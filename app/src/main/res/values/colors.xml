@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#6200EE</color>
+    <color name="colorPrimaryDark">#3700B3</color>
+    <color name="colorAccent">#03DAC5</color>
+    <color name="cloudy">#FF8BC0EF</color>
+    <color name="ocean_blue">#00498A</color>
+    <color name="deep_blue">#0073DA</color>
+    <color name="light_blue">#3CA4FF</color>
+    <color name="button_color">#A9CBFF</color>
+    <color name="red">#FF2323</color>
+    <color name="green">#2FFF00</color>
+    <color name="clear">#00000000</color>
+    <color name="black">#000000</color>
+    <color name="white">#FFFFFF</color>
+
+    <!-- Settings Screen -->
+    <color name="settings_top">#EFEFEF</color>
+    <color name="settings_bottom">#E1E1E1</color>
+    <color name="grey">#595959</color>
+    <color name="menu_button">#FFFFFF</color>
+
+    <!-- Lock Screen -->
+    <color name="lock_green">#57C65B</color>
+
+</resources>

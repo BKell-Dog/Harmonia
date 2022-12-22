@@ -1,0 +1,26 @@
+<resources>
+    <string name="app_name">HarmoniaLauncher</string>
+    <string name="phone_icon_desc">Phone Icon</string>
+    <string name="text_icon_desc">Text Icon</string>
+    <string name="camera_icon_desc">Camera Icon</string>
+    <string name="gallery_icon_desc">Gallery Icon</string>
+    <string name="email_icon_desc">Email Icon</string>
+    <string name="contacts_icon_desc">Contacts Icon</string>
+    <string name="settings_icon_desc">Settings Icon</string>
+    <string name="file_sys_icon_desc">File Sys Icon</string>
+
+    <!-- App APK names -->
+    <string name="phone_apk">com.sec.android.app.phoneutil</string>
+
+    <!-- Settings Menu Names -->
+    <string name="menu_item_name">Menu Item Name</string>
+    <string name="menu_item_icon">Menu Item Icon</string>
+    <!-- Whitelist -->
+    <string name="whitelist">Whitelist</string>
+    <string name="whitelist_title">Select Apps to be Whitelisted</string>
+    <string name="whitelist_subtitle">Whitelisted apps will appear on the home screen.</string>
+    <string name="whitelist_accept_button">Accept</string>
+
+    <!-- Lock Screen -->
+    <string name="lock_title">Locked</string>
+</resources>

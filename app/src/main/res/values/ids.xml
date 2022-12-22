@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <item type="id" name="whitelist_bar" />
+    <item type="id" name="whitelist_text" />
+    <item type="id" name="whitelist_icon" />
+    <item type="id" name="whitelist_checkbox" />
+</resources>

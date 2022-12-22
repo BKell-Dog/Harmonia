@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/set_launcher"
+        android:title="Set Launcher" />
+
+    <item
+        android:id="@+id/set_whitelist"
+        android:title="Set Whitelist" />
+
+    <item
+        android:id="@+id/exit_harmonia"
+        android:title="Exit Harmonia" />
+
+</menu>
