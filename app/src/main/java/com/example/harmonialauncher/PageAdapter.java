@@ -5,24 +5,25 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
 
+import com.example.harmonia.R;
+
 import java.util.ArrayList;
 
 public class PageAdapter extends FragmentStateAdapter {
 
     private static final String TAG = "Page Adapter";
-    private ArrayList<Fragment> fragments = new ArrayList<Fragment>();
+    protected ArrayList<Fragment> fragments = new ArrayList<Fragment>();
 
-    public ArrayList<String> nameIndex = new ArrayList<String>();
-    public final String HOMESCREEN = "Home Screen",
-                        SETTINGS = "Settings",
-                        WHITELIST = "Whitelist";
+    protected ArrayList<String> nameIndex = new ArrayList<String>();
+    protected final String HOMESCREEN = "Home Screen",
+                        DRAWER = "Drawer";
 
     public PageAdapter(@NonNull FragmentActivity fragmentActivity) {
         super(fragmentActivity);
         fragments.add(new HomeScreenFragment());
         nameIndex.add(HOMESCREEN);
-        fragments.add(new SettingsFragment());
-        nameIndex.add(SETTINGS);
+        fragments.add(new DrawerFragment());
+        nameIndex.add(DRAWER);
     }
 
     @NonNull
@@ -31,7 +32,7 @@ public class PageAdapter extends FragmentStateAdapter {
         if (position == 0)
             return new HomeScreenFragment();
         else if (position == 1)
-            return new SettingsFragment();
+            return new DrawerFragment();
         return null;
     }
 

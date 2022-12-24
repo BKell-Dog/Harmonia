@@ -16,6 +16,7 @@ import android.widget.TextView;
 import androidx.fragment.app.Fragment;
 import androidx.viewpager2.widget.ViewPager2;
 
+import com.example.harmonia.R;
 import com.example.harmonialauncher.*;
 import com.example.harmonialauncher.lockManager.LockManager;
 import com.example.harmonialauncher.lockManager.LockScreen;

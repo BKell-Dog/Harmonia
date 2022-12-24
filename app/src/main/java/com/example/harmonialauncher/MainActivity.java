@@ -10,6 +10,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 
+import com.example.harmonia.R;
 import com.example.harmonialauncher.lockManager.HarmoniaActivity;
 
 
@@ -23,22 +24,8 @@ public class MainActivity extends HarmoniaActivity {
     private static final String TAG = "Main Activity";
     public final Context CONTEXT = MainActivity.this;
     public static Application instance;
-
-    //Get package names set to default in the OS
-    private static String dialerPackage = null;
-    private static String SMSPackage = null;
-    private static String cameraPackage = null;
-    private static String galleryPackage = null;
-    private static String emailPackage = null;
-    private static String contactsPackage = null;
-    private static String settingsPackage = null;
-
     public ViewPager2 vp;
 
-    //TODO: Find a way around this API requirement while still using Telephony for SMS package
-    @SuppressLint("ResourceType")
-    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
-    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
@@ -47,7 +34,11 @@ public class MainActivity extends HarmoniaActivity {
 
         PageAdapter pa = new PageAdapter(this);
         vp.setAdapter(pa);
-        vp.setUserInputEnabled(false);
+
+        //Set page adapter to scroll vertically between home screen and drawer
+        vp.setUserInputEnabled(true);
+        vp.canScrollVertically(1);
+
         vp.setCurrentItem(0);
         vp.setVisibility(View.VISIBLE);
 

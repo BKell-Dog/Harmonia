@@ -20,6 +20,7 @@ import android.widget.Toast;
 import androidx.fragment.app.Fragment;
 import androidx.viewpager2.widget.ViewPager2;
 
+import com.example.harmonia.R;
 import com.example.harmonialauncher.Config.ConfigManager;
 import com.example.harmonialauncher.Settings.WhitelistManager;
 import com.example.harmonialauncher.lockManager.LockManager;
