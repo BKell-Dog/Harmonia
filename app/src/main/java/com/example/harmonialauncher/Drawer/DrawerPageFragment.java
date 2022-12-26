@@ -1,18 +1,23 @@
-package com.example.harmonialauncher;
+package com.example.harmonialauncher.Drawer;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Rect;
 import android.os.Build;
 import android.os.Bundle;
-import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.GridView;
 
-import com.example.harmonia.R;
-import com.example.harmonialauncher.lockManager.HarmoniaFragment;
+import androidx.viewpager2.widget.ViewPager2;
 
-import java.util.ArrayList;
+import com.example.harmonia.R;
+import com.example.harmonialauncher.AppObject;
+import com.example.harmonialauncher.Config.ConfigManager;
+import com.example.harmonialauncher.Util;
+import com.example.harmonialauncher.lockManager.HarmoniaFragment;
 
 // Purpose of this class: retrieve app data for all installed apps, and display app name as well as
 // app icon (type Drawable) on the screen in a grid. Grid will not exceed 4 columns and 5 rows, and
@@ -20,13 +25,31 @@ import java.util.ArrayList;
 // will not resize as more space on the screen appears. When an app element is tapped, the app opens.
 // When an app element is held down, options appear and the app may move to where the finger decides.
 public class DrawerPageFragment extends HarmoniaFragment {
+    private static final String TAG = "Drawer Page Fragment";
     private Context CONTEXT;
+
     public DrawerPageFragment()
     {
         super(R.layout.drawer_page);
         GridView gv = (GridView) getActivity().findViewById(R.id.drawer_page_grid);
         gv.setAdapter(new DrawerGridAdapter(getContext(), R.layout.app, Util.loadAllApps()));
         gv.setNumColumns(4);
+
+        gv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                AppObject app = (AppObject) adapterView.getItemAtPosition(i);
+                Log.d(TAG, app.toString() + " CLICKED");
+                String pkg = app.getPackageName();
+                if (pkg != null) {
+                    Util.openApp(CONTEXT, pkg);
+                } else if (app.getName().equalsIgnoreCase("Harmonia")) {
+                    //Use Fragment Transaction to open settings fragment in ViewPager
+                    ViewPager2 vp = getActivity().findViewById(R.id.ViewPager);
+                    vp.setCurrentItem(1, true);
+                }
+            }
+        });
     }
 
     @Override

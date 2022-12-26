@@ -1,4 +1,4 @@
-package com.example.harmonialauncher;
+package com.example.harmonialauncher.HomeScreen;
 
 import android.content.Context;
 import android.graphics.drawable.Drawable;
@@ -16,24 +16,25 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.example.harmonia.R;
+import com.example.harmonialauncher.AppGridAdapter;
+import com.example.harmonialauncher.AppObject;
 
 import java.util.ArrayList;
 
-public class DrawerGridAdapter extends GridAdapter {
+public class HomeScreenGridAdapter extends AppGridAdapter {
 
-    private final static String TAG = "Drawer Grid Adapter";
-    private ArrayList<AppObject> apps;
+    private final static String TAG = "Grid Adapter";
+    private AppObject[] apps = new AppObject[20];
     private Context CONTEXT;
     private int layout_id;
 
-    final int COLS = 4, ROWS = 5;
-    private int horizontalBuffer = 200, verticalBuffer = 200;
-
-    public DrawerGridAdapter(@NonNull Context context, int resource, ArrayList<AppObject> appList) {
+    //TODO: Alter the home screen system to reference a specified set of home screen apps, not the first 20 aps out of all apps.
+    public HomeScreenGridAdapter(@NonNull Context context, int resource, ArrayList<AppObject> appList) {
         super(context, resource, appList);
         CONTEXT = context;
-        apps = appList;
         layout_id = resource;
+        for (int i = 0; i < 20; i++)
+            apps[i] = appList.get(i);
     }
 
     @NonNull
@@ -45,9 +46,14 @@ public class DrawerGridAdapter extends GridAdapter {
             LayoutInflater inflater = (LayoutInflater)getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             gridItemView = inflater.inflate(R.layout.app, null);
         }
-        if (position > apps.size())
-            return null;
-        AppObject app = apps.get(position);
+        AppObject app = apps[position];
+
+        //If the current index of the array holds a null value, return an empty view.
+        if (app == null)
+        {
+            LayoutInflater inflater = (LayoutInflater)getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            return inflater.inflate(R.layout.empty, null);
+        }
 
         //Get Icon and Label and set their values to the specific app
         TextView label = (TextView) gridItemView.findViewById(R.id.label);
@@ -71,21 +77,28 @@ public class DrawerGridAdapter extends GridAdapter {
         return gridItemView;
     }
 
-    //This method resizes each GridView element size to fit the screen, and therefore, the gridView
-    //won't scroll. This method must be called before Adapter.getView() to be effective.
-    public void setElementDimen(int screenHeight, int screenWidth)
-    {
-        if (screenHeight <= 0 || screenWidth <= 0)
-            return;
+    public int getCount()
+    {return apps.length;}
 
-        int elementHeight = screenHeight / ROWS;
-        int elementWidth = screenWidth / COLS;
-        for (AppObject app : apps)
-        {
-            app.setWidth(elementWidth);
-            app.setHeight(elementHeight);
-        }
-        this.horizontalBuffer = (int) (elementWidth * 0.2);
-        this.verticalBuffer = (int) (elementHeight * 0.3);
+    public AppObject replace(AppObject app, int position)
+    {
+        AppObject a = apps[position];
+        apps[position] = app;
+        return a;
+    }
+
+    public AppObject remove(int position)
+    {
+        AppObject a = apps[position];
+        apps[position] = null;
+        return a;
+    }
+
+    public AppObject get(int position)
+    {
+        if (position > 0 && position < apps.length)
+            return apps[position];
+        else
+            return null;
     }
 }

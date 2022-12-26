@@ -1,12 +1,14 @@
 package com.example.harmonialauncher;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.graphics.Point;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
+import android.util.Log;
 import android.view.Display;
 import android.view.WindowManager;
 
@@ -15,6 +17,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Util {
+
+    private static final String TAG = "Util";
 
     public static ArrayList<AppObject> loadAllApps() {
         ArrayList<AppObject> apps = new ArrayList<AppObject>();
@@ -53,6 +57,26 @@ public class Util {
         return apps;
     }
 
+    public static boolean openApp(Context context, String appPackageName) {
+        if (context == null) {
+            context = Util.getGenericContext();
+        }
+
+        //if (LockManager.isLocked(Util.findAppByPackageName(appPackageName)))
+
+        //Form intent from package name
+        Intent intent = context.getPackageManager().getLaunchIntentForPackage(appPackageName);
+
+        if (intent != null) {
+            context.startActivity(intent);
+            Log.d(TAG, "Started app, package name: '" + appPackageName + "'");
+            return true;
+        } else {
+            Log.e(TAG, "Cannot start app, appPackageName:'" + appPackageName + "'");
+            return false;
+        }
+    }
+
     public static ArrayList<String> getAllPackages()
     {
         PackageManager pm = getGenericContext().getPackageManager();
@@ -81,8 +105,7 @@ public class Util {
     }
 
     public static Context getGenericContext() {
-        Context c = MainActivity.getContext();
-        return c;
+        return MainActivity.getContext();
     }
 
     public static Point getNavigationBarSize(Context context) {

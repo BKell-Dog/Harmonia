@@ -1,4 +1,4 @@
-package com.example.harmonialauncher;
+package com.example.harmonialauncher.Drawer;
 
 import android.view.View;
 
@@ -7,9 +7,9 @@ import androidx.fragment.app.FragmentActivity;
 import androidx.viewpager2.widget.ViewPager2;
 
 import com.example.harmonia.R;
+import com.example.harmonialauncher.PageAdapter;
+import com.example.harmonialauncher.Util;
 import com.example.harmonialauncher.lockManager.HarmoniaFragment;
-
-import java.util.ArrayList;
 
 public class DrawerFragment extends HarmoniaFragment {
 

@@ -9,7 +9,6 @@ import android.widget.PopupWindow;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import com.example.harmonialauncher.HomeScreenFragment;
 import com.example.harmonialauncher.R;
 import com.example.harmonialauncher.Util;
 

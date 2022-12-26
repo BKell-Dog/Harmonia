@@ -5,7 +5,8 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
 
-import com.example.harmonia.R;
+import com.example.harmonialauncher.Drawer.DrawerFragment;
+import com.example.harmonialauncher.HomeScreen.HomeScreenFragment;
 
 import java.util.ArrayList;
 
