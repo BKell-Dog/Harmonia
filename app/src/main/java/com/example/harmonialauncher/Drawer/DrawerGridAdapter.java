@@ -15,7 +15,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import com.example.harmonia.R;
+import com.example.harmonialauncher.R;
 import com.example.harmonialauncher.AppGridAdapter;
 import com.example.harmonialauncher.AppObject;
 
@@ -42,7 +42,7 @@ public class DrawerGridAdapter extends AppGridAdapter {
         View gridItemView = convertView;
         if (gridItemView == null) {
             // Layout Inflater inflates each item to be displayed in GridView.
-            LayoutInflater inflater = (LayoutInflater)getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            LayoutInflater inflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             gridItemView = inflater.inflate(R.layout.app, null);
         }
         if (position > apps.size())
@@ -73,15 +73,13 @@ public class DrawerGridAdapter extends AppGridAdapter {
 
     //This method resizes each GridView element size to fit the screen, and therefore, the gridView
     //won't scroll. This method must be called before Adapter.getView() to be effective.
-    public void setElementDimen(int screenHeight, int screenWidth)
-    {
+    public void setElementDimen(int screenHeight, int screenWidth) {
         if (screenHeight <= 0 || screenWidth <= 0)
             return;
 
         int elementHeight = screenHeight / ROWS;
         int elementWidth = screenWidth / COLS;
-        for (AppObject app : apps)
-        {
+        for (AppObject app : apps) {
             app.setWidth(elementWidth);
             app.setHeight(elementHeight);
         }

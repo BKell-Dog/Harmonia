@@ -178,14 +178,6 @@ public class LockManager {
         lockedPacks = newPacks;
     }
 
-    private static boolean isPackage(String name) {
-        ArrayList<String> packs = Util.getAllPackages();
-        for (String p : packs)
-            if (p.equalsIgnoreCase(name))
-                return true;
-        return false;
-    }
-
     public static boolean exitLocked() {
         return inMap(EXIT);
     }

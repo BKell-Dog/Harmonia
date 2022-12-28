@@ -16,8 +16,7 @@ public class LockScreen {
 
     private static final String TAG = "Lock Screen";
 
-    public void showLockScreenWindow(View parent, Lockable l)
-    {
+    public void showLockScreenWindow(View parent, Lockable l) {
         //Inflate lock screen view
         final View popupView = LayoutInflater.from(parent.getContext()).inflate(R.layout.lock_popup, null);
 

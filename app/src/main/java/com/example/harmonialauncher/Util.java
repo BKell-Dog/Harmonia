@@ -1,5 +1,7 @@
 package com.example.harmonialauncher;
 
+import android.app.Activity;
+import android.app.Application;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ApplicationInfo;
@@ -12,6 +14,8 @@ import android.util.Log;
 import android.view.Display;
 import android.view.WindowManager;
 
+import androidx.fragment.app.Fragment;
+
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
@@ -20,9 +24,9 @@ public class Util {
 
     private static final String TAG = "Util";
 
-    public static ArrayList<AppObject> loadAllApps() {
+    public static ArrayList<AppObject> loadAllApps(Activity a) {
         ArrayList<AppObject> apps = new ArrayList<AppObject>();
-        PackageManager pm = getGenericContext().getPackageManager();
+        PackageManager pm = a.getApplicationContext().getPackageManager();
         List<PackageInfo> packages = pm.getInstalledPackages(0);
         List<ApplicationInfo> applications = new ArrayList<ApplicationInfo>();
 
@@ -57,10 +61,12 @@ public class Util {
         return apps;
     }
 
+    public static ArrayList<AppObject> loadAllApps(Fragment f)
+    {return loadAllApps(f.getActivity());}
+
     public static boolean openApp(Context context, String appPackageName) {
-        if (context == null) {
-            context = Util.getGenericContext();
-        }
+        if (context == null)
+            return false;
 
         //if (LockManager.isLocked(Util.findAppByPackageName(appPackageName)))
 
@@ -77,9 +83,8 @@ public class Util {
         }
     }
 
-    public static ArrayList<String> getAllPackages()
-    {
-        PackageManager pm = getGenericContext().getPackageManager();
+    public static ArrayList<String> getAllPackages(Activity a) {
+        PackageManager pm = a.getApplicationContext().getPackageManager();
         List<PackageInfo> packages = pm.getInstalledPackages(0);
         ArrayList<String> packs = new ArrayList<String>();
         for (PackageInfo p : packages)
@@ -87,26 +92,29 @@ public class Util {
         return packs;
     }
 
-    public static ArrayList<String> getAppPackages()
-    {
-        ArrayList<AppObject> apps = loadAllApps();
+    public static ArrayList<String> getAllPackages(Fragment f)
+    {return getAllPackages(f.getActivity());}
+
+    public static ArrayList<String> getAppPackages(Activity act) {
+        ArrayList<AppObject> apps = loadAllApps(act);
         ArrayList<String> packs = new ArrayList<String>();
         for (AppObject a : apps)
             packs.add(a.getPackageName());
         return packs;
     }
 
-    public static AppObject findAppByPackageName(String packageName) {
-        ArrayList<AppObject> apps = loadAllApps();
+    public static ArrayList<String> getAppPackages(Fragment f)
+    {return getAppPackages(f.getActivity());}
+
+    public static AppObject findAppByPackageName(String packageName, Activity act) {
+        ArrayList<AppObject> apps = loadAllApps(act);
         for (AppObject a : apps)
             if (a.getPackageName().equalsIgnoreCase(packageName))
                 return a;
         return null;
     }
-
-    public static Context getGenericContext() {
-        return MainActivity.getContext();
-    }
+    public static AppObject findAppByPackageName(String packageName, Fragment f)
+    {return findAppByPackageName(packageName, f.getActivity());}
 
     public static Point getNavigationBarSize(Context context) {
         Point appUsableSize = getAppUsableScreenSize(context);
@@ -153,4 +161,15 @@ public class Util {
 
         return size;
     }
+
+    public static boolean isPackage(String name, Activity a) {
+        ArrayList<String> packs = Util.getAllPackages(a);
+        for (String p : packs)
+            if (p.equalsIgnoreCase(name))
+                return true;
+        return false;
+    }
+
+    public static boolean isPackage(String name, Fragment f)
+    {return isPackage(name, f.getActivity());}
 }

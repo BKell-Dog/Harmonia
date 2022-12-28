@@ -15,7 +15,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import com.example.harmonia.R;
+import com.example.harmonialauncher.R;
 import com.example.harmonialauncher.AppGridAdapter;
 import com.example.harmonialauncher.AppObject;
 
@@ -24,7 +24,8 @@ import java.util.ArrayList;
 public class HomeScreenGridAdapter extends AppGridAdapter {
 
     private final static String TAG = "Grid Adapter";
-    private AppObject[] apps = new AppObject[20];
+    private int homeScreenAppNum = 20;
+    private AppObject[] apps = new AppObject[homeScreenAppNum];
     private Context CONTEXT;
     private int layout_id;
 
@@ -33,8 +34,9 @@ public class HomeScreenGridAdapter extends AppGridAdapter {
         super(context, resource, appList);
         CONTEXT = context;
         layout_id = resource;
-        for (int i = 0; i < 20; i++)
+        for (int i = 0; i < homeScreenAppNum && i < appList.size(); i++) {
             apps[i] = appList.get(i);
+        }
     }
 
     @NonNull
@@ -43,15 +45,14 @@ public class HomeScreenGridAdapter extends AppGridAdapter {
         View gridItemView = convertView;
         if (gridItemView == null) {
             // Layout Inflater inflates each item to be displayed in GridView.
-            LayoutInflater inflater = (LayoutInflater)getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            LayoutInflater inflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             gridItemView = inflater.inflate(R.layout.app, null);
         }
         AppObject app = apps[position];
 
         //If the current index of the array holds a null value, return an empty view.
-        if (app == null)
-        {
-            LayoutInflater inflater = (LayoutInflater)getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        if (app == null) {
+            LayoutInflater inflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             return inflater.inflate(R.layout.empty, null);
         }
 
@@ -77,25 +78,23 @@ public class HomeScreenGridAdapter extends AppGridAdapter {
         return gridItemView;
     }
 
-    public int getCount()
-    {return apps.length;}
+    public int getCount() {
+        return apps.length;
+    }
 
-    public AppObject replace(AppObject app, int position)
-    {
+    public AppObject replace(AppObject app, int position) {
         AppObject a = apps[position];
         apps[position] = app;
         return a;
     }
 
-    public AppObject remove(int position)
-    {
+    public AppObject remove(int position) {
         AppObject a = apps[position];
         apps[position] = null;
         return a;
     }
 
-    public AppObject get(int position)
-    {
+    public AppObject get(int position) {
         if (position > 0 && position < apps.length)
             return apps[position];
         else

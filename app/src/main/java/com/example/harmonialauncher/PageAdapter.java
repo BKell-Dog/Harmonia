@@ -17,7 +17,7 @@ public class PageAdapter extends FragmentStateAdapter {
 
     protected ArrayList<String> nameIndex = new ArrayList<String>();
     protected final String HOMESCREEN = "Home Screen",
-                        DRAWER = "Drawer";
+            DRAWER = "Drawer";
 
     public PageAdapter(@NonNull FragmentActivity fragmentActivity) {
         super(fragmentActivity);
@@ -38,8 +38,7 @@ public class PageAdapter extends FragmentStateAdapter {
     }
 
     @NonNull
-    public Fragment getFragment(int position)
-    {
+    public Fragment getFragment(int position) {
         if (position >= 0 && position < fragments.size())
             return fragments.get(position);
         return null;
@@ -50,8 +49,7 @@ public class PageAdapter extends FragmentStateAdapter {
         return fragments.size();
     }
 
-    public int getIndexByName(String name)
-    {
+    public int getIndexByName(String name) {
         for (String s : nameIndex)
             if (s.equalsIgnoreCase(name)) {
                 return nameIndex.indexOf(s);

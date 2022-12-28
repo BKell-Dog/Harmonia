@@ -10,7 +10,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 
-import com.example.harmonia.R;
+import com.example.harmonialauncher.R;
 import com.example.harmonialauncher.lockManager.HarmoniaActivity;
 
 
@@ -51,8 +51,7 @@ public class MainActivity extends HarmoniaActivity {
         }catch(IOException ioe){Log.d(TAG, "EXCEPTION");ioe.printStackTrace();}*/
     }
 
-    public static Context getContext()
-    {
+    public static Context getContext() {
         return instance.getApplicationContext();
     }
 

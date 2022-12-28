@@ -12,38 +12,38 @@ public class WhitelistManager {
     //AppObjects when we can deal directly with the packages they wrap around.
     private static HashMap<String, Boolean> whitelisted = new HashMap<String, Boolean>();
 
-    public static void whitelist(String packageName)
-    {whitelisted.put(packageName, true);}
+    public static void whitelist(String packageName) {
+        whitelisted.put(packageName, true);
+    }
 
-    public static void whitelist(AppObject app)
-    {whitelisted.put(app.getPackageName(), true);}
+    public static void whitelist(AppObject app) {
+        whitelisted.put(app.getPackageName(), true);
+    }
 
-    public static void unWhitelist(String packageName)
-    {whitelisted.put(packageName, false);}
+    public static void unWhitelist(String packageName) {
+        whitelisted.put(packageName, false);
+    }
 
-    public static void unWhitelist(AppObject app)
-    {whitelisted.put(app.getPackageName(), false);}
+    public static void unWhitelist(AppObject app) {
+        whitelisted.put(app.getPackageName(), false);
+    }
 
-    public static boolean isWhitelisted(String packageName)
-    {
+    public static boolean isWhitelisted(String packageName) {
         if (whitelisted.containsKey(packageName) && whitelisted.get(packageName))
             return true;
         return false;
     }
 
-    public static ArrayList<String> getWhitelist()
-    {
+    public static ArrayList<String> getWhitelist() {
         ArrayList<String> wl = new ArrayList<String>();
-        for (String key : whitelisted.keySet())
-        {
+        for (String key : whitelisted.keySet()) {
             if (whitelisted.get(key))
                 wl.add(key);
         }
         return wl;
     }
 
-    private static boolean inMap(String packageName)
-    {
+    private static boolean inMap(String packageName) {
         return whitelisted.containsKey(packageName);
     }
 }
