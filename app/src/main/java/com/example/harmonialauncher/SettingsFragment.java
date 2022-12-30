@@ -15,8 +15,9 @@ public class SettingsFragment extends Fragment {
     private static final String TAG = "Settings Fragment";
     private Context CONTEXT;
 
-    public SettingsFragment()
-    {super(R.layout.settings_screen);}
+    public SettingsFragment() {
+        super(R.layout.settings_screen);
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -26,7 +27,7 @@ public class SettingsFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState)    {
+                             Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.settings_screen, container, false);
 
         ViewPager2 vp = (ViewPager2) v.findViewById(R.id.settings_view_pager);

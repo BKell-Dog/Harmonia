@@ -34,13 +34,10 @@ public class ConfigManager {
 
     //TODO: finish this class
 
-    public static HashMap<String, String> loadProperties()
-    {
-        if (checkForConfig())
-        {
+    public static HashMap<String, String> loadProperties() {
+        if (checkForConfig()) {
             //Iterate through loaded hash table of key-value pairs and put them into a hash map. Return hash map.
-            for (String s : p.stringPropertyNames())
-            {
+            for (String s : p.stringPropertyNames()) {
                 properties.put(s, p.getProperty(s));
             }
             return properties;
@@ -48,32 +45,25 @@ public class ConfigManager {
         return null;
     }
 
-    public static void setProperty(String key, String value)
-    {
+    public static void setProperty(String key, String value) {
         p.put(key, value);
     }
 
     //Method checks if there is a config file, and if so, automatically sends the data to the
     // Properties object p. We can read the data from p elsewhere.
     //If this method returns false, it means that this is the first time the app is being opened.
-    public static boolean checkForConfig()
-    {
+    public static boolean checkForConfig() {
         File config = new File(filePath);
 
-        try
-        {
+        try {
             FileReader reader = new FileReader(config);
             p.load(reader);
             return true;
-        }
-        catch (FileNotFoundException fnfe)
-        {
+        } catch (FileNotFoundException fnfe) {
             Log.d(TAG, "File not found");
             fnfe.printStackTrace();
             return false;
-        }
-        catch (IOException ioe)
-        {
+        } catch (IOException ioe) {
             Log.d(TAG, "IOException");
             ioe.printStackTrace();
             return false;
@@ -81,8 +71,7 @@ public class ConfigManager {
     }
 
     //Write preferences to file
-    public void writeToFile()
-    {
+    public void writeToFile() {
         //Check that Properties p contains all the key-value pairs that are necessary for the system
         //TODO: Check properties list and compile a basic list of config keys
 
@@ -91,21 +80,21 @@ public class ConfigManager {
         try {
             OutputStream outputStream = new FileOutputStream(configFile);
             p.storeToXML(outputStream, null);
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
 
-    public static void setConfigFilePath(String filePath)
-    {filePath = filePath;}
+    public static void setConfigFilePath(String filePath) {
+        filePath = filePath;
+    }
 
-    public static String getConfigFilePath()
-    {return filePath;}
+    public static String getConfigFilePath() {
+        return filePath;
+    }
 
-    public static String getMode()
-    {
+    public static String getMode() {
         checkForConfig();
         return p.getProperty(MODE);
     }

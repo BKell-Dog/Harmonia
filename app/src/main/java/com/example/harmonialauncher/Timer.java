@@ -9,8 +9,8 @@ public class Timer extends Thread {
 
     public void run() {
         if (startTime != null && endTime != null) {
-            while (System.nanoTime() < endTime)
-            {}
+            while (System.nanoTime() < endTime) {
+            }
             startTime = null;
             endTime = null;
         }
@@ -41,8 +41,7 @@ public class Timer extends Thread {
             return 0;
     }
 
-    public long getRemainingTime()
-    {
+    public long getRemainingTime() {
         if (endTime != null)
             return ((endTime - System.nanoTime()) / 1000000000);
         else

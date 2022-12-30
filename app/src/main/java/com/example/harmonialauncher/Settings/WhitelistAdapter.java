@@ -27,22 +27,19 @@ public class WhitelistAdapter extends AppListAdapter {
     private static ArrayList<AppObject> whitelistedApps = new ArrayList<AppObject>();
 
     //Resource should be R.layout.list_menu_item
-    public WhitelistAdapter(Context c, int resource)
-    {
+    public WhitelistAdapter(Context c, int resource) {
         super(c, resource);
     }
 
-    public WhitelistAdapter(Context c, int resource, ArrayList<AppObject> apps)
-    {
+    public WhitelistAdapter(Context c, int resource, ArrayList<AppObject> apps) {
         super(c, resource);
         super.apps = apps;
     }
 
     @SuppressLint("ViewHolder")
     @Override
-    public View getView(int position, View convertView, ViewGroup parent)
-    {
-       // View v = convertView;
+    public View getView(int position, View convertView, ViewGroup parent) {
+        // View v = convertView;
 
         LayoutInflater inflater = (LayoutInflater) CONTEXT.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         final View v = inflater.inflate(resource, null, true);

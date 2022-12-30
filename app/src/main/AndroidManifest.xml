@@ -2,6 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     package="com.example.harmonialauncher">
+
     <permission android:name="android.permission.QUERY_ALL_PACKAGES" />
     <!-- <uses-permission android:name="android.permission.SET_WALLPAPER"/> -->
 
@@ -13,7 +14,8 @@
         android:supportsRtl="true"
         android:launchMode="singleTask"
         android:theme="@style/AppTheme">
-        <activity android:name=".MainActivity"
+        <activity
+            android:name=".MainActivity"
             android:excludeFromRecents="true"
             android:launchMode="singleTask"
             android:screenOrientation="nosensor"
@@ -22,8 +24,8 @@
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <!-- The following two lines are key to set homescreen -->
-                <category android:name="android.intent.category.HOME"/>
-                <category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="android.intent.category.HOME" />
+                <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>

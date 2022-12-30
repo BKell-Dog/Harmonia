@@ -41,7 +41,7 @@ public class WhitelistFragment extends HarmoniaFragment {
 
         //Set list view adapter to show the menu items
         ListView lv = (ListView) v.findViewById(R.id.whitelist_list_view);
-        WhitelistAdapter adapter = new WhitelistAdapter(CONTEXT, R.layout.list_menu_item, Util.loadAllApps());
+        WhitelistAdapter adapter = new WhitelistAdapter(CONTEXT, R.layout.list_menu_item, Util.loadAllApps(this));
         lv.setAdapter(adapter);
 
         lv.setFooterDividersEnabled(true);

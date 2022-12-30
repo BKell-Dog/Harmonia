@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
+
 import com.example.harmonialauncher.Settings.*;
 
 import java.util.ArrayList;
@@ -20,7 +21,7 @@ public class SettingsPageAdapter extends FragmentStateAdapter {
 
     public ArrayList<String> nameIndex = new ArrayList<String>();
     public final String SETTINGSHOME = "Settings Home",
-                        WHITELIST = "Whitelist";
+            WHITELIST = "Whitelist";
 
     public SettingsPageAdapter(@NonNull FragmentActivity fragmentActivity) {
         super(fragmentActivity);
@@ -41,8 +42,7 @@ public class SettingsPageAdapter extends FragmentStateAdapter {
     }
 
     @NonNull
-    public Fragment getFragment(int position)
-    {
+    public Fragment getFragment(int position) {
         if (position >= 0 && position < fragments.size())
             return fragments.get(position);
         return null;
@@ -53,8 +53,7 @@ public class SettingsPageAdapter extends FragmentStateAdapter {
         return fragments.size();
     }
 
-    public int getIndexByName(String name)
-    {
+    public int getIndexByName(String name) {
         for (String s : nameIndex)
             if (s.equalsIgnoreCase(name)) {
                 return nameIndex.indexOf(s);

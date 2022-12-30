@@ -31,28 +31,29 @@ public abstract class AppListAdapter extends BaseAdapter {
     public abstract View getView(int position, View convertView, ViewGroup parent);
 
     @NonNull
-    public AppObject getApp(int position)
-    {
+    public AppObject getApp(int position) {
         if (position >= 0 && position < apps.size())
             return apps.get(position);
         return null;
     }
 
-    public AppObject get(int position)
-    {return getApp(position);}
+    public AppObject get(int position) {
+        return getApp(position);
+    }
 
-    public AppObject getItem(int position)
-    {return getApp(position);}
+    public AppObject getItem(int position) {
+        return getApp(position);
+    }
 
-    public long getItemId(int position)
-    {return position;}
+    public long getItemId(int position) {
+        return position;
+    }
 
     public int getCount() {
         return apps.size();
     }
 
-    public int getIndexByName(String name)
-    {
+    public int getIndexByName(String name) {
         for (AppObject a : apps) {
             if (a.getName().equalsIgnoreCase(name)) {
                 return apps.indexOf(a);
@@ -61,27 +62,28 @@ public abstract class AppListAdapter extends BaseAdapter {
         return -1;
     }
 
-    public void add(AppObject a)
-    {apps.add(a);}
+    public void add(AppObject a) {
+        apps.add(a);
+    }
 
-    public void addAll(List<AppObject> list)
-    {apps.addAll(list);}
+    public void addAll(List<AppObject> list) {
+        apps.addAll(list);
+    }
 
-    public void clear()
-    {apps.clear();}
+    public void clear() {
+        apps.clear();
+    }
 
-    public ArrayList<AppObject> getAppList()
-    {return apps;}
+    public ArrayList<AppObject> getAppList() {
+        return apps;
+    }
 
-    public static ArrayList<AppObject> sortListAlphabetically(ArrayList<AppObject> appList)
-    {
+    public static ArrayList<AppObject> sortListAlphabetically(ArrayList<AppObject> appList) {
         ArrayList<String> names = new ArrayList<String>();
         for (AppObject a : appList)
             names.add(a.getName());
-        for (int i = 0; i < appList.size() - 1; i++)
-        {
-            if (appList.get(i).getName().compareTo(appList.get(i + 1).getName()) < 0)
-            {
+        for (int i = 0; i < appList.size() - 1; i++) {
+            if (appList.get(i).getName().compareTo(appList.get(i + 1).getName()) < 0) {
                 AppObject app1 = appList.get(i);
                 appList.set(i, appList.get(i + 1));
                 appList.set(i + 1, app1);
@@ -91,26 +93,22 @@ public abstract class AppListAdapter extends BaseAdapter {
         return appList;
     }
 
-    public AppObject findAppByName(String name)
-    {
+    public AppObject findAppByName(String name) {
         ArrayList<String> names = new ArrayList<String>();
         for (AppObject a : apps)
             names.add(a.getName());
-        for (String s : names)
-        {
+        for (String s : names) {
             if (s.equalsIgnoreCase(name))
                 return apps.get(names.indexOf(s));
         }
         return null;
     }
 
-    public AppObject findAppByPackage(String packageName)
-    {
+    public AppObject findAppByPackage(String packageName) {
         ArrayList<String> packages = new ArrayList<String>();
         for (AppObject a : apps)
             packages.add(a.getPackageName());
-        for (String s : packages)
-        {
+        for (String s : packages) {
             if (s.equalsIgnoreCase(packageName))
                 return apps.get(packages.indexOf(s));
         }

@@ -14,7 +14,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import com.example.harmonia.R;
+import com.example.harmonialauncher.R;
 
 import java.util.ArrayList;
 
@@ -41,7 +41,7 @@ public class AppGridAdapter extends ArrayAdapter<AppObject> {
         View gridItemView = convertView;
         if (gridItemView == null) {
             // Layout Inflater inflates each item to be displayed in GridView.
-            LayoutInflater inflater = (LayoutInflater)getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            LayoutInflater inflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             gridItemView = inflater.inflate(R.layout.app, null);
         }
         AppObject app = apps.get(position);
@@ -68,14 +68,15 @@ public class AppGridAdapter extends ArrayAdapter<AppObject> {
         return gridItemView;
     }
 
-    public int getCount()
-    {return apps.size();}
+    public int getCount() {
+        return apps.size();
+    }
 
-    public void add(AppObject app)
-    {apps.add(app);}
+    public void add(AppObject app) {
+        apps.add(app);
+    }
 
-    public AppObject get(int position)
-    {
+    public AppObject get(int position) {
         if (position > 0 && position < apps.size())
             return apps.get(position);
         else
@@ -84,15 +85,13 @@ public class AppGridAdapter extends ArrayAdapter<AppObject> {
 
     //This method resizes each GridView element size to fit the screen, and therefore, the gridView
     //won't scroll. This method must be called before Adapter.getView() to be effective.
-    public void setElementDimen(int screenHeight, int screenWidth)
-    {
+    public void setElementDimen(int screenHeight, int screenWidth) {
         if (screenHeight <= 0 || screenWidth <= 0)
             return;
 
         int elementHeight = screenHeight / ROWS;
         int elementWidth = screenWidth / COLS;
-        for (AppObject app : apps)
-        {
+        for (AppObject app : apps) {
             app.setWidth(elementWidth);
             app.setHeight(elementHeight);
         }
