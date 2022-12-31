@@ -11,6 +11,7 @@ import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Display;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
@@ -97,6 +98,12 @@ public class HomeScreenFragment extends Fragment {
                     ViewPager2 vp = getActivity().findViewById(R.id.ViewPager);
                     vp.setCurrentItem(1, true);
                 }
+            }
+        });
+        gv.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                return event.getAction() == MotionEvent.ACTION_MOVE;
             }
         });
         return v;

@@ -41,7 +41,7 @@ public class Util {
         List<ApplicationInfo> installedApps = new ArrayList<ApplicationInfo>();
         for (ApplicationInfo app : applications) {
             //checks for flags; if flagged, check if updated system app
-            if ((app.flags & ApplicationInfo.FLAG_UPDATED_SYSTEM_APP) != 0) {
+            if ((app.flags & ApplicationInfo.FLAG_INSTALLED) != 0) { //FLAG_UPDATED_SYSTEM_APP) != 0) {
                 installedApps.add(app);
                 //it's a system app, not interested
             } else if ((app.flags & ApplicationInfo.FLAG_SYSTEM) != 0) {
@@ -66,6 +66,12 @@ public class Util {
                 removeApps.add(app);
         apps.removeAll(removeApps);
 
+
+        Log.d(TAG, "App List Size: " + apps.size());
+        Log.d(TAG, "Installed App Size: " + installedApps.size());
+        Log.d(TAG, "Number of Packages: " + packages.size());
+        Log.d(TAG, "Launchable Packages: " + removeApps.size());
+        Log.d(TAG, "Application List: " + applications.size());
         return apps;
     }
 

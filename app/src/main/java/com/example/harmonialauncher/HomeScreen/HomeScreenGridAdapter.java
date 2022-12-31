@@ -37,6 +37,7 @@ public class HomeScreenGridAdapter extends AppGridAdapter {
         for (int i = 0; i < homeScreenAppNum && i < appList.size(); i++) {
             apps[i] = appList.get(i);
         }
+        super.verticalBuffer = 500;
     }
 
     @NonNull

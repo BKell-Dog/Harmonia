@@ -41,7 +41,7 @@ public class MainActivity extends HarmoniaActivity {
 
         //Set page adapter to scroll vertically between home screen and drawer
         vp.setUserInputEnabled(true);
-        vp.canScrollVertically(0);
+        vp.setOrientation(ViewPager2.ORIENTATION_VERTICAL);
 
         vp.setCurrentItem(0);
         vp.setVisibility(View.VISIBLE);
@@ -59,7 +59,7 @@ public class MainActivity extends HarmoniaActivity {
         return instance.getApplicationContext();
     }
 
-    //Handler for swipe events
+    /*//Handler for swipe events
     private static final int SWIPE_MIN_DISTANCE = 120;
     private static final int SWIPE_MAX_OFF_PATH = 250;
     private static final int SWIPE_THRESHOLD_VELOCITY = 200;
@@ -74,7 +74,7 @@ public class MainActivity extends HarmoniaActivity {
             /**
              * left to right swipe
              */
-            if (e1.getX() - e2.getX() > SWIPE_MIN_DISTANCE
+            /*if (e1.getX() - e2.getX() > SWIPE_MIN_DISTANCE
                     && Math.abs(velocityX) > SWIPE_THRESHOLD_VELOCITY) {
 
 
@@ -84,7 +84,7 @@ public class MainActivity extends HarmoniaActivity {
                 /**
                  * right to left
                  */
-            } else if (e2.getX() - e1.getX() > SWIPE_MIN_DISTANCE
+           /* } else if (e2.getX() - e1.getX() > SWIPE_MIN_DISTANCE
                     && Math.abs(velocityX) > SWIPE_THRESHOLD_VELOCITY) {
 
 
@@ -163,7 +163,7 @@ public class MainActivity extends HarmoniaActivity {
         }
 
         /* This method is invoked when a swipe gesture happened. */
-        @Override
+        /*@Override
         public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
 
             // Get swipe delta value in x axis.
@@ -216,7 +216,7 @@ public class MainActivity extends HarmoniaActivity {
             this.activity.displayMessage("Double tap occurred.");
             return true;
         }
-    }
+    }*/
 
 
 
