@@ -51,12 +51,20 @@ public class Util {
                 installedApps.add(app);
             }
         }
+
         for (ApplicationInfo app : installedApps) {
             String packageName = (String) packages.get(installedApps.indexOf(app)).packageName;
             String label = (String) pm.getApplicationLabel(app);
             Drawable icon = pm.getApplicationIcon(app);
             apps.add(new AppObject(packageName, label, icon, false));
         }
+
+        //Remove all apps that are not launchable
+        ArrayList<AppObject> removeApps = new ArrayList<AppObject>();
+        for (AppObject app : apps)
+            if (pm.getLaunchIntentForPackage(app.getPackageName()) == null)
+                removeApps.add(app);
+        apps.removeAll(removeApps);
 
         return apps;
     }

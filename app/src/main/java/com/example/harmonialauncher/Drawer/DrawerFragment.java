@@ -1,5 +1,6 @@
 package com.example.harmonialauncher.Drawer;
 
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -54,8 +55,8 @@ public class DrawerFragment extends HarmoniaFragment {
         public DrawerPageAdapter(@NonNull FragmentActivity fragmentActivity, int numOfPages) {
             super(fragmentActivity);
 
-            Log.d(TAG, "Number of Pages: " + numOfPages);
-            for (int i = 0; i < numOfPages; i++) {
+            //i < nOP - 1, this is to create one less drawer page than currently
+            for (int i = 0; i < numOfPages - 1; i++) {
                 super.fragments.add(new DrawerPageFragment(i));
                 super.nameIndex.add("Drawer Page " + i);
             }
