@@ -47,8 +47,8 @@ public class AppGridAdapter extends ArrayAdapter<AppObject> {
         AppObject app = apps.get(position);
 
         //Get Icon and Label and set their values to the specific app
-        TextView label = (TextView) gridItemView.findViewById(R.id.label);
-        ImageView icon = (ImageView) gridItemView.findViewById(R.id.image);
+        TextView label = gridItemView.findViewById(R.id.label);
+        ImageView icon = gridItemView.findViewById(R.id.image);
         label.setText(app.getName());
         Drawable image = app.getImage();
         if (image == null) {

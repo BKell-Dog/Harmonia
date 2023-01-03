@@ -47,7 +47,7 @@ public class SettingsHomeFragment extends Fragment {
                              Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.settings_home_screen, container, false);
 
-        LinearLayout ll = (LinearLayout) v.findViewById(R.id.settings_list);
+        LinearLayout ll = v.findViewById(R.id.settings_list);
 
         //Programmatically fill the linear layout with the settings, read from a list
         ArrayList<String> settingNames = new ArrayList<String>();
@@ -80,7 +80,7 @@ public class SettingsHomeFragment extends Fragment {
                             break;
                         case setWhitelist:
                             if (!LockManager.isLocked(new WhitelistFragment())) {
-                                ViewPager2 vp = (ViewPager2) getActivity().findViewById(R.id.settings_view_pager);
+                                ViewPager2 vp = getActivity().findViewById(R.id.settings_view_pager);
                                 vp.setCurrentItem(((SettingsPageAdapter) vp.getAdapter()).getIndexByName(((SettingsPageAdapter) vp.getAdapter()).WHITELIST));
                             } else {
                                 LockScreen ls = new LockScreen();
@@ -113,7 +113,7 @@ public class SettingsHomeFragment extends Fragment {
             }
         });
 
-        ImageButton b = (ImageButton) v.findViewById(R.id.settings_back_button);
+        ImageButton b = v.findViewById(R.id.settings_back_button);
         b.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

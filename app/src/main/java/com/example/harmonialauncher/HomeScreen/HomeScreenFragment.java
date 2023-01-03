@@ -71,7 +71,7 @@ public class HomeScreenFragment extends Fragment {
 
         //Populate Grid Layout in home_screen.xml with instances of app.xml
         //Get grid view
-        gv = (GridView) v.findViewById(R.id.home_screen_grid);
+        gv = v.findViewById(R.id.home_screen_grid);
 
         //Set adapter, set element dimensions for proper scaling, and add a specific app for Harmonia Settings
         HomeScreenGridAdapter ga = new HomeScreenGridAdapter(CONTEXT, R.layout.app, Util.loadAllApps(this));
@@ -100,12 +100,12 @@ public class HomeScreenFragment extends Fragment {
                 }
             }
         });
-        gv.setOnTouchListener(new View.OnTouchListener() {
+        /*gv.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 return event.getAction() == MotionEvent.ACTION_MOVE;
             }
-        });
+        });*/
         return v;
     }
 

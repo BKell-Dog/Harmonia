@@ -1,5 +1,7 @@
 package com.example.harmonialauncher;
 
+import android.util.Log;
+
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
@@ -16,7 +18,7 @@ public class PageAdapter extends FragmentStateAdapter {
     protected ArrayList<Fragment> fragments = new ArrayList<Fragment>();
 
     protected ArrayList<String> nameIndex = new ArrayList<String>();
-    protected final String HOMESCREEN = "Home Screen",
+    public final String HOMESCREEN = "Home Screen",
             DRAWER = "Drawer";
 
     public PageAdapter(@NonNull FragmentActivity fragmentActivity) {
@@ -32,8 +34,12 @@ public class PageAdapter extends FragmentStateAdapter {
     public Fragment createFragment(int position) {
         if (position == 0)
             return new HomeScreenFragment();
-        else if (position == 1)
-            return new DrawerFragment();
+        else if (position == 1) {
+            DrawerFragment df = new DrawerFragment();
+            fragments.set(position, df);
+            Log.d(TAG, "New DrawerFragment null: " + (df == null));
+            return df;
+        }
         return null;
     }
 

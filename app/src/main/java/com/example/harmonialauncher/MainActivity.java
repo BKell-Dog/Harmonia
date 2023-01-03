@@ -9,13 +9,17 @@ import android.app.Application;
 import android.content.Context;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.TextView;
 
+import com.example.harmonialauncher.Drawer.DrawerFragment;
 import com.example.harmonialauncher.R;
 import com.example.harmonialauncher.lockManager.HarmoniaActivity;
+
+import java.util.HashMap;
 
 
 /*
@@ -30,17 +34,22 @@ public class MainActivity extends HarmoniaActivity {
     public static Application instance;
     public ViewPager2 vp;
 
+    //Gesture Detection
+    private GestureDetectorCompat gd;
+
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        vp = (ViewPager2) findViewById(R.id.ViewPager);
+        gd = new GestureDetectorCompat(this, new ScreenGestureDetector());
+
+        vp = findViewById(R.id.ViewPager);
 
         PageAdapter pa = new PageAdapter(this);
         vp.setAdapter(pa);
 
         //Set page adapter to scroll vertically between home screen and drawer
-        vp.setUserInputEnabled(true);
+        vp.setUserInputEnabled(false);
         vp.setOrientation(ViewPager2.ORIENTATION_VERTICAL);
 
         vp.setCurrentItem(0);
@@ -55,9 +64,79 @@ public class MainActivity extends HarmoniaActivity {
         }catch(IOException ioe){Log.d(TAG, "EXCEPTION");ioe.printStackTrace();}*/
     }
 
+    @Override
+    public boolean onTouchEvent(MotionEvent event){
+        this.gd.onTouchEvent(event);
+        return super.onTouchEvent(event);
+    }
+
+    @Override
+    public boolean dispatchTouchEvent(MotionEvent e)
+    {
+        return onTouchEvent(e);
+    }
+
+
     public static Context getContext() {
         return instance.getApplicationContext();
     }
+
+
+    public class ScreenGestureDetector extends GestureDetector.SimpleOnGestureListener
+    {
+        private static final String TAG = "DRAWER PAGE GEST DETECT";
+        private static final int THRESHOLD = 100;
+
+        @Override
+        public boolean onDown(MotionEvent event) {
+            Log.d(TAG,"onDown: " + event.toString());
+            return true;
+        }
+
+        @Override
+        public boolean onFling(MotionEvent event1, MotionEvent event2, float velocityX, float velocityY) {
+            //Vertical flings will move between home screen and app drawer, sent to the viewpager in MainActivity.
+            if (event1.getY() - event2.getY() > THRESHOLD) //Upward fling
+                vp.setCurrentItem(vp.getAdapter().getItemCount() - 1);
+            else if (event1.getY() - event2.getY() < -THRESHOLD) //Downward fling
+                vp.setCurrentItem(vp.getCurrentItem() - 1);
+
+            //Horizontal flings will move between pages of the drawer, sent to the viewpager in DrawerFragment.
+            else if (event1.getX() - event2.getX() < -THRESHOLD && vp.getCurrentItem() == 1) //Rightward fling
+            {
+                Log.d(TAG, "RIGHTWARD FLING");
+                PageAdapter pa = (PageAdapter)vp.getAdapter();
+                Log.d(TAG, "Page Adapter null: " + (pa == null));
+                int position = pa.getIndexByName(pa.DRAWER);
+                Log.d(TAG, "Position is null: " + position);
+                DrawerFragment df = (DrawerFragment) pa.getFragment(position);
+                Log.d(TAG, "Drawer Fragment null: " + (df == null) + " -- ViewPager null: " + (df.vp == null));
+                int currentPage = df.getCurrentPage();
+                Log.d(TAG, "Current Page: " + currentPage);
+                if (currentPage > 0)
+                    df.setPage(currentPage - 1);
+            }
+            else if (event1.getX() - event2.getX() > THRESHOLD && vp.getCurrentItem() == 1) //Leftward fling
+            {
+                Log.d(TAG, "LEFTWARD FLING");
+                PageAdapter pa = (PageAdapter)vp.getAdapter();
+                int position = pa.getIndexByName(pa.DRAWER);
+                DrawerFragment df = (DrawerFragment) pa.getFragment(position);
+                int currentPage = df.getCurrentPage(), lastPage = df.getLastPage();
+                Log.d(TAG, "Current Drawer Page: " + currentPage);
+                if (currentPage < lastPage) {
+                    df.setPage(currentPage + 1);
+                    Log.d(TAG, "New Current Page: " + (currentPage + 1));
+                }
+            }
+
+            Log.d(TAG, "onFling: " + event1.toString() + event2.toString() + "-------X: " + velocityX + " ///Y: " + velocityY);
+
+            return true;
+        }
+
+    }
+
 
     /*//Handler for swipe events
     private static final int SWIPE_MIN_DISTANCE = 120;

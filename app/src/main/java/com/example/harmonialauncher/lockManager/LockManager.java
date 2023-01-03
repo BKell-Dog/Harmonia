@@ -29,29 +29,22 @@ public class LockManager {
             return true;
 
         //If object is in our hash map, then it has not been unlocked: return true.
-        if (inMap(obj))
-            return true;
-
-        return false;
+        return inMap(obj);
     }
 
     public static boolean isLocked(String packageName) {
         update();
 
-        if (inMap(packageName) && lockedPacks.get(packageName) != 0)
-            return true;
-        return false;
+        return inMap(packageName) && lockedPacks.get(packageName) != 0;
     }
 
     public static boolean isLocked(Intent i) {
         update();
 
         if (i.getPackage() != null) {
-            if (inMap(i.getPackage()) && lockedPacks.get(i.getPackage()) != 0)
-                return true;
+            return inMap(i.getPackage()) && lockedPacks.get(i.getPackage()) != 0;
         } else if (i.getAction() != null) {
-            if (inMap(i.getAction()) && lockedPacks.get(i.getAction()) != 0)
-                return true;
+            return inMap(i.getAction()) && lockedPacks.get(i.getAction()) != 0;
         }
         return false;
     }
@@ -122,9 +115,7 @@ public class LockManager {
     }
 
     private static boolean inMap(Lockable obj) {
-        if (locked.containsKey(obj.getClass()) && locked.get(obj.getClass()).intValue() != 0)
-            return true;
-        return false;
+        return locked.containsKey(obj.getClass()) && locked.get(obj.getClass()).intValue() != 0;
     }
 
     private static boolean inMap(String packageName) {

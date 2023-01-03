@@ -47,11 +47,11 @@ public class WhitelistAdapter extends AppListAdapter {
         AppObject app = apps.get(position);
 
         //Set app name
-        TextView text = (TextView) v.findViewById(R.id.whitelist_text);
+        TextView text = v.findViewById(R.id.whitelist_text);
         text.setText(app.getName());
 
         //Set app icon
-        ImageView icon = (ImageView) v.findViewById(R.id.whitelist_icon);
+        ImageView icon = v.findViewById(R.id.whitelist_icon);
         Drawable image = app.getImage();
         if (image == null) {
             if (Build.VERSION.SDK_INT > 21)
@@ -62,7 +62,7 @@ public class WhitelistAdapter extends AppListAdapter {
         icon.setImageDrawable(image);
 
         //Set app whitelisted checkbox to unchecked
-        CheckBox check = (CheckBox) v.findViewById(R.id.whitelist_checkbox);
+        CheckBox check = v.findViewById(R.id.whitelist_checkbox);
         if (WhitelistManager.isWhitelisted(app.getPackageName()))
             check.setChecked(true);
         else
@@ -80,7 +80,7 @@ public class WhitelistAdapter extends AppListAdapter {
         v.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                CheckBox c = (CheckBox) v.findViewById(R.id.whitelist_checkbox);
+                CheckBox c = v.findViewById(R.id.whitelist_checkbox);
                 String name = ((TextView) v.findViewById(R.id.whitelist_text)).getText().toString();
                 AppObject app = findAppByName(name);
                 if (c.isChecked())

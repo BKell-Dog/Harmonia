@@ -30,7 +30,7 @@ public class SettingsFragment extends Fragment {
                              Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.settings_screen, container, false);
 
-        ViewPager2 vp = (ViewPager2) v.findViewById(R.id.settings_view_pager);
+        ViewPager2 vp = v.findViewById(R.id.settings_view_pager);
         vp.setAdapter(new SettingsPageAdapter(this.getActivity()));
         vp.setUserInputEnabled(false);
         vp.setCurrentItem(0);

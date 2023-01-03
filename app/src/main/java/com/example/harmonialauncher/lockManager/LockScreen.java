@@ -21,8 +21,8 @@ public class LockScreen {
         final View popupView = LayoutInflater.from(parent.getContext()).inflate(R.layout.lock_popup, null);
 
         //Specify lock screen text and progress bar percentage
-        final TextView lsText = (TextView) popupView.findViewById(R.id.lock_screen_progress_text);
-        final ProgressBar lsBar = (ProgressBar) popupView.findViewById(R.id.lock_screen_progress_bar);
+        final TextView lsText = popupView.findViewById(R.id.lock_screen_progress_text);
+        final ProgressBar lsBar = popupView.findViewById(R.id.lock_screen_progress_bar);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
             lsBar.setMin(0);

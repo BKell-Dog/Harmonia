@@ -36,17 +36,17 @@ public class WhitelistFragment extends HarmoniaFragment {
         View v = inflater.inflate(R.layout.whitelist_screen, container, false);
 
         //Set proper padding so that everything appears on screen
-        ConstraintLayout ll = (ConstraintLayout) v.findViewById(R.id.whitelist_screen);
+        ConstraintLayout ll = v.findViewById(R.id.whitelist_screen);
         ll.setPadding(0, Util.getNavigationBarSize(CONTEXT).y, 0, Util.getNavigationBarSize(CONTEXT).y);
 
         //Set list view adapter to show the menu items
-        ListView lv = (ListView) v.findViewById(R.id.whitelist_list_view);
+        ListView lv = v.findViewById(R.id.whitelist_list_view);
         WhitelistAdapter adapter = new WhitelistAdapter(CONTEXT, R.layout.list_menu_item, Util.loadAllApps(this));
         lv.setAdapter(adapter);
 
         lv.setFooterDividersEnabled(true);
 
-        Button b = (Button) v.findViewById(R.id.whitelist_accept_button);
+        Button b = v.findViewById(R.id.whitelist_accept_button);
         b.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

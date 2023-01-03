@@ -53,7 +53,7 @@ public class Util {
         }
 
         for (ApplicationInfo app : installedApps) {
-            String packageName = (String) packages.get(installedApps.indexOf(app)).packageName;
+            String packageName = packages.get(installedApps.indexOf(app)).packageName;
             String label = (String) pm.getApplicationLabel(app);
             Drawable icon = pm.getApplicationIcon(app);
             apps.add(new AppObject(packageName, label, icon, false));
@@ -66,12 +66,6 @@ public class Util {
                 removeApps.add(app);
         apps.removeAll(removeApps);
 
-
-        Log.d(TAG, "App List Size: " + apps.size());
-        Log.d(TAG, "Installed App Size: " + installedApps.size());
-        Log.d(TAG, "Number of Packages: " + packages.size());
-        Log.d(TAG, "Launchable Packages: " + removeApps.size());
-        Log.d(TAG, "Application List: " + applications.size());
         return apps;
     }
 

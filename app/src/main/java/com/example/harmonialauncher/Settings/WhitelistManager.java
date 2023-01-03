@@ -29,9 +29,7 @@ public class WhitelistManager {
     }
 
     public static boolean isWhitelisted(String packageName) {
-        if (whitelisted.containsKey(packageName) && whitelisted.get(packageName))
-            return true;
-        return false;
+        return whitelisted.containsKey(packageName) && whitelisted.get(packageName);
     }
 
     public static ArrayList<String> getWhitelist() {

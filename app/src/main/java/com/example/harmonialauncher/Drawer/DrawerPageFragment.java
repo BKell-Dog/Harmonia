@@ -7,12 +7,15 @@ import android.graphics.Rect;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.GestureDetector;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.GridView;
 
+import androidx.core.view.GestureDetectorCompat;
 import androidx.viewpager2.widget.ViewPager2;
 
 import com.example.harmonialauncher.R;
@@ -20,6 +23,8 @@ import com.example.harmonialauncher.AppObject;
 import com.example.harmonialauncher.Config.ConfigManager;
 import com.example.harmonialauncher.Util;
 import com.example.harmonialauncher.lockManager.HarmoniaFragment;
+
+import java.util.ArrayList;
 
 // Purpose of this class: retrieve app data for all installed apps, and display app name as well as
 // app icon (type Drawable) on the screen in a grid. Grid will not exceed 4 columns and 5 rows, and
@@ -43,12 +48,17 @@ public class DrawerPageFragment extends HarmoniaFragment {
         CONTEXT = getActivity().getApplicationContext();
     }
 
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
-    {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.drawer_page, container, false);
 
-        GridView gv = (GridView) this.getActivity().findViewById(R.id.drawer_page_grid);
-        gv.setAdapter(new DrawerGridAdapter(getContext(), R.layout.app, Util.loadAllApps(this)));
+        GridView gv = this.getActivity().findViewById(R.id.drawer_page_grid);
+        ArrayList<AppObject> appList = new ArrayList<AppObject>();
+        ArrayList<AppObject> allApps = Util.loadAllApps(this);
+        for (int k = pageNum * 20; k < (pageNum * 20) + 20; k++)
+            try {
+                appList.add(allApps.get(k));
+            } catch (IndexOutOfBoundsException e) {break;} catch (Exception e) {e.printStackTrace();}
+        gv.setAdapter(new DrawerGridAdapter(getContext(), R.layout.app, allApps));
         gv.setNumColumns(4);
 
         gv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
