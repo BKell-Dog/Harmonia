@@ -1,6 +1,5 @@
 package com.example.harmonialauncher.Drawer;
 
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -8,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.viewpager2.widget.ViewPager2;
 
@@ -31,12 +31,10 @@ public class DrawerFragment extends HarmoniaFragment {
         //Load all apps into Arraylist, then find how many drawer pages are needed.
         //Each page in the drawer will hold twenty apps at most, a 5x4 grid (rows x cols)
         numOfPages = (Util.loadAllApps(this).size() / 20) + 1;
-        Log.d(TAG, "Num of Pages: " + numOfPages);
     }
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
     {
-        Log.d(TAG, "REACHED CREATE VIEW IN DRAWER FRAGMENT");
         View v = inflater.inflate(R.layout.drawer_fragment, container, false);
         if (v == null)
             return null;
@@ -49,17 +47,17 @@ public class DrawerFragment extends HarmoniaFragment {
         vp.setCurrentItem(0);
         vp.setVisibility(View.VISIBLE);
 
-        Log.d(TAG, "FINISHED CREATE VIEW");
-
         return v;
     }
 
     public boolean setPage(int index)
     {
-        Log.d(TAG, "ViewPager null: " + (vp == null));
-        if (vp != null && index < ((DrawerPageAdapter)vp.getAdapter()).getItemCount()) {
-            vp.setCurrentItem(index);
-            return true;
+        if (vp != null) {
+            try {
+                vp.setCurrentItem(index);
+                return true;
+            } catch (IndexOutOfBoundsException e) {Log.d(TAG, "Index Out of Bounds in Drawer Fragment."); e.printStackTrace();}
+            catch (Exception e) {e.printStackTrace();}
         }
         return false;
     }
@@ -77,10 +75,34 @@ public class DrawerFragment extends HarmoniaFragment {
             super(fragmentActivity);
 
             //i < nOP - 1, this is to create one less drawer page than currently
-            for (int i = 0; i < numOfPages - 1; i++) {
+            for (int i = 0; i <= numOfPages - 1; i++) {
+                //Log.d(TAG, "Create Drawer Page " + i);
                 super.fragments.add(new DrawerPageFragment(i));
                 super.nameIndex.add("Drawer Page " + i);
             }
         }
+
+        @Override
+        public Fragment createFragment(int position)
+        {
+            try {
+                return super.fragments.get(position);
+            }
+            catch (IndexOutOfBoundsException e) {Log.d(TAG, "Out of Bounds Exception: Index out of bounds in Drawer Page list.");return null;}
+            catch (Exception e) {e.printStackTrace();return null;}
+
+        }
+    }
+
+    public String toString()
+    {
+        if (vp == null)
+            return "";
+        String s = "";
+        for (int i = 0; i < vp.getAdapter().getItemCount(); i++)
+        {
+            s += ((DrawerPageAdapter)this.vp.getAdapter()).getFragment(i).toString() + "\n";
+        }
+        return s;
     }
 }

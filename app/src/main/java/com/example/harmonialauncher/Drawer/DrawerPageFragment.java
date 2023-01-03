@@ -36,9 +36,9 @@ public class DrawerPageFragment extends HarmoniaFragment {
     private Context CONTEXT;
     private int pageNum;
 
+
     public DrawerPageFragment(int pageNum) {
         super(R.layout.drawer_page);
-
         this.pageNum = pageNum;
     }
 
@@ -51,9 +51,10 @@ public class DrawerPageFragment extends HarmoniaFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.drawer_page, container, false);
 
-        GridView gv = this.getActivity().findViewById(R.id.drawer_page_grid);
+        GridView gv = v.findViewById(R.id.drawer_page_grid);
         ArrayList<AppObject> appList = new ArrayList<AppObject>();
         ArrayList<AppObject> allApps = Util.loadAllApps(this);
+        Log.d(TAG, "DRAWER PAGE " + pageNum);
         for (int k = pageNum * 20; k < (pageNum * 20) + 20; k++)
             try {
                 appList.add(allApps.get(k));
@@ -92,4 +93,7 @@ public class DrawerPageFragment extends HarmoniaFragment {
             g.setElementDimen(adjustedHeight, windowWidth);
         }
     }
+
+    public String toString()
+    {return "Drawer Page Fragment #" + pageNum;}
 }

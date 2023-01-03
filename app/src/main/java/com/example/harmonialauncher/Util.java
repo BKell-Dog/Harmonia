@@ -66,6 +66,8 @@ public class Util {
                 removeApps.add(app);
         apps.removeAll(removeApps);
 
+        Log.d(TAG, "App List Size: " + apps.size());
+
         return apps;
     }
 

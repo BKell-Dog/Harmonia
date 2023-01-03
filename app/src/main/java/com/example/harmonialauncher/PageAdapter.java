@@ -12,42 +12,27 @@ import com.example.harmonialauncher.HomeScreen.HomeScreenFragment;
 
 import java.util.ArrayList;
 
-public class PageAdapter extends FragmentStateAdapter {
+public abstract class PageAdapter extends FragmentStateAdapter {
 
     private static final String TAG = "Page Adapter";
     protected ArrayList<Fragment> fragments = new ArrayList<Fragment>();
 
     protected ArrayList<String> nameIndex = new ArrayList<String>();
-    public final String HOMESCREEN = "Home Screen",
-            DRAWER = "Drawer";
 
     public PageAdapter(@NonNull FragmentActivity fragmentActivity) {
         super(fragmentActivity);
-        fragments.add(new HomeScreenFragment());
-        nameIndex.add(HOMESCREEN);
-        fragments.add(new DrawerFragment());
-        nameIndex.add(DRAWER);
     }
 
     @NonNull
-    @Override
-    public Fragment createFragment(int position) {
-        if (position == 0)
-            return new HomeScreenFragment();
-        else if (position == 1) {
-            DrawerFragment df = new DrawerFragment();
-            fragments.set(position, df);
-            Log.d(TAG, "New DrawerFragment null: " + (df == null));
-            return df;
-        }
-        return null;
-    }
+    public abstract Fragment createFragment(int position);
 
     @NonNull
     public Fragment getFragment(int position) {
-        if (position >= 0 && position < fragments.size())
+        try {
             return fragments.get(position);
-        return null;
+        }
+        catch (IndexOutOfBoundsException e) {Log.d(TAG, "Out of Bounds Exception: Index out of bounds in Page Adapter list.");return null;}
+        catch (Exception e) {e.printStackTrace();return null;}
     }
 
     @Override
@@ -61,5 +46,14 @@ public class PageAdapter extends FragmentStateAdapter {
                 return nameIndex.indexOf(s);
             }
         return -1;
+    }
+
+    public Fragment remove(int position)
+    {
+        try {
+            return fragments.remove(position);
+        }
+        catch (IndexOutOfBoundsException e) {Log.d(TAG, "Index out of bounds, cannot remove element."); e.printStackTrace();return null;}
+        catch (Exception e) {e.printStackTrace();return null;}
     }
 }
