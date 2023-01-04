@@ -3,6 +3,7 @@ package com.example.harmonialauncher.Drawer;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.graphics.Rect;
 import android.os.Build;
 import android.os.Bundle;
@@ -54,12 +55,11 @@ public class DrawerPageFragment extends HarmoniaFragment {
         GridView gv = v.findViewById(R.id.drawer_page_grid);
         ArrayList<AppObject> appList = new ArrayList<AppObject>();
         ArrayList<AppObject> allApps = Util.loadAllApps(this);
-        Log.d(TAG, "DRAWER PAGE " + pageNum);
         for (int k = pageNum * 20; k < (pageNum * 20) + 20; k++)
             try {
                 appList.add(allApps.get(k));
             } catch (IndexOutOfBoundsException e) {break;} catch (Exception e) {e.printStackTrace();}
-        gv.setAdapter(new DrawerGridAdapter(getContext(), R.layout.app, allApps));
+        gv.setAdapter(new DrawerGridAdapter(getContext(), R.layout.app, appList));
         gv.setNumColumns(4);
 
         gv.setOnItemClickListener(new AdapterView.OnItemClickListener() {

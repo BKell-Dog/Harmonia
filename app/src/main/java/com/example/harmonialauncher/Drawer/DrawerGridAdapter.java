@@ -24,9 +24,6 @@ import java.util.ArrayList;
 public class DrawerGridAdapter extends AppGridAdapter {
 
     private final static String TAG = "Drawer Grid Adapter";
-    private ArrayList<AppObject> apps;
-    private Context CONTEXT;
-    private int layout_id;
 
 
     public DrawerGridAdapter(@NonNull Context context, int resource, ArrayList<AppObject> appList) {
@@ -45,7 +42,7 @@ public class DrawerGridAdapter extends AppGridAdapter {
             LayoutInflater inflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             gridItemView = inflater.inflate(R.layout.app, null);
         }
-        if (position > apps.size())
+        if (position > apps.size() || position < 0)
             return null;
         AppObject app = apps.get(position);
 
@@ -85,5 +82,13 @@ public class DrawerGridAdapter extends AppGridAdapter {
         }
         this.horizontalBuffer = (int) (elementWidth * 0.2);
         this.verticalBuffer = (int) (elementHeight * 0.3);
+    }
+
+    public String toString()
+    {
+        String s = "";
+        for (AppObject a : apps)
+            s += a.toString() + "\n";
+        return s;
     }
 }

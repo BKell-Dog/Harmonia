@@ -21,9 +21,9 @@ import java.util.ArrayList;
 public class AppGridAdapter extends ArrayAdapter<AppObject> {
 
     private final static String TAG = "Grid Adapter";
-    private ArrayList<AppObject> apps;
-    private Context CONTEXT;
-    private int layout_id;
+    protected ArrayList<AppObject> apps;
+    protected Context CONTEXT;
+    protected int layout_id;
 
     protected final int COLS = 4, ROWS = 5;
     protected int horizontalBuffer = 200, verticalBuffer = 200;

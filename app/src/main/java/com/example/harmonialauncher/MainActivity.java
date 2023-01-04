@@ -39,6 +39,7 @@ public class MainActivity extends HarmoniaActivity {
     public final Context CONTEXT = MainActivity.this;
     public static Application instance;
     public ViewPager2 vp;
+    private final int OFFSCREENPAGELIMIT = 1;
 
     //Gesture Detection
     private GestureDetectorCompat gd;
@@ -57,6 +58,8 @@ public class MainActivity extends HarmoniaActivity {
         //Set page adapter to scroll vertically between home screen and drawer
         vp.setUserInputEnabled(false);
         vp.setOrientation(ViewPager2.ORIENTATION_VERTICAL);
+        vp.setPageTransformer(new MainPageTransformer());
+        vp.setOffscreenPageLimit(vp.getAdapter().getItemCount());
 
         vp.setCurrentItem(0);
         vp.setVisibility(View.VISIBLE);
@@ -115,7 +118,6 @@ public class MainActivity extends HarmoniaActivity {
                 int currentPage = df.getCurrentPage();
                 if (currentPage > 0)
                     df.setPage(currentPage - 1);
-                Log.d(TAG, "DF Current Page: " + df.getCurrentPage());
             }
             else if (event1.getX() - event2.getX() > THRESHOLD && vp.getCurrentItem() == 1) //Leftward fling
             {
@@ -126,7 +128,6 @@ public class MainActivity extends HarmoniaActivity {
                 if (currentPage < lastPage) {
                     df.setPage(currentPage + 1);
                 }
-                Log.d(TAG, "DF Current Page: " + df.getCurrentPage());
             }
 
             Log.d(TAG, "onFling: " + event1.toString() + event2.toString());
@@ -154,6 +155,23 @@ public class MainActivity extends HarmoniaActivity {
                 return fragments.get(position);
             else
                 throw new IndexOutOfBoundsException();
+        }
+    }
+
+    private class MainPageTransformer implements ViewPager2.PageTransformer
+    {
+        private static final String TAG = "Main Page Transformer";
+        public void transformPage(@NonNull View page, float position)
+        {
+            Log.d(TAG, "REACHED TRANSFORM PAGE");
+            if (position == 1f)
+            {
+                page.setTranslationY(page.getHeight());
+            }
+            else if (position == -1f)
+            {
+                page.setTranslationY(-1 * page.getHeight());
+            }
         }
     }
 }
