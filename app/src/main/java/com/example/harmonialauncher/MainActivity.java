@@ -27,6 +27,9 @@ import com.example.harmonialauncher.lockManager.HarmoniaActivity;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+//TODO: ON 1/4/2023, bring back LockManager, create a Harmonia Lock App which blacklists selected apps for a period of time,
+// Say, 1 hour. Those apps will appear grey, or invisible, and cannot be opened when tapped.
+
 
 /*
 This class will manage the fragment viewer which switches between the HomeScreenFragment and the SettingsFragment.
