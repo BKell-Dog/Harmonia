@@ -24,6 +24,7 @@ import androidx.core.view.GestureDetectorCompat;
 import androidx.viewpager2.widget.ViewPager2;
 
 import com.example.harmonialauncher.AppGridAdapter;
+import com.example.harmonialauncher.GestureDetection.HarmoniaGestureDetector;
 import com.example.harmonialauncher.R;
 import com.example.harmonialauncher.AppObject;
 import com.example.harmonialauncher.Config.ConfigManager;
@@ -53,6 +54,8 @@ public class DrawerPageFragment extends HarmoniaFragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         CONTEXT = getActivity().getApplicationContext();
+
+        (new HarmoniaGestureDetector()).add(this);
     }
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -84,20 +87,24 @@ public class DrawerPageFragment extends HarmoniaFragment {
         return v;
     }
 
-    public void onTap(MotionEvent e)
+    @Override
+    public boolean onSingleTapConfirmed(MotionEvent e)
     {
         //Check if view is created
         if (gv == null)
-            return;
+            return false;
 
         for (int i = 0; i < ((AppGridAdapter)gv.getAdapter()).getCount(); i++)
         {
             View v = gv.getChildAt(i);
             Point coords = Util.getLocationOnScreen(v);
             Rect bounds = new Rect(coords.x, coords.y, coords.x + v.getWidth(), coords.y + v.getHeight());
-            if (bounds.contains((int)e.getX(), (int)e.getY()))
-                Util.openApp(this.CONTEXT, ((AppGridAdapter)gv.getAdapter()).get(i).getPackageName());
+            if (bounds.contains((int)e.getX(), (int)e.getY())) {
+                Util.openApp(this.CONTEXT, ((AppGridAdapter) gv.getAdapter()).get(i).getPackageName());
+                return true;
+            }
         }
+        return false;
     }
 
     public String toString()

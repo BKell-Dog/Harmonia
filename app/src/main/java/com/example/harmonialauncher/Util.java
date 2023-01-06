@@ -101,9 +101,10 @@ public class Util {
 
         if (appPackageName.equalsIgnoreCase(LOCK_PACKAGE_NAME))
         {
-            Log.d(TAG, "REACHED INTENT");
             Intent intent = new Intent(context, LockActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             context.startActivity(intent);
+            return true;
         }
 
         if (LockManager.isLocked(Util.findAppByPackageName(appPackageName, context)));
@@ -116,7 +117,7 @@ public class Util {
             Log.d(TAG, "Started app, package name: '" + appPackageName + "'");
             return true;
         } else {
-            Log.e(TAG, "Cannot start app, appPackageName:'" + appPackageName + "'");
+            Log.e(TAG, "Cannot start app. AppPackageName:'" + appPackageName + "'");
             return false;
         }
     }

@@ -20,6 +20,7 @@ import android.widget.TextView;
 
 import com.example.harmonialauncher.Drawer.DrawerFragment;
 import com.example.harmonialauncher.Drawer.DrawerPageFragment;
+import com.example.harmonialauncher.GestureDetection.HarmoniaGestureDetector;
 import com.example.harmonialauncher.HomeScreen.HomeScreenFragment;
 import com.example.harmonialauncher.R;
 import com.example.harmonialauncher.lockManager.HarmoniaActivity;
@@ -46,12 +47,16 @@ public class MainActivity extends HarmoniaActivity {
 
     //Gesture Detection
     private GestureDetectorCompat gd;
+    private HarmoniaGestureDetector gest;
+    private final int THRESHOLD = 100;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        gd = new GestureDetectorCompat(this, new ScreenGestureDetector());
+        gest = new HarmoniaGestureDetector();
+        gd = new GestureDetectorCompat(this, gest);
+        gest.add(this);
 
         vp = findViewById(R.id.ViewPager);
 
@@ -77,14 +82,13 @@ public class MainActivity extends HarmoniaActivity {
     }
 
     @Override
-    public boolean onTouchEvent(MotionEvent event){
+    public boolean onTouchEvent(MotionEvent event) {
         this.gd.onTouchEvent(event);
         return super.onTouchEvent(event);
     }
 
     @Override
-    public boolean dispatchTouchEvent(MotionEvent e)
-    {
+    public boolean dispatchTouchEvent(MotionEvent e) {
         return onTouchEvent(e);
     }
 
@@ -94,71 +98,46 @@ public class MainActivity extends HarmoniaActivity {
     }
 
 
-    public class ScreenGestureDetector extends GestureDetector.SimpleOnGestureListener
-    {
-        private static final String TAG = "DRAWER PAGE GEST DETECT";
-        private static final int THRESHOLD = 100;
+    @Override
+    public boolean onDown(MotionEvent event) {
+        return true;
+    }
 
-        @Override
-        public boolean onDown(MotionEvent event) {
-            return true;
-        }
-
-        @Override
-        public boolean onFling(MotionEvent event1, MotionEvent event2, float velocityX, float velocityY) {
-            //Vertical flings will move between home screen and app drawer, sent to the viewpager in MainActivity.
-            if (event1.getY() - event2.getY() > THRESHOLD) //Upward fling
-                vp.setCurrentItem(vp.getAdapter().getItemCount() - 1);
-            else if (event1.getY() - event2.getY() < -THRESHOLD) //Downward fling
-                vp.setCurrentItem(vp.getCurrentItem() - 1);
+    @Override
+    public boolean onFling(MotionEvent event1, MotionEvent event2, float velocityX, float velocityY) {
+        //Vertical flings will move between home screen and app drawer, sent to the viewpager in MainActivity.
+        if (event1.getY() - event2.getY() > THRESHOLD) //Upward fling
+            vp.setCurrentItem(vp.getAdapter().getItemCount() - 1);
+        else if (event1.getY() - event2.getY() < -THRESHOLD) //Downward fling
+            vp.setCurrentItem(vp.getCurrentItem() - 1);
 
             //Horizontal flings will move between pages of the drawer, sent to the viewpager in DrawerFragment.
-            else if (event1.getX() - event2.getX() < -THRESHOLD && vp.getCurrentItem() == 1) //Rightward fling
-            {
-                MainPageAdapter pa = (MainPageAdapter)vp.getAdapter();
-                int position = pa.getIndexByName(pa.DRAWER);
-                DrawerFragment df = (DrawerFragment) pa.getFragment(position);
-                int currentPage = df.getCurrentPageIndex();
-                if (currentPage > 0)
-                    df.setPage(currentPage - 1);
-            }
-            else if (event1.getX() - event2.getX() > THRESHOLD && vp.getCurrentItem() == 1) //Leftward fling
-            {
-                MainPageAdapter pa = (MainPageAdapter)vp.getAdapter();
-                int position = pa.getIndexByName(pa.DRAWER);
-                DrawerFragment df = (DrawerFragment) pa.getFragment(position);
-                int currentPage = df.getCurrentPageIndex(), lastPage = df.getLastPageIndex();
-                if (currentPage < lastPage) {
-                    df.setPage(currentPage + 1);
-                }
-            }
-
-            Log.d(TAG, "onFling: " + event1.toString() + event2.toString());
-
-            return true;
-        }
-
-        @Override
-        public boolean onSingleTapConfirmed(MotionEvent e)
+        else if (event1.getX() - event2.getX() < -THRESHOLD && vp.getCurrentItem() == 1) //Rightward fling
         {
-            Log.d(TAG, "TAPPED TAPPED TAPPED");
-            HarmoniaFragment f = (HarmoniaFragment)((PageAdapter)vp.getAdapter()).getFragment(vp.getCurrentItem());
-            if (f instanceof HomeScreenFragment)
-            {
-                ((HomeScreenFragment) f).onTap(e);
+            MainPageAdapter pa = (MainPageAdapter) vp.getAdapter();
+            int position = pa.getIndexByName(pa.DRAWER);
+            DrawerFragment df = (DrawerFragment) pa.getFragment(position);
+            int currentPage = df.getCurrentPageIndex();
+            if (currentPage > 0)
+                df.setPage(currentPage - 1);
+        } else if (event1.getX() - event2.getX() > THRESHOLD && vp.getCurrentItem() == 1) //Leftward fling
+        {
+            MainPageAdapter pa = (MainPageAdapter) vp.getAdapter();
+            int position = pa.getIndexByName(pa.DRAWER);
+            DrawerFragment df = (DrawerFragment) pa.getFragment(position);
+            int currentPage = df.getCurrentPageIndex(), lastPage = df.getLastPageIndex();
+            if (currentPage < lastPage) {
+                df.setPage(currentPage + 1);
             }
-            else if (f instanceof DrawerFragment)
-            {
-                f = ((DrawerFragment) f).getCurrentPage();
-                if (f instanceof DrawerPageFragment)
-                    ((DrawerPageFragment)f).onTap(e);
-            }
-            return true;
         }
 
+        Log.d(TAG, "onFling: " + event1.toString() + event2.toString());
+
+        return true;
     }
-    public class MainPageAdapter extends PageAdapter
-    {
+
+
+    public class MainPageAdapter extends PageAdapter {
         public final String HOMESCREEN = "Home Screen", DRAWER = "Drawer";
 
         public MainPageAdapter(@NonNull FragmentActivity fragmentActivity) {
@@ -170,8 +149,7 @@ public class MainActivity extends HarmoniaActivity {
             nameIndex.add(DRAWER);
         }
 
-        public Fragment createFragment(int position)
-        {
+        public Fragment createFragment(int position) {
             if (position == 1 || position == 0)
                 return fragments.get(position);
             else

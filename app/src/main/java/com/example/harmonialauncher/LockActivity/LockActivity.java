@@ -2,6 +2,8 @@ package com.example.harmonialauncher.LockActivity;
 
 import android.os.Bundle;
 
+import androidx.recyclerview.widget.LinearLayoutManager;
+
 import com.example.harmonialauncher.R;
 import com.example.harmonialauncher.lockManager.HarmoniaActivity;
 

@@ -70,7 +70,7 @@ public class HomeScreenGridAdapter extends AppGridAdapter {
     }
 
     public AppObject get(int position) {
-        if (position > 0 && position < apps.length)
+        if (position >= 0 && position < apps.length)
             return apps[position];
         else
             return null;

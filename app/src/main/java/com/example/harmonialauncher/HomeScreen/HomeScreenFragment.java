@@ -22,6 +22,7 @@ import android.widget.Toast;
 import androidx.fragment.app.Fragment;
 import androidx.viewpager2.widget.ViewPager2;
 
+import com.example.harmonialauncher.GestureDetection.HarmoniaGestureDetector;
 import com.example.harmonialauncher.R;
 import com.example.harmonialauncher.AppObject;
 import com.example.harmonialauncher.Config.ConfigManager;
@@ -45,6 +46,7 @@ pressing of buttons and opening of apps. This screen is the home screen and laun
 public class HomeScreenFragment extends HarmoniaFragment {
     private final static String TAG = "Home Screen Fragment";
     private Context CONTEXT;
+    private boolean onScreen = false;
 
     GridView gv;
     private int numCols = 4;
@@ -62,6 +64,8 @@ public class HomeScreenFragment extends HarmoniaFragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         CONTEXT = getActivity().getApplicationContext();
+
+        (new HarmoniaGestureDetector()).add(this);
     }
 
     @Override
@@ -107,23 +111,33 @@ public class HomeScreenFragment extends HarmoniaFragment {
                 return event.getAction() == MotionEvent.ACTION_MOVE;
             }
         });*/
+
+        onScreen = true;
+
         return v;
     }
 
-    public void onTap(MotionEvent e)
+    @Override
+    public boolean onSingleTapConfirmed(MotionEvent e)
     {
         //Check if view is created
-        if (gv == null)
-            return;
+        if (gv == null || !onScreen)
+            return false;
 
         for (int i = 0; i < ((AppGridAdapter)gv.getAdapter()).getCount(); i++)
         {
             View v = gv.getChildAt(i);
             Point coords = Util.getLocationOnScreen(v);
             Rect bounds = new Rect(coords.x, coords.y, coords.x + v.getWidth(), coords.y + v.getHeight());
-            if (bounds.contains((int)e.getX(), (int)e.getY()))
-                Util.openApp(this.CONTEXT, ((AppGridAdapter)gv.getAdapter()).get(i).getPackageName());
+            if (bounds.contains((int)e.getX(), (int)e.getY())) {
+                AppGridAdapter a = (AppGridAdapter) gv.getAdapter();
+                AppObject app = a.get(i);
+                Log.d(TAG, "App is null: " + app + " --- i: " + i + " --- List size: "  + ((AppGridAdapter)gv.getAdapter()).getCount());
+                Util.openApp(this.CONTEXT, app.getPackageName());
+                return true;
+            }
         }
+        return false;
     }
 
     //Methods for determining window size -----------------------------------------------------

@@ -96,20 +96,13 @@ public class AppGridAdapter extends ArrayAdapter<AppObject> {
     }
 
     public AppObject get(int position) {
-        if (position > 0 && position < apps.size())
+        Log.d(TAG, "FIRST POINT REACHED. LIST SIZE: " + apps.size() + " Position: " + position);
+        if (position >= 0 && position < apps.size()) {
+            Log.d(TAG, "POINT REACHED");
             return apps.get(position);
+        }
         else
             return null;
-    }
-
-    public AppObject getAppByCoords(int x, int y)
-    {
-        ArrayList<Point> points = new ArrayList<Point>();
-        for (int i = 0; i < apps.size(); i++)
-        {
-
-        }
-        return null;
     }
 
     //This method resizes each GridView element size to fit the screen, and therefore, the gridView
@@ -126,8 +119,6 @@ public class AppGridAdapter extends ArrayAdapter<AppObject> {
         }
         this.horizontalBuffer = (int) (elementWidth * 0.2);
         this.verticalBuffer = (int) (elementHeight * 0.1);
-
-        Log.d(TAG, "ELEMENT HEIGHT: " + elementHeight);
     }
 
     public Point getElementDimens()
