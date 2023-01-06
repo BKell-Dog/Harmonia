@@ -12,9 +12,13 @@ import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.util.Log;
 import android.view.Display;
+import android.view.View;
 import android.view.WindowManager;
 
 import androidx.fragment.app.Fragment;
+
+import com.example.harmonialauncher.LockActivity.LockActivity;
+import com.example.harmonialauncher.lockManager.LockManager;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
@@ -24,9 +28,12 @@ public class Util {
 
     private static final String TAG = "Util";
 
-    public static ArrayList<AppObject> loadAllApps(Activity a) {
+    static final String LOCK_PACKAGE_NAME = "Harmonia Lock App",
+                        LOCK_APP_NAME = "App Locker";
+
+    public static ArrayList<AppObject> loadAllApps(Context c) {
         ArrayList<AppObject> apps = new ArrayList<AppObject>();
-        PackageManager pm = a.getApplicationContext().getPackageManager();
+        PackageManager pm = c.getPackageManager();
         List<PackageInfo> packages = pm.getInstalledPackages(0);
         List<ApplicationInfo> applications = new ArrayList<ApplicationInfo>();
 
@@ -66,7 +73,7 @@ public class Util {
                 removeApps.add(app);
         apps.removeAll(removeApps);
 
-        Log.d(TAG, "App List Size: " + apps.size());
+        apps.addAll(loadHarmoniaApps());
 
         return apps;
     }
@@ -74,11 +81,32 @@ public class Util {
     public static ArrayList<AppObject> loadAllApps(Fragment f)
     {return loadAllApps(f.getActivity());}
 
+    /** Method to load AppObjects which are specific to the functionality of
+     * Harmonia. For example, Harmonia settings or Lock Manager.
+     * @return ArrayList<AppObject>
+     */
+    private static ArrayList<AppObject> loadHarmoniaApps()
+    {
+        ArrayList<AppObject> hApps = new ArrayList<AppObject>();
+
+        //Lock Activity
+        hApps.add(new AppObject(LOCK_PACKAGE_NAME, LOCK_APP_NAME, R.drawable.lock_icon, false));
+
+        return hApps;
+    }
+
     public static boolean openApp(Context context, String appPackageName) {
         if (context == null)
             return false;
 
-        //if (LockManager.isLocked(Util.findAppByPackageName(appPackageName)))
+        if (appPackageName.equalsIgnoreCase(LOCK_PACKAGE_NAME))
+        {
+            Log.d(TAG, "REACHED INTENT");
+            Intent intent = new Intent(context, LockActivity.class);
+            context.startActivity(intent);
+        }
+
+        if (LockManager.isLocked(Util.findAppByPackageName(appPackageName, context)));
 
         //Form intent from package name
         Intent intent = context.getPackageManager().getLaunchIntentForPackage(appPackageName);
@@ -116,15 +144,17 @@ public class Util {
     public static ArrayList<String> getAppPackages(Fragment f)
     {return getAppPackages(f.getActivity());}
 
-    public static AppObject findAppByPackageName(String packageName, Activity act) {
-        ArrayList<AppObject> apps = loadAllApps(act);
+    public static AppObject findAppByPackageName(String packageName, Context c) {
+        ArrayList<AppObject> apps = loadAllApps(c);
         for (AppObject a : apps)
             if (a.getPackageName().equalsIgnoreCase(packageName))
                 return a;
         return null;
     }
     public static AppObject findAppByPackageName(String packageName, Fragment f)
-    {return findAppByPackageName(packageName, f.getActivity());}
+    {return findAppByPackageName(packageName, f.getActivity().getApplicationContext());}
+    public static AppObject findAppByPackageName(String packageName, Activity a)
+    {return findAppByPackageName(packageName, a.getApplicationContext());}
 
     public static Point getNavigationBarSize(Context context) {
         Point appUsableSize = getAppUsableScreenSize(context);
@@ -182,4 +212,11 @@ public class Util {
 
     public static boolean isPackage(String name, Fragment f)
     {return isPackage(name, f.getActivity());}
+
+    public static Point getLocationOnScreen(View v)
+    {
+        int[] location = new int[2];
+        v.getLocationOnScreen(location);
+        return new Point(location[0], location[1]);
+    }
 }

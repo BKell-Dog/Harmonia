@@ -29,6 +29,7 @@ import com.example.harmonialauncher.AppGridAdapter;
 import com.example.harmonialauncher.PackageLoader;
 import com.example.harmonialauncher.Settings.WhitelistManager;
 import com.example.harmonialauncher.Util;
+import com.example.harmonialauncher.lockManager.HarmoniaFragment;
 import com.example.harmonialauncher.lockManager.LockManager;
 
 import java.lang.reflect.InvocationTargetException;
@@ -41,12 +42,12 @@ generate the apps to display as well. It will manage the default and preset pack
 pressing of buttons and opening of apps. This screen is the home screen and launcher.
  */
 
-public class HomeScreenFragment extends Fragment {
+public class HomeScreenFragment extends HarmoniaFragment {
     private final static String TAG = "Home Screen Fragment";
     private Context CONTEXT;
 
     GridView gv;
-    private int numCols = 3;
+    private int numCols = 4;
 
     //App Name Constants
     private static final String DIALER = "Dialer";
@@ -107,6 +108,22 @@ public class HomeScreenFragment extends Fragment {
             }
         });*/
         return v;
+    }
+
+    public void onTap(MotionEvent e)
+    {
+        //Check if view is created
+        if (gv == null)
+            return;
+
+        for (int i = 0; i < ((AppGridAdapter)gv.getAdapter()).getCount(); i++)
+        {
+            View v = gv.getChildAt(i);
+            Point coords = Util.getLocationOnScreen(v);
+            Rect bounds = new Rect(coords.x, coords.y, coords.x + v.getWidth(), coords.y + v.getHeight());
+            if (bounds.contains((int)e.getX(), (int)e.getY()))
+                Util.openApp(this.CONTEXT, ((AppGridAdapter)gv.getAdapter()).get(i).getPackageName());
+        }
     }
 
     //Methods for determining window size -----------------------------------------------------

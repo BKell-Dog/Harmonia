@@ -23,6 +23,7 @@ import com.example.harmonialauncher.Drawer.DrawerPageFragment;
 import com.example.harmonialauncher.HomeScreen.HomeScreenFragment;
 import com.example.harmonialauncher.R;
 import com.example.harmonialauncher.lockManager.HarmoniaActivity;
+import com.example.harmonialauncher.lockManager.HarmoniaFragment;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -36,7 +37,6 @@ This class will manage the fragment viewer which switches between the HomeScreen
 It will switch from home to settings once the Harmonia settings button is pressed, and switch from settings to
 home once the back button is pressed in the settings menu.
  */
-
 public class MainActivity extends HarmoniaActivity {
     private static final String TAG = "Main Activity";
     public final Context CONTEXT = MainActivity.this;
@@ -61,8 +61,8 @@ public class MainActivity extends HarmoniaActivity {
         //Set page adapter to scroll vertically between home screen and drawer
         vp.setUserInputEnabled(false);
         vp.setOrientation(ViewPager2.ORIENTATION_VERTICAL);
-        vp.setPageTransformer(new MainPageTransformer());
-        vp.setOffscreenPageLimit(vp.getAdapter().getItemCount());
+        //vp.setPageTransformer(new MainPageTransformer());
+        //vp.setOffscreenPageLimit(vp.getAdapter().getItemCount());
 
         vp.setCurrentItem(0);
         vp.setVisibility(View.VISIBLE);
@@ -118,7 +118,7 @@ public class MainActivity extends HarmoniaActivity {
                 MainPageAdapter pa = (MainPageAdapter)vp.getAdapter();
                 int position = pa.getIndexByName(pa.DRAWER);
                 DrawerFragment df = (DrawerFragment) pa.getFragment(position);
-                int currentPage = df.getCurrentPage();
+                int currentPage = df.getCurrentPageIndex();
                 if (currentPage > 0)
                     df.setPage(currentPage - 1);
             }
@@ -127,7 +127,7 @@ public class MainActivity extends HarmoniaActivity {
                 MainPageAdapter pa = (MainPageAdapter)vp.getAdapter();
                 int position = pa.getIndexByName(pa.DRAWER);
                 DrawerFragment df = (DrawerFragment) pa.getFragment(position);
-                int currentPage = df.getCurrentPage(), lastPage = df.getLastPage();
+                int currentPage = df.getCurrentPageIndex(), lastPage = df.getLastPageIndex();
                 if (currentPage < lastPage) {
                     df.setPage(currentPage + 1);
                 }
@@ -135,6 +135,24 @@ public class MainActivity extends HarmoniaActivity {
 
             Log.d(TAG, "onFling: " + event1.toString() + event2.toString());
 
+            return true;
+        }
+
+        @Override
+        public boolean onSingleTapConfirmed(MotionEvent e)
+        {
+            Log.d(TAG, "TAPPED TAPPED TAPPED");
+            HarmoniaFragment f = (HarmoniaFragment)((PageAdapter)vp.getAdapter()).getFragment(vp.getCurrentItem());
+            if (f instanceof HomeScreenFragment)
+            {
+                ((HomeScreenFragment) f).onTap(e);
+            }
+            else if (f instanceof DrawerFragment)
+            {
+                f = ((DrawerFragment) f).getCurrentPage();
+                if (f instanceof DrawerPageFragment)
+                    ((DrawerPageFragment)f).onTap(e);
+            }
             return true;
         }
 
@@ -161,7 +179,7 @@ public class MainActivity extends HarmoniaActivity {
         }
     }
 
-    private class MainPageTransformer implements ViewPager2.PageTransformer
+    /*private class MainPageTransformer implements ViewPager2.PageTransformer
     {
         private static final String TAG = "Main Page Transformer";
         public void transformPage(@NonNull View page, float position)
@@ -176,5 +194,5 @@ public class MainActivity extends HarmoniaActivity {
                 page.setTranslationY(-1 * page.getHeight());
             }
         }
-    }
+    }*/
 }

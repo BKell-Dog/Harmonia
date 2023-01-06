@@ -11,6 +11,7 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.viewpager2.widget.ViewPager2;
 
+import com.example.harmonialauncher.AppGridAdapter;
 import com.example.harmonialauncher.R;
 import com.example.harmonialauncher.PageAdapter;
 import com.example.harmonialauncher.Util;
@@ -62,11 +63,14 @@ public class DrawerFragment extends HarmoniaFragment {
         return false;
     }
 
-    public int getCurrentPage()
+    public int getCurrentPageIndex()
     {return vp != null ? vp.getCurrentItem() : -1;}
 
-    public int getLastPage()
+    public int getLastPageIndex()
     {return vp != null ? vp.getAdapter().getItemCount() - 1 : -1;}
+
+    public HarmoniaFragment getCurrentPage()
+    {return vp != null ? (HarmoniaFragment)((DrawerPageAdapter)vp.getAdapter()).createFragment(vp.getCurrentItem()) : null;}
 
     public class DrawerPageAdapter extends PageAdapter {
         private static final String TAG = "Drawer Page Adapter";
@@ -90,7 +94,6 @@ public class DrawerFragment extends HarmoniaFragment {
             }
             catch (IndexOutOfBoundsException e) {Log.d(TAG, "Out of Bounds Exception: Index out of bounds in Drawer Page list.");return null;}
             catch (Exception e) {e.printStackTrace();return null;}
-
         }
     }
 

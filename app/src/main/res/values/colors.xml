@@ -20,7 +20,11 @@
     <color name="grey">#595959</color>
     <color name="menu_button">#FFFFFF</color>
 
-    <!-- Lock Screen -->
+    <!-- Lock Popup -->
     <color name="lock_green">#57C65B</color>
+
+    <!-- Lock Activity -->
+    <color name="lock_activity_background">#F3EFEE</color>
+    <color name="lock_activity_list_item_background">#FCFCFC</color>
 
 </resources>

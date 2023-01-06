@@ -150,7 +150,7 @@ public class LockManager {
                 remove.add(entry.getKey());
         }
 
-        //Remove selected entries
+        //Remove expired entries
         for (Class<?> c : remove)
             newLocked.remove(c);
 

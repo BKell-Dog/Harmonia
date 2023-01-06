@@ -1,9 +1,11 @@
 package com.example.harmonialauncher.Drawer;
 
+import android.app.ActionBar;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.Point;
 import android.graphics.Rect;
 import android.os.Build;
 import android.os.Bundle;
@@ -14,11 +16,14 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.GridLayout;
 import android.widget.GridView;
 
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.view.GestureDetectorCompat;
 import androidx.viewpager2.widget.ViewPager2;
 
+import com.example.harmonialauncher.AppGridAdapter;
 import com.example.harmonialauncher.R;
 import com.example.harmonialauncher.AppObject;
 import com.example.harmonialauncher.Config.ConfigManager;
@@ -36,7 +41,8 @@ public class DrawerPageFragment extends HarmoniaFragment {
     private static final String TAG = "Drawer Page Fragment";
     private Context CONTEXT;
     private int pageNum;
-
+    private int numCols = 4;
+    private GridView gv = null;
 
     public DrawerPageFragment(int pageNum) {
         super(R.layout.drawer_page);
@@ -52,7 +58,7 @@ public class DrawerPageFragment extends HarmoniaFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.drawer_page, container, false);
 
-        GridView gv = v.findViewById(R.id.drawer_page_grid);
+        gv = v.findViewById(R.id.drawer_page_grid);
         ArrayList<AppObject> appList = new ArrayList<AppObject>();
         ArrayList<AppObject> allApps = Util.loadAllApps(this);
         for (int k = pageNum * 20; k < (pageNum * 20) + 20; k++)
@@ -60,7 +66,8 @@ public class DrawerPageFragment extends HarmoniaFragment {
                 appList.add(allApps.get(k));
             } catch (IndexOutOfBoundsException e) {break;} catch (Exception e) {e.printStackTrace();}
         gv.setAdapter(new DrawerGridAdapter(getContext(), R.layout.app, appList));
-        gv.setNumColumns(4);
+        gv.setNumColumns(numCols);
+        gv.setBackgroundColor(Color.GREEN); //TODO: delete when done
 
         gv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -70,10 +77,6 @@ public class DrawerPageFragment extends HarmoniaFragment {
                 String pkg = app.getPackageName();
                 if (pkg != null) {
                     Util.openApp(CONTEXT, pkg);
-                } else if (app.getName().equalsIgnoreCase("Harmonia")) {
-                    //Use Fragment Transaction to open settings fragment in ViewPager
-                    //ViewPager2 vp = getActivity().findViewById(R.id.ViewPager);
-                    //vp.setCurrentItem(1, true);
                 }
             }
         });
@@ -81,16 +84,19 @@ public class DrawerPageFragment extends HarmoniaFragment {
         return v;
     }
 
+    public void onTap(MotionEvent e)
+    {
+        //Check if view is created
+        if (gv == null)
+            return;
 
-    //Methods for determining window size
-    private void setElementDimens(DrawerGridAdapter g, int numCols, View parentView) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-            Rect bounds = ((Activity) getContext()).getWindowManager().getCurrentWindowMetrics().getBounds();
-            int windowHeight = bounds.height();
-            int windowWidth = bounds.width();
-            int adjustedHeight = windowHeight - Util.getNavigationBarSize(CONTEXT).y;
-
-            g.setElementDimen(adjustedHeight, windowWidth);
+        for (int i = 0; i < ((AppGridAdapter)gv.getAdapter()).getCount(); i++)
+        {
+            View v = gv.getChildAt(i);
+            Point coords = Util.getLocationOnScreen(v);
+            Rect bounds = new Rect(coords.x, coords.y, coords.x + v.getWidth(), coords.y + v.getHeight());
+            if (bounds.contains((int)e.getX(), (int)e.getY()))
+                Util.openApp(this.CONTEXT, ((AppGridAdapter)gv.getAdapter()).get(i).getPackageName());
         }
     }
 
