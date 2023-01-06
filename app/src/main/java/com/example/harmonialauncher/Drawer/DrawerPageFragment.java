@@ -53,7 +53,7 @@ public class DrawerPageFragment extends HarmoniaFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        CONTEXT = getActivity().getApplicationContext();
+        CONTEXT = getActivity();
 
         (new HarmoniaGestureDetector()).add(this);
     }

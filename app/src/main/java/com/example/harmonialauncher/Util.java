@@ -29,7 +29,9 @@ public class Util {
     private static final String TAG = "Util";
 
     static final String LOCK_PACKAGE_NAME = "Harmonia Lock App",
-                        LOCK_APP_NAME = "App Locker";
+                        LOCK_APP_NAME = "App Locker",
+                        EXIT_PACKAGE_NAME = "Harmonia Exit App",
+                        EXIT_APP_NAME = "Exit Harmonia";
 
     public static ArrayList<AppObject> loadAllApps(Context c) {
         ArrayList<AppObject> apps = new ArrayList<AppObject>();
@@ -92,6 +94,9 @@ public class Util {
         //Lock Activity
         hApps.add(new AppObject(LOCK_PACKAGE_NAME, LOCK_APP_NAME, R.drawable.lock_icon, false));
 
+        //Exit Intent, for Testing on Real Phones
+        hApps.add(new AppObject(EXIT_PACKAGE_NAME, EXIT_APP_NAME, R.drawable.exit_icon, false));
+
         return hApps;
     }
 
@@ -104,6 +109,11 @@ public class Util {
             Intent intent = new Intent(context, LockActivity.class);
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             context.startActivity(intent);
+            return true;
+        }
+        else if (appPackageName.equalsIgnoreCase(EXIT_PACKAGE_NAME))
+        {
+            ((Activity)context).finish();
             return true;
         }
 
