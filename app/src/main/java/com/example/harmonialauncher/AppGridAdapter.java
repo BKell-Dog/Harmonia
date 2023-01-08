@@ -31,7 +31,7 @@ public class AppGridAdapter extends ArrayAdapter<AppObject> {
     protected int layout_id;
 
     protected final int COLS = 4, ROWS = 5;
-    protected int horizontalBuffer = 200, verticalBuffer = 200;
+    protected int horizontalBuffer = 300, verticalBuffer = 300;
     protected int pageHorizontalBuffer = 0, pageVerticalBuffer = 120;
     protected int elementHeight = -1, elementWidth = -1;
 
@@ -80,7 +80,6 @@ public class AppGridAdapter extends ArrayAdapter<AppObject> {
         //Resize icon to fit within the GridView area
         icon.setLayoutParams(new LinearLayout.LayoutParams(app.getWidth() - horizontalBuffer, app.getHeight() - verticalBuffer));
 
-        gridItemView.setBackgroundColor(Color.RED);
         //Resize the Grid Item to the app's previously defined height and width, which are set below
         //TODO: place limits on the scaling of the grid to it doesn't exceed 3x3
         gridItemView.setLayoutParams(new LinearLayout.LayoutParams(app.getWidth(), app.getHeight()));
@@ -96,11 +95,8 @@ public class AppGridAdapter extends ArrayAdapter<AppObject> {
     }
 
     public AppObject get(int position) {
-        Log.d(TAG, "FIRST POINT REACHED. LIST SIZE: " + apps.size() + " Position: " + position);
-        if (position >= 0 && position < apps.size()) {
-            Log.d(TAG, "POINT REACHED");
+        if (position >= 0 && position < apps.size())
             return apps.get(position);
-        }
         else
             return null;
     }

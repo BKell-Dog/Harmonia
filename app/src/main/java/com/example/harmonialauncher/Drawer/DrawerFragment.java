@@ -44,9 +44,11 @@ public class DrawerFragment extends HarmoniaFragment {
         vp = v.findViewById(R.id.drawer_view_pager);
         vp.setAdapter(new DrawerPageAdapter(this.getActivity(), numOfPages));
         vp.setUserInputEnabled(false);
+        vp.setOrientation(ViewPager2.ORIENTATION_HORIZONTAL);
         vp.canScrollHorizontally(1);
         vp.setCurrentItem(0);
         vp.setVisibility(View.VISIBLE);
+        vp.setOffscreenPageLimit(5);
 
         return v;
     }

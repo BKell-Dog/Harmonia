@@ -163,9 +163,18 @@ public class Util {
         return null;
     }
     public static AppObject findAppByPackageName(String packageName, Fragment f)
-    {return findAppByPackageName(packageName, f.getActivity().getApplicationContext());}
+    {return findAppByPackageName(packageName, f.getActivity());}
     public static AppObject findAppByPackageName(String packageName, Activity a)
-    {return findAppByPackageName(packageName, a.getApplicationContext());}
+    {return findAppByPackageName(packageName, a);}
+
+    public static AppObject findAppByName(String name, Context c)
+    {
+        ArrayList<AppObject> apps = loadAllApps(c); //TODO: can probably optimize this function, eliminate call to loadAllApps(c);
+        for (AppObject a : apps)
+            if (a.getName().equalsIgnoreCase(name))
+                return a;
+        return null;
+    }
 
     public static Point getNavigationBarSize(Context context) {
         Point appUsableSize = getAppUsableScreenSize(context);

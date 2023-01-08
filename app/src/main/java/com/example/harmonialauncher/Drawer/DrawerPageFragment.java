@@ -30,6 +30,7 @@ import com.example.harmonialauncher.AppObject;
 import com.example.harmonialauncher.Config.ConfigManager;
 import com.example.harmonialauncher.Util;
 import com.example.harmonialauncher.lockManager.HarmoniaFragment;
+import com.example.harmonialauncher.lockManager.LockManager;
 
 import java.util.ArrayList;
 
@@ -70,7 +71,6 @@ public class DrawerPageFragment extends HarmoniaFragment {
             } catch (IndexOutOfBoundsException e) {break;} catch (Exception e) {e.printStackTrace();}
         gv.setAdapter(new DrawerGridAdapter(getContext(), R.layout.app, appList));
         gv.setNumColumns(numCols);
-        gv.setBackgroundColor(Color.GREEN); //TODO: delete when done
 
         gv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -93,15 +93,19 @@ public class DrawerPageFragment extends HarmoniaFragment {
         //Check if view is created
         if (gv == null)
             return false;
+        Log.d(TAG, "SINGLE TAP CONFIRMED");
 
         for (int i = 0; i < ((AppGridAdapter)gv.getAdapter()).getCount(); i++)
         {
             View v = gv.getChildAt(i);
+            AppObject app = ((AppGridAdapter) gv.getAdapter()).getItem(i);
             Point coords = Util.getLocationOnScreen(v);
             Rect bounds = new Rect(coords.x, coords.y, coords.x + v.getWidth(), coords.y + v.getHeight());
-            if (bounds.contains((int)e.getX(), (int)e.getY())) {
-                Util.openApp(this.CONTEXT, ((AppGridAdapter) gv.getAdapter()).get(i).getPackageName());
-                return true;
+            if (bounds.contains((int)e.getX(), (int)e.getY())) {            //Check that tap coords were on top of app view
+                if (!LockManager.isLocked(app.getPackageName())) {                           //Check that app is not locked
+                    Util.openApp(this.CONTEXT, app.getPackageName());
+                    return true;
+                }
             }
         }
         return false;

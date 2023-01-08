@@ -74,6 +74,7 @@ public class LockManager {
 
     public static void lock(String packageName, long millisLocked) {
         lockedPacks.put(packageName, System.currentTimeMillis() + millisLocked);
+        Log.d(TAG, "LOCKED APP " + packageName);
     }
 
     public static void lock(Intent i) {

@@ -105,12 +105,6 @@ public class HomeScreenFragment extends HarmoniaFragment {
                 }
             }
         });
-        /*gv.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                return event.getAction() == MotionEvent.ACTION_MOVE;
-            }
-        });*/
 
         onScreen = true;
 
@@ -132,7 +126,6 @@ public class HomeScreenFragment extends HarmoniaFragment {
             if (bounds.contains((int)e.getX(), (int)e.getY())) {
                 AppGridAdapter a = (AppGridAdapter) gv.getAdapter();
                 AppObject app = a.get(i);
-                Log.d(TAG, "App is null: " + app + " --- i: " + i + " --- List size: "  + ((AppGridAdapter)gv.getAdapter()).getCount());
                 Util.openApp(this.CONTEXT, app.getPackageName());
                 return true;
             }
