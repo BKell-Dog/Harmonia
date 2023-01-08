@@ -24,6 +24,8 @@ public class LockManager {
     public static boolean isLocked(Lockable obj) {
         update();
 
+        Log.d(TAG, "Locked Packs List: " + lockedPacks);
+
         //Check if object is internally locked. If so, add it to our locked map, return true.
         if (obj.isLocked())
             return true;
@@ -75,6 +77,7 @@ public class LockManager {
     public static void lock(String packageName, long millisLocked) {
         lockedPacks.put(packageName, System.currentTimeMillis() + millisLocked);
         Log.d(TAG, "LOCKED APP " + packageName);
+        Log.d(TAG, "Locked Packs List: " + lockedPacks);
     }
 
     public static void lock(Intent i) {
@@ -141,6 +144,12 @@ public class LockManager {
         locked.put(obj.getClass(), endTime);
     }
 
+    /**
+     * Since locked apps are stored in an ArrayList without reference to the time period for which
+     * they are locked, this method, which will be called before all invocations of isLocked(), will
+     * check that each app in the list has not expired its lock period. If current time > start time
+     * + lock period, then we remove the app and package from the lists.
+     */
     public static void update() {
         HashMap<Class<?>, Long> newLocked = new HashMap<Class<?>, Long>();
         ArrayList<Class<?>> remove = new ArrayList<Class<?>>();
@@ -156,18 +165,24 @@ public class LockManager {
             newLocked.remove(c);
 
         locked = newLocked;
+        Log.d(TAG, "1111 Locked Packs List: " + lockedPacks);
 
-        HashMap<String, Long> newPacks = new HashMap<String, Long>();
+
+        HashMap<String, Long> newPacks = (HashMap<String, Long>) lockedPacks.clone();
         ArrayList<String> removePacks = new ArrayList<String>();
         for (Map.Entry<String, Long> pack : lockedPacks.entrySet()) {
-            if (pack.getValue() > 0 && pack.getValue() < System.currentTimeMillis())
+            if (pack.getValue() > 0 && pack.getValue() < System.currentTimeMillis()) {
                 removePacks.add(pack.getKey());
+                Log.d(TAG, "Greater Than? " + pack.getValue() + " --- " + System.currentTimeMillis() + " --- " + (pack.getValue() > System.currentTimeMillis()));
+            }
         }
+        Log.d(TAG, "151515 Current Time " + System.currentTimeMillis() + " --- Remove Packs: " + removePacks);
 
         for (String key : removePacks)
             newPacks.remove(key);
 
         lockedPacks = newPacks;
+        Log.d(TAG, "2222 Locked Packs List: " + lockedPacks);
     }
 
     public static boolean exitLocked() {

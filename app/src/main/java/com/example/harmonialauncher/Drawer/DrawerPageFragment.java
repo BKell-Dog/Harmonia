@@ -99,10 +99,11 @@ public class DrawerPageFragment extends HarmoniaFragment {
         {
             View v = gv.getChildAt(i);
             AppObject app = ((AppGridAdapter) gv.getAdapter()).getItem(i);
+            Log.d(TAG, "App Locked: " + LockManager.isLocked(app.getPackageName()));
             Point coords = Util.getLocationOnScreen(v);
             Rect bounds = new Rect(coords.x, coords.y, coords.x + v.getWidth(), coords.y + v.getHeight());
-            if (bounds.contains((int)e.getX(), (int)e.getY())) {            //Check that tap coords were on top of app view
-                if (!LockManager.isLocked(app.getPackageName())) {                           //Check that app is not locked
+            if (bounds.contains((int)e.getX(), (int)e.getY())) {           //Check that tap coords were on top of app view
+                if (!LockManager.isLocked(app.getPackageName())) {         //Check that app is not locked
                     Util.openApp(this.CONTEXT, app.getPackageName());
                     return true;
                 }
