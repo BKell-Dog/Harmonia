@@ -3,6 +3,7 @@ package com.example.harmonialauncher.LockActivity;
 import android.app.ActionBar;
 import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.os.Build;
@@ -31,12 +32,26 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.example.harmonialauncher.AppObject;
+import com.example.harmonialauncher.MainActivity;
 import com.example.harmonialauncher.R;
 import com.example.harmonialauncher.Util;
 import com.example.harmonialauncher.lockManager.HarmoniaActivity;
 import com.example.harmonialauncher.lockManager.LockManager;
 
 import java.util.ArrayList;
+import java.util.concurrent.TimeUnit;
+
+/**
+ * This class will display a list of all apps and prompt the user to lock any of them for an amount
+ * of time. Each item in this scrollview will consist of the following.
+ *
+ *     ____________________________________________________
+ *    | App Icon | App Name | App Lock Timer | Edit Button|
+ *    |          |          |                |            |
+ *    |  ...     |   ...    |      ...       |  ...       |
+ */
+
+//TODO: implement the above schema
 
 public class LockActivity extends HarmoniaActivity {
 
@@ -60,7 +75,8 @@ public class LockActivity extends HarmoniaActivity {
             View v = inflater.inflate(R.layout.list_item, null);
             TextView text = (TextView) v.findViewById(R.id.app_name);
             ImageView icon = (ImageView) v.findViewById(R.id.app_icon);
-            CheckBox check = (CheckBox) v.findViewById(R.id.lock_drop_down_list);
+            TextView timer = (TextView) v.findViewById(R.id.lock_timer_text);
+            Button button = (Button) v.findViewById(R.id.edit_button);
 
             text.setText(a.getName());
             if (a.getImage() != null)
@@ -70,13 +86,17 @@ public class LockActivity extends HarmoniaActivity {
             else
                 icon.setImageDrawable(getResources().getDrawable(a.getImageId()));
             icon.setLayoutParams(new RelativeLayout.LayoutParams(Util.getRealScreenSize(this).x / 4, Util.getRealScreenSize(this).x / 4));
-            check.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-                @Override
-                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                    if (!isChecked)
-                        return;
 
-                    final CheckBox check = (CheckBox)buttonView;
+            if (LockManager.isLocked(a))
+                setTimerText(timer, (int) TimeUnit.HOURS.convert(LockManager.getTimeRemaining(a), TimeUnit.MILLISECONDS), (int) TimeUnit.MINUTES.convert(LockManager.getTimeRemaining(a) % 3600000, TimeUnit.MILLISECONDS));
+            else
+                timer.setText("00:00");
+
+            button.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+
+                    final Button b = (Button) view;
 
                     // Create NumberPicker popup
                     final Dialog d = new Dialog(context);
@@ -100,8 +120,8 @@ public class LockActivity extends HarmoniaActivity {
                     minutes.setMaxValue(59);
                     minutes.setWrapSelectorWheel(false);
 
-                    //Find app object associated with checkbox press
-                    LinearLayoutCompat parent = (LinearLayoutCompat) buttonView.getParent().getParent();
+                    //Find app object associated with button press
+                    LinearLayoutCompat parent = (LinearLayoutCompat) view.getParent().getParent();
                     String appName = null;
                     for (int i = 0; i < parent.getChildCount(); i++) {
                         if (parent.getChildAt(i).getId() == R.id.app_name_layout) {
@@ -121,6 +141,9 @@ public class LockActivity extends HarmoniaActivity {
                             int minute = minutes.getValue();
                             int millis = (hour * 3600000) + (minute * 60000);
                             LockManager.lock(app.getPackageName(), millis);
+                            LockManager.lock(app, millis);
+
+                            setTimerText(timer, hour, minute);
                             Log.d(TAG, "LOCKED APP: " + app + " for time: " + millis);
                             d.dismiss();
                         }
@@ -129,10 +152,7 @@ public class LockActivity extends HarmoniaActivity {
                     cancel.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            //TODO: Only unselect the button if the app lock timer has run out.
-                            check.setChecked(false);
-                            d.dismiss();
-                            Log.d(TAG, "CANCEL DIALOG");
+                            d.cancel();
                         }
                     });
                 }
@@ -142,4 +162,22 @@ public class LockActivity extends HarmoniaActivity {
         }
     }
 
+    /**
+     * Method to properly format timer text
+     */
+    private void setTimerText(TextView timer, int hour, int minute)
+    {
+        String h = "", m = "";
+        if (hour < 10)
+            h = "0" + hour;
+        else
+            h = "" + hour;
+
+        if (minute < 10)
+            m = "0" + minute;
+        else
+            m = "" + minute;
+
+        timer.setText(h + ":" + m);
+    }
 }

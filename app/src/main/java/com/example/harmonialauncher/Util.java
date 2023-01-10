@@ -7,6 +7,8 @@ import android.content.Intent;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.graphics.ColorMatrix;
+import android.graphics.ColorMatrixColorFilter;
 import android.graphics.Point;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
@@ -33,8 +35,12 @@ public class Util {
                         EXIT_PACKAGE_NAME = "Harmonia Exit App",
                         EXIT_APP_NAME = "Exit Harmonia";
 
+    private static ArrayList<AppObject> apps = new ArrayList<AppObject>();
+
     public static ArrayList<AppObject> loadAllApps(Context c) {
-        ArrayList<AppObject> apps = new ArrayList<AppObject>();
+
+        apps.clear();
+
         PackageManager pm = c.getPackageManager();
         List<PackageInfo> packages = pm.getInstalledPackages(0);
         List<ApplicationInfo> applications = new ArrayList<ApplicationInfo>();
@@ -156,7 +162,6 @@ public class Util {
     {return getAppPackages(f.getActivity());}
 
     public static AppObject findAppByPackageName(String packageName, Context c) {
-        ArrayList<AppObject> apps = loadAllApps(c);
         for (AppObject a : apps)
             if (a.getPackageName().equalsIgnoreCase(packageName))
                 return a;
@@ -169,7 +174,6 @@ public class Util {
 
     public static AppObject findAppByName(String name, Context c)
     {
-        ArrayList<AppObject> apps = loadAllApps(c); //TODO: can probably optimize this function, eliminate call to loadAllApps(c);
         for (AppObject a : apps)
             if (a.getName().equalsIgnoreCase(name))
                 return a;
@@ -238,5 +242,17 @@ public class Util {
         int[] location = new int[2];
         v.getLocationOnScreen(location);
         return new Point(location[0], location[1]);
+    }
+
+    public static Drawable convertToGreyscale(Drawable d)
+    {
+        ColorMatrix matrix = new ColorMatrix();
+        matrix.setSaturation(0);
+
+        ColorMatrixColorFilter filter = new ColorMatrixColorFilter(matrix);
+
+        d.setColorFilter(filter);
+
+        return d;
     }
 }

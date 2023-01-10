@@ -26,6 +26,7 @@
     <string name="lock_title">Locked</string>
     <string name="submit_time">OK</string>
     <string name="cancel">Cancel</string>
+    <string name="edit_button">Set Time</string>
 
     <!-- App Icon -->
     <string name="app_icon_image">App Icon Image</string>

@@ -126,8 +126,10 @@ public class HomeScreenFragment extends HarmoniaFragment {
             if (bounds.contains((int)e.getX(), (int)e.getY())) {
                 AppGridAdapter a = (AppGridAdapter) gv.getAdapter();
                 AppObject app = a.get(i);
-                Util.openApp(this.CONTEXT, app.getPackageName());
-                return true;
+                if (!LockManager.isLocked(app.getPackageName())) {         //Check that app is not locked
+                    Util.openApp(this.CONTEXT, app.getPackageName());
+                    return true;
+                }
             }
         }
         return false;

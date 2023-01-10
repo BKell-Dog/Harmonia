@@ -35,6 +35,10 @@ public class AppGridAdapter extends ArrayAdapter<AppObject> {
     protected int pageHorizontalBuffer = 0, pageVerticalBuffer = 120;
     protected int elementHeight = -1, elementWidth = -1;
 
+    //Variables for drawing locked apps
+    private final int INVISIBLE = 0, GREYSCALE = 1;
+    private int mode = GREYSCALE; //Change this variable to change disappearance mode
+
     public AppGridAdapter(@NonNull Context context, int resource, ArrayList<AppObject> appList) {
         super(context, resource, appList);
         CONTEXT = context;
@@ -60,10 +64,6 @@ public class AppGridAdapter extends ArrayAdapter<AppObject> {
         if (p.y == -1 || p.x == -1)
             setElementDimen(parent.getHeight(), parent.getWidth());
 
-        //Make app invisible if it is meant to be locked
-        if (app.isLocked() || LockManager.isLocked(app))
-            gridItemView.setVisibility(View.INVISIBLE);
-
         //Get Icon and Label and set their values to the specific app
         TextView label = gridItemView.findViewById(R.id.label);
         ImageView icon = gridItemView.findViewById(R.id.image);
@@ -81,8 +81,19 @@ public class AppGridAdapter extends ArrayAdapter<AppObject> {
         icon.setLayoutParams(new LinearLayout.LayoutParams(app.getWidth() - horizontalBuffer, app.getHeight() - verticalBuffer));
 
         //Resize the Grid Item to the app's previously defined height and width, which are set below
-        //TODO: place limits on the scaling of the grid to it doesn't exceed 3x3
         gridItemView.setLayoutParams(new LinearLayout.LayoutParams(app.getWidth(), app.getHeight()));
+
+        //Make app invisible or greyscale if it is meant to be locked
+        if (app.isLocked() || LockManager.isLocked(app.getPackageName())) {
+            if (mode == INVISIBLE)
+                gridItemView.setVisibility(View.INVISIBLE);
+            else if (mode == GREYSCALE)
+            {
+                icon.setImageDrawable(Util.convertToGreyscale(app.getImage()));
+                Log.d(TAG, "GREYSCALE for app " + app + " --- " + app.getImage());
+            }
+        }
+
         return gridItemView;
     }
 

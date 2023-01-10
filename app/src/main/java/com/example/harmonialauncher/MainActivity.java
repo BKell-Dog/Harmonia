@@ -29,9 +29,6 @@ import com.example.harmonialauncher.lockManager.HarmoniaFragment;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-//TODO: ON 1/4/2023, bring back LockManager, create a Harmonia Lock App which blacklists selected apps for a period of time,
-// Say, 1 hour. Those apps will appear grey, or invisible, and cannot be opened when tapped.
-
 
 /*
 This class will manage the fragment viewer which switches between the HomeScreenFragment and the SettingsFragment.
@@ -46,14 +43,13 @@ public class MainActivity extends HarmoniaActivity {
 
     //Gesture Detection
     private GestureDetectorCompat gd;
-    private HarmoniaGestureDetector gest;
     private final int THRESHOLD = 100;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        gest = new HarmoniaGestureDetector();
+        HarmoniaGestureDetector gest = new HarmoniaGestureDetector();
         gd = new GestureDetectorCompat(this, gest);
         gest.add(this);
 
@@ -70,6 +66,12 @@ public class MainActivity extends HarmoniaActivity {
         vp.setVisibility(View.VISIBLE);
 
         instance = this.getApplication();
+    }
+
+    public void onResume() {
+        super.onResume();
+        vp.postInvalidate();
+        Log.d(TAG, "ON RESUME");
     }
 
     @Override

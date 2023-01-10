@@ -3,6 +3,11 @@ package com.example.harmonialauncher.lockManager;
 import android.content.Intent;
 import android.util.Log;
 
+import androidx.annotation.NonNull;
+
+import com.example.harmonialauncher.AppObject;
+import com.example.harmonialauncher.LockActivity.LockActivity;
+import com.example.harmonialauncher.MainActivity;
 import com.example.harmonialauncher.Util;
 
 import java.util.ArrayList;
@@ -17,6 +22,9 @@ public class LockManager {
     private static HashMap<Class<?>, Long> locked = new HashMap<Class<?>, Long>();
     private static HashMap<String, Long> lockedPacks = new HashMap<String, Long>();
 
+    //Variables for efficiency
+    private static long nearestTime = -1;
+
     //Constants
     private static final long INDEFINITELY = -1;
     public static final String EXIT = "EXIT";
@@ -24,11 +32,14 @@ public class LockManager {
     public static boolean isLocked(Lockable obj) {
         update();
 
-        Log.d(TAG, "Locked Packs List: " + lockedPacks);
-
         //Check if object is internally locked. If so, add it to our locked map, return true.
         if (obj.isLocked())
             return true;
+
+        //Check for AppObject and corresponding package name
+        if (obj instanceof AppObject)
+            if (inMap(((AppObject) obj).getPackageName()))
+                return true;
 
         //If object is in our hash map, then it has not been unlocked: return true.
         return inMap(obj);
@@ -64,6 +75,12 @@ public class LockManager {
     public static void lock(Lockable obj, long millisLocked) {
         obj.lock();
         locked.put(obj.getClass(), System.currentTimeMillis() + millisLocked);
+
+        if (nearestTime > System.currentTimeMillis() + millisLocked)
+            nearestTime = System.currentTimeMillis() + millisLocked;
+
+        if (obj instanceof AppObject)
+            lockedPacks.put(((AppObject) obj).getPackageName(), millisLocked);
     }
 
     public static void lock(String packageName) {
@@ -74,10 +91,12 @@ public class LockManager {
         lock(packageName, (long) millisLocked);
     }
 
+    //TODO: locked packages are not synced with corresponding Lockable App Objects. Must fix.
     public static void lock(String packageName, long millisLocked) {
         lockedPacks.put(packageName, System.currentTimeMillis() + millisLocked);
+        if (nearestTime > System.currentTimeMillis() + millisLocked)
+            nearestTime = System.currentTimeMillis() + millisLocked;
         Log.d(TAG, "LOCKED APP " + packageName);
-        Log.d(TAG, "Locked Packs List: " + lockedPacks);
     }
 
     public static void lock(Intent i) {
@@ -126,14 +145,24 @@ public class LockManager {
         return lockedPacks.containsKey(packageName);
     }
 
-    public static long getTimeRemaining(Lockable obj) {
-        if (inMap(obj))
-            return locked.get(obj.getClass()) - System.currentTimeMillis();
-        else
+    //TODO: with long type time variables, we experience overflows and time ends up negative.
+    public static long getTimeRemaining(@NonNull Lockable obj) {
+        if (obj instanceof AppObject)
+        {
+            AppObject a = (AppObject) obj;
+            if (inMap(a.getPackageName()))
+                return lockedPacks.get(a.getPackageName()) - System.currentTimeMillis();
+            else
+                return 0;
+        }
+        else if (inMap(obj)) {
+            long time = locked.get(obj.getClass()) - System.currentTimeMillis();
+            return time;
+        } else
             return 0;
     }
 
-    public static long getEndTime(Lockable obj) {
+    public static long getEndTime(@NonNull Lockable obj) {
         if (inMap(obj))
             return locked.get(obj.getClass());
         else
@@ -151,7 +180,24 @@ public class LockManager {
      * + lock period, then we remove the app and package from the lists.
      */
     public static void update() {
-        HashMap<Class<?>, Long> newLocked = new HashMap<Class<?>, Long>();
+
+        if (nearestTime == -1 || nearestTime < System.currentTimeMillis()) {
+            Long smallestValue = Long.MAX_VALUE;
+            for (HashMap.Entry<String, Long> entry : lockedPacks.entrySet()) {
+                if (entry.getValue() < smallestValue) {
+                    smallestValue = entry.getValue();
+                }
+            }
+            nearestTime = smallestValue;
+        }
+
+        //If hashmaps are empty, there is nothing to update. If no apps have expired yet, no need to update.
+        if ((locked.size() <= 0 && lockedPacks.size() <= 0) || nearestTime > System.currentTimeMillis())
+            return;
+
+        Log.d(TAG, "NearestTime: " + nearestTime);
+
+        HashMap<Class<?>, Long> newLocked = (HashMap<Class<?>, Long>) locked.clone();
         ArrayList<Class<?>> remove = new ArrayList<Class<?>>();
         for (Map.Entry<Class<?>, Long> entry : locked.entrySet()) {
             //Remove all key-value pair for which the end time has passed.
@@ -165,15 +211,12 @@ public class LockManager {
             newLocked.remove(c);
 
         locked = newLocked;
-        Log.d(TAG, "1111 Locked Packs List: " + lockedPacks);
-
 
         HashMap<String, Long> newPacks = (HashMap<String, Long>) lockedPacks.clone();
         ArrayList<String> removePacks = new ArrayList<String>();
         for (Map.Entry<String, Long> pack : lockedPacks.entrySet()) {
             if (pack.getValue() > 0 && pack.getValue() < System.currentTimeMillis()) {
                 removePacks.add(pack.getKey());
-                Log.d(TAG, "Greater Than? " + pack.getValue() + " --- " + System.currentTimeMillis() + " --- " + (pack.getValue() > System.currentTimeMillis()));
             }
         }
         Log.d(TAG, "151515 Current Time " + System.currentTimeMillis() + " --- Remove Packs: " + removePacks);
@@ -182,7 +225,6 @@ public class LockManager {
             newPacks.remove(key);
 
         lockedPacks = newPacks;
-        Log.d(TAG, "2222 Locked Packs List: " + lockedPacks);
     }
 
     public static boolean exitLocked() {
