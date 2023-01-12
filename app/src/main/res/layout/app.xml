@@ -44,6 +44,6 @@
             android:text="@string/app_icon_text"
             android:textAlignment="center"
             android:textColor="@android:color/white"
-            android:textSize="14sp" />
+            android:textSize="12sp" />
     </LinearLayout>
 </LinearLayout>

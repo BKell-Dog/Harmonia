@@ -24,8 +24,8 @@ import java.util.ArrayList;
 public class HomeScreenGridAdapter extends AppGridAdapter {
 
     private final static String TAG = "Grid Adapter";
-    private int homeScreenAppNum = 20;
-    private AppObject[] apps = new AppObject[homeScreenAppNum];
+    public final int HOMESCREENAPPNUM = 15;
+    private AppObject[] apps = new AppObject[HOMESCREENAPPNUM];
     private Context CONTEXT;
     private int layout_id;
 
@@ -34,7 +34,7 @@ public class HomeScreenGridAdapter extends AppGridAdapter {
         super(context, resource, appList);
         CONTEXT = context;
         layout_id = resource;
-        for (int i = 0; i < homeScreenAppNum && i < appList.size(); i++) {
+        for (int i = 0; i < HOMESCREENAPPNUM && i < appList.size(); i++) {
             apps[i] = appList.get(i);
         }
         super.pageVerticalBuffer = 150;

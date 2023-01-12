@@ -17,12 +17,16 @@ import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.GridView;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
 import androidx.viewpager2.widget.ViewPager2;
 
+import com.example.harmonialauncher.Drawer.DrawerGridAdapter;
 import com.example.harmonialauncher.GestureDetection.HarmoniaGestureDetector;
+import com.example.harmonialauncher.LockActivity.LockStatusChangeListener;
 import com.example.harmonialauncher.R;
 import com.example.harmonialauncher.AppObject;
 import com.example.harmonialauncher.Config.ConfigManager;
@@ -43,7 +47,7 @@ generate the apps to display as well. It will manage the default and preset pack
 pressing of buttons and opening of apps. This screen is the home screen and launcher.
  */
 
-public class HomeScreenFragment extends HarmoniaFragment {
+public class HomeScreenFragment extends HarmoniaFragment implements LockStatusChangeListener.LockStatusListener {
     private final static String TAG = "Home Screen Fragment";
     private Context CONTEXT;
     private boolean onScreen = false;
@@ -56,27 +60,28 @@ public class HomeScreenFragment extends HarmoniaFragment {
     private static final String MESSENGER = "Messenger";
 
     public HomeScreenFragment() {
-        super(R.layout.home_screen);
+        super(R.layout.app_grid_page);
     }
 
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        CONTEXT = getActivity().getApplicationContext();
+        CONTEXT = getActivity();
 
-        (new HarmoniaGestureDetector()).add(this);
+        HarmoniaGestureDetector.add(this);
+        LockStatusChangeListener.add(this);
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate layout for this fragment
-        View v = inflater.inflate(R.layout.home_screen, container, false);
+        View v = inflater.inflate(R.layout.app_grid_page, container, false);
 
         //Populate Grid Layout in home_screen.xml with instances of app.xml
         //Get grid view
-        gv = v.findViewById(R.id.home_screen_grid);
+        gv = v.findViewById(R.id.app_page_grid);
 
         //Set adapter, set element dimensions for proper scaling, and add a specific app for Harmonia Settings
         HomeScreenGridAdapter ga = new HomeScreenGridAdapter(CONTEXT, R.layout.app, Util.loadAllApps(this));
@@ -111,24 +116,29 @@ public class HomeScreenFragment extends HarmoniaFragment {
         return v;
     }
 
+    public void onStatusChanged() {
+        gv.setAdapter(new HomeScreenGridAdapter(getContext(), R.layout.app, Util.loadAllApps(this)));
+    }
+
     @Override
-    public boolean onSingleTapConfirmed(MotionEvent e)
-    {
+    public boolean onSingleTapConfirmed(MotionEvent e) {
         //Check if view is created
         if (gv == null || !onScreen)
             return false;
 
-        for (int i = 0; i < ((AppGridAdapter)gv.getAdapter()).getCount(); i++)
-        {
+        for (int i = 0; i < ((AppGridAdapter) gv.getAdapter()).getCount(); i++) {
             View v = gv.getChildAt(i);
-            Point coords = Util.getLocationOnScreen(v);
-            Rect bounds = new Rect(coords.x, coords.y, coords.x + v.getWidth(), coords.y + v.getHeight());
-            if (bounds.contains((int)e.getX(), (int)e.getY())) {
-                AppGridAdapter a = (AppGridAdapter) gv.getAdapter();
-                AppObject app = a.get(i);
-                if (!LockManager.isLocked(app.getPackageName())) {         //Check that app is not locked
-                    Util.openApp(this.CONTEXT, app.getPackageName());
-                    return true;
+            if (v != null) {
+                Log.d(TAG, "View is Null: " + (v == null) + " at position " + i);
+                Point coords = Util.getLocationOnScreen(v);
+                Rect bounds = new Rect(coords.x, coords.y, coords.x + v.getWidth(), coords.y + v.getHeight());
+                if (bounds.contains((int) e.getX(), (int) e.getY())) {
+                    AppGridAdapter a = (AppGridAdapter) gv.getAdapter();
+                    AppObject app = a.get(i);
+                    if (!LockManager.isLocked(app.getPackageName())) {         //Check that app is not locked
+                        Util.openApp(this.CONTEXT, app.getPackageName());
+                        return true;
+                    }
                 }
             }
         }

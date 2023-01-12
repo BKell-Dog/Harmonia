@@ -16,6 +16,7 @@ import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.example.harmonialauncher.Drawer.DrawerFragment;
@@ -43,7 +44,7 @@ public class MainActivity extends HarmoniaActivity {
 
     //Gesture Detection
     private GestureDetectorCompat gd;
-    private final int THRESHOLD = 100;
+    public final int THRESHOLD = 100;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -66,12 +67,6 @@ public class MainActivity extends HarmoniaActivity {
         vp.setVisibility(View.VISIBLE);
 
         instance = this.getApplication();
-    }
-
-    public void onResume() {
-        super.onResume();
-        vp.postInvalidate();
-        Log.d(TAG, "ON RESUME");
     }
 
     @Override
@@ -98,30 +93,18 @@ public class MainActivity extends HarmoniaActivity {
 
     @Override
     public boolean onFling(MotionEvent event1, MotionEvent event2, float velocityX, float velocityY) {
-        //Vertical flings will move between home screen and app drawer, sent to the viewpager in MainActivity.
-        if (event1.getY() - event2.getY() > THRESHOLD) //Upward fling
-            vp.setCurrentItem(vp.getAdapter().getItemCount() - 1);
-        else if (event1.getY() - event2.getY() < -THRESHOLD) //Downward fling
-            vp.setCurrentItem(vp.getCurrentItem() - 1);
+        float e1y = event1.getY(), e2y = event2.getY();
+        float e1x = event1.getX(), e2x = event2.getX();
+        float xTranslation = e2x - e1x, yTranslation = e2y - e1y;
+        float greaterTranslation = Math.abs(yTranslation - xTranslation);
 
-            //Horizontal flings will move between pages of the drawer, sent to the viewpager in DrawerFragment.
-        else if (event1.getX() - event2.getX() < -THRESHOLD && vp.getCurrentItem() == 1) //Rightward fling
+        if (greaterTranslation > 0) //Fling more vertical than horizontal
         {
-            MainPageAdapter pa = (MainPageAdapter) vp.getAdapter();
-            int position = pa.getIndexByName(pa.DRAWER);
-            DrawerFragment df = (DrawerFragment) pa.getFragment(position);
-            int currentPage = df.getCurrentPageIndex();
-            if (currentPage > 0)
-                df.setPage(currentPage - 1);
-        } else if (event1.getX() - event2.getX() > THRESHOLD && vp.getCurrentItem() == 1) //Leftward fling
-        {
-            MainPageAdapter pa = (MainPageAdapter) vp.getAdapter();
-            int position = pa.getIndexByName(pa.DRAWER);
-            DrawerFragment df = (DrawerFragment) pa.getFragment(position);
-            int currentPage = df.getCurrentPageIndex(), lastPage = df.getLastPageIndex();
-            if (currentPage < lastPage) {
-                df.setPage(currentPage + 1);
-            }
+            //Vertical flings will move between home screen and app drawer, sent to the viewpager in MainActivity.
+            if (yTranslation < -THRESHOLD) //Upward fling
+                vp.setCurrentItem(vp.getAdapter().getItemCount() - 1);
+            else if (yTranslation > THRESHOLD) //Downward fling
+                vp.setCurrentItem(vp.getCurrentItem() - 1);
         }
 
         Log.d(TAG, "onFling: " + event1.toString() + event2.toString());

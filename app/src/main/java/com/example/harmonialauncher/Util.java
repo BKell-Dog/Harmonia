@@ -12,11 +12,13 @@ import android.graphics.ColorMatrixColorFilter;
 import android.graphics.Point;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
+import android.provider.Settings;
 import android.util.Log;
 import android.view.Display;
 import android.view.View;
 import android.view.WindowManager;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
 import com.example.harmonialauncher.LockActivity.LockActivity;
@@ -30,10 +32,12 @@ public class Util {
 
     private static final String TAG = "Util";
 
-    static final String LOCK_PACKAGE_NAME = "Harmonia Lock App",
+    public static final String LOCK_PACKAGE_NAME = "Harmonia Lock App",
                         LOCK_APP_NAME = "App Locker",
                         EXIT_PACKAGE_NAME = "Harmonia Exit App",
-                        EXIT_APP_NAME = "Exit Harmonia";
+                        EXIT_APP_NAME = "Exit Harmonia",
+                        LAUNCHER_SETTINGS_PACKAGE_NAME = "Settings Launcher Page",
+                        LAUNCHER_SETTINGS_APP_NAME = "Select Launcher";
 
     private static ArrayList<AppObject> apps = new ArrayList<AppObject>();
 
@@ -100,6 +104,9 @@ public class Util {
         //Lock Activity
         hApps.add(new AppObject(LOCK_PACKAGE_NAME, LOCK_APP_NAME, R.drawable.lock_icon, false));
 
+        //App icon which opens the settings page for changing default launcher
+        hApps.add(new AppObject(LAUNCHER_SETTINGS_PACKAGE_NAME, LAUNCHER_SETTINGS_APP_NAME, R.drawable.launcher_icon, false));
+
         //Exit Intent, for Testing on Real Phones
         hApps.add(new AppObject(EXIT_PACKAGE_NAME, EXIT_APP_NAME, R.drawable.exit_icon, false));
 
@@ -121,6 +128,20 @@ public class Util {
         {
             ((Activity)context).finish();
             return true;
+        }
+        else if (appPackageName.equalsIgnoreCase(LAUNCHER_SETTINGS_PACKAGE_NAME))
+        {
+            final Intent intent;
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
+                intent = new Intent(Settings.ACTION_HOME_SETTINGS);
+            } else {
+                intent = new Intent(Settings.ACTION_SETTINGS);
+            }
+            if (!LockManager.isLocked(intent)) {
+                context.startActivity(intent);
+                return true;
+            }
+            return false;
         }
 
         if (LockManager.isLocked(Util.findAppByPackageName(appPackageName, context)));
@@ -237,7 +258,7 @@ public class Util {
     public static boolean isPackage(String name, Fragment f)
     {return isPackage(name, f.getActivity());}
 
-    public static Point getLocationOnScreen(View v)
+    public static Point getLocationOnScreen(@NonNull View v)
     {
         int[] location = new int[2];
         v.getLocationOnScreen(location);
@@ -255,4 +276,20 @@ public class Util {
 
         return d;
     }
+
+    public static ArrayList<AppObject> getLockedApps(Context c)
+    {
+        ArrayList<AppObject> locked = new ArrayList<>();
+        if (apps == null || apps.size() == 0)
+            apps = loadAllApps(c);
+        for (AppObject a : apps)
+        {
+            if (LockManager.isLocked(a.getPackageName()))
+                locked.add(a);
+        }
+        return locked;
+    }
+
+    public static void exitHarmonia(Context context)
+    {openApp(context, EXIT_PACKAGE_NAME);}
 }

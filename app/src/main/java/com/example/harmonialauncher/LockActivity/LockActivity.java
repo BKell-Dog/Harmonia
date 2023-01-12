@@ -162,8 +162,14 @@ public class LockActivity extends HarmoniaActivity {
         }
     }
 
+    public void onDestroy()
+    {
+        super.onDestroy();
+        LockStatusChangeListener.onStatusChanged();
+    }
+
     /**
-     * Method to properly format timer text
+     * Method to properly format timer text.
      */
     private void setTimerText(TextView timer, int hour, int minute)
     {

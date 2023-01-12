@@ -39,32 +39,6 @@ public class HarmoniaFragment extends Fragment implements Lockable, Gesturable {
 
     public boolean onSingleTapConfirmed(MotionEvent event) {return false;}
 
-    public void onStart()
-    {
-        onScreen = true;
-        super.onStart();
-    }
-    public void onResume()
-    {
-        onScreen = true;
-        super.onResume();
-    }
-
-    public void onDestroy()
-    {
-        onScreen = false;
-        super.onDestroy();
-    }
-    public void onPause()
-    {
-        onScreen = false;
-        super.onPause();
-    }
-    public void onStop()
-    {
-        onScreen = false;
-        super.onStop();
-    }
     public boolean isOnScreen()
     {return onScreen;}
 }

@@ -36,8 +36,9 @@ public class AppGridAdapter extends ArrayAdapter<AppObject> {
     protected int elementHeight = -1, elementWidth = -1;
 
     //Variables for drawing locked apps
-    private final int INVISIBLE = 0, GREYSCALE = 1;
+    public final int INVISIBLE = 0, GREYSCALE = 1;
     private int mode = GREYSCALE; //Change this variable to change disappearance mode
+    private ArrayList<String> lockedPacks = new ArrayList<String>();
 
     public AppGridAdapter(@NonNull Context context, int resource, ArrayList<AppObject> appList) {
         super(context, resource, appList);
@@ -85,13 +86,13 @@ public class AppGridAdapter extends ArrayAdapter<AppObject> {
 
         //Make app invisible or greyscale if it is meant to be locked
         if (app.isLocked() || LockManager.isLocked(app.getPackageName())) {
+            if (inLockedList(app.getPackageName()))
+                lockedPacks.add(app.getPackageName());
+
             if (mode == INVISIBLE)
                 gridItemView.setVisibility(View.INVISIBLE);
             else if (mode == GREYSCALE)
-            {
                 icon.setImageDrawable(Util.convertToGreyscale(app.getImage()));
-                Log.d(TAG, "GREYSCALE for app " + app + " --- " + app.getImage());
-            }
         }
 
         return gridItemView;
@@ -131,6 +132,28 @@ public class AppGridAdapter extends ArrayAdapter<AppObject> {
     public Point getElementDimens()
     {
         return new Point(elementWidth, elementHeight);
+    }
+
+    public int getMode()
+    {return mode;}
+
+    public void setMode(int mode)
+    {
+        if (mode == 0 || mode == 1)
+            this.mode = mode;
+        else
+            Log.d(TAG, "Mode out of bounds. Possibly update method setMode to accommodate new modes.");
+    }
+
+    public ArrayList<String> getLockedPacks()
+    {return lockedPacks;}
+
+    public boolean inLockedList(String packageName)
+    {
+        for (String pack : lockedPacks)
+            if (pack.equalsIgnoreCase(packageName))
+                return true;
+        return false;
     }
 
     public String toString()
