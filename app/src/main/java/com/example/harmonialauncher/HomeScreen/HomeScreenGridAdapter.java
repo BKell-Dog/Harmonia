@@ -57,10 +57,21 @@ public class HomeScreenGridAdapter extends AppGridAdapter {
         return apps.length;
     }
 
+    /**
+     * Method removes the AppObject at the specified position, replaces it with the provided AppObject,
+     * and returns the removed AppObject.
+     * @param app
+     * @param position
+     * @return app which was removed from list
+     */
     public AppObject replace(AppObject app, int position) {
-        AppObject a = apps[position];
-        apps[position] = app;
-        return a;
+        if (position >= 0 && position < apps.length) {
+            AppObject a = apps[position];
+            apps[position] = app;
+            return a;
+        }
+        else
+            return null;
     }
 
     public AppObject remove(int position) {
@@ -75,4 +86,7 @@ public class HomeScreenGridAdapter extends AppGridAdapter {
         else
             return null;
     }
+
+    public AppObject[] getAppList()
+    {return apps;}
 }

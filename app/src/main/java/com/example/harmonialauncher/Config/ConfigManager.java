@@ -2,6 +2,8 @@ package com.example.harmonialauncher.Config;
 
 import android.util.Log;
 
+import com.example.harmonialauncher.AppObject;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -43,6 +45,11 @@ public class ConfigManager {
             return properties;
         }
         return null;
+    }
+
+    public static void writeHomeScreenApps(AppObject[] apps)
+    {
+
     }
 
     public static void setProperty(String key, String value) {

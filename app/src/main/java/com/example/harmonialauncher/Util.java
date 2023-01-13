@@ -10,6 +10,7 @@ import android.content.pm.PackageManager;
 import android.graphics.ColorMatrix;
 import android.graphics.ColorMatrixColorFilter;
 import android.graphics.Point;
+import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.provider.Settings;
@@ -263,6 +264,13 @@ public class Util {
         int[] location = new int[2];
         v.getLocationOnScreen(location);
         return new Point(location[0], location[1]);
+    }
+
+    public static Rect getViewBounds(View v)
+    {
+        Point viewLoc = Util.getLocationOnScreen(v);
+        Point viewBound = new Point(viewLoc.x + v.getWidth(), viewLoc.y + v.getHeight());
+        return new Rect(viewLoc.x, viewLoc.y, viewBound.x, viewBound.y);
     }
 
     public static Drawable convertToGreyscale(Drawable d)

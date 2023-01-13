@@ -1,8 +1,10 @@
 package com.example.harmonialauncher.HomeScreen;
 
 import android.app.Activity;
+import android.content.ClipData;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.graphics.Point;
 import android.graphics.Rect;
 import android.os.Build;
@@ -10,6 +12,7 @@ import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Display;
+import android.view.DragEvent;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -55,10 +58,6 @@ public class HomeScreenFragment extends HarmoniaFragment implements LockStatusCh
     GridView gv;
     private int numCols = 4;
 
-    //App Name Constants
-    private static final String DIALER = "Dialer";
-    private static final String MESSENGER = "Messenger";
-
     public HomeScreenFragment() {
         super(R.layout.app_grid_page);
     }
@@ -97,13 +96,9 @@ public class HomeScreenFragment extends HarmoniaFragment implements LockStatusCh
                 AppObject app = (AppObject) parent.getItemAtPosition(position);
                 Log.d(TAG, app.toString() + " CLICKED");
                 String pkg = app.getPackageName();
-                if (pkg != null) {
-                    if (ConfigManager.getMode().equalsIgnoreCase(ConfigManager.ELDERLY) && app.getName().equalsIgnoreCase(DIALER)) {
-                        Intent i = new Intent(Intent.ACTION_DIAL);
-                        startActivity(i);
-                    } else
-                        Util.openApp(CONTEXT, pkg);
-                } else if (app.getName().equalsIgnoreCase("Harmonia")) {
+                if (pkg != null)
+                    Util.openApp(CONTEXT, pkg);
+                else if (app.getName().equalsIgnoreCase("Harmonia")) {
                     //Use Fragment Transaction to open settings fragment in ViewPager
                     ViewPager2 vp = getActivity().findViewById(R.id.ViewPager);
                     vp.setCurrentItem(1, true);
@@ -111,9 +106,42 @@ public class HomeScreenFragment extends HarmoniaFragment implements LockStatusCh
             }
         });
 
+        /*gv.setOnDragListener(new View.OnDragListener() {
+            @Override
+            public boolean onDrag(View view, DragEvent dragEvent) {
+                switch (dragEvent.getAction()) {
+                    case DragEvent.ACTION_DRAG_STARTED:
+                        view.setVisibility(View.INVISIBLE);
+                        break;
+                    case DragEvent.ACTION_DRAG_ENTERED:
+                        break;
+                    case DragEvent.ACTION_DRAG_LOCATION:
+                        Point p = new Point((int) dragEvent.getX(), (int) dragEvent.getY());
+                        for (int i = 0; i < gv.getChildCount(); i++) {
+                            if (gv.getChildAt(i) != null) {
+                                Point viewLoc = Util.getLocationOnScreen(gv.getChildAt(i));
+                                Point viewBound = new Point(viewLoc.x + gv.getChildAt(i).getWidth(), viewLoc.y + gv.getChildAt(i).getHeight());
+                                Rect bounds = new Rect(viewLoc.x, viewLoc.y, viewBound.x, viewBound.y);
+                                if (bounds.contains(p.x, p.y)) {
+                                    ((AppGridAdapter) gv.getAdapter()).swap();
+                                }
+                            }
+                        }
+                        break;
+                }
+                return true;
+            }
+        });*/
+
         onScreen = true;
 
         return v;
+    }
+
+    public void onDestroy()
+    {
+        super.onDestroy();
+        ConfigManager.writeHomeScreenApps(((HomeScreenGridAdapter)gv.getAdapter()).getAppList());
     }
 
     public void onStatusChanged() {
@@ -143,6 +171,24 @@ public class HomeScreenFragment extends HarmoniaFragment implements LockStatusCh
             }
         }
         return false;
+    }
+
+    @Override
+    public boolean onLongPress(MotionEvent e) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            for (int i = 0; i < gv.getChildCount(); i++) {
+                if (gv.getChildAt(i) != null) {
+                    Rect bounds = Util.getViewBounds(gv.getChildAt(i));
+                    if (bounds.contains((int) e.getX(), (int) e.getY())) {
+                        ClipData data = ClipData.newPlainText("", "");
+                        View.DragShadowBuilder shadow = new View.DragShadowBuilder(gv.getChildAt(i));
+                        gv.startDragAndDrop(data, shadow, gv.getChildAt(i), 0);
+                        gv.getChildAt(i).setVisibility(View.INVISIBLE);
+                    }
+                }
+            }
+        }
+        return true;
     }
 
     //Methods for determining window size -----------------------------------------------------
