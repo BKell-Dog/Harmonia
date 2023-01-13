@@ -1,10 +1,14 @@
 package com.example.harmonialauncher.HomeScreen;
 
+import static com.example.harmonialauncher.MainActivity.THRESHOLD;
+
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.ClipData;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.graphics.Point;
 import android.graphics.Rect;
 import android.os.Build;
@@ -24,12 +28,16 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.core.view.GestureDetectorCompat;
 import androidx.fragment.app.Fragment;
 import androidx.viewpager2.widget.ViewPager2;
 
+import com.example.harmonialauncher.AppGridPage;
 import com.example.harmonialauncher.Drawer.DrawerGridAdapter;
 import com.example.harmonialauncher.GestureDetection.HarmoniaGestureDetector;
 import com.example.harmonialauncher.LockActivity.LockStatusChangeListener;
+import com.example.harmonialauncher.MainActivity;
 import com.example.harmonialauncher.R;
 import com.example.harmonialauncher.AppObject;
 import com.example.harmonialauncher.Config.ConfigManager;
@@ -50,62 +58,19 @@ generate the apps to display as well. It will manage the default and preset pack
 pressing of buttons and opening of apps. This screen is the home screen and launcher.
  */
 
-public class HomeScreenFragment extends HarmoniaFragment implements LockStatusChangeListener.LockStatusListener {
+public class HomeScreenFragment extends AppGridPage implements LockStatusChangeListener.LockStatusListener {
     private final static String TAG = "Home Screen Fragment";
-    private Context CONTEXT;
-    private boolean onScreen = false;
-
-    GridView gv;
-    private int numCols = 4;
 
     public HomeScreenFragment() {
         super(R.layout.app_grid_page);
     }
 
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        CONTEXT = getActivity();
 
-        HarmoniaGestureDetector.add(this);
-        LockStatusChangeListener.add(this);
+        adapter = new HomeScreenGridAdapter(CONTEXT, R.layout.app, Util.loadAllApps(CONTEXT));
     }
-
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        // Inflate layout for this fragment
-        View v = inflater.inflate(R.layout.app_grid_page, container, false);
-
-        //Populate Grid Layout in home_screen.xml with instances of app.xml
-        //Get grid view
-        gv = v.findViewById(R.id.app_page_grid);
-
-        //Set adapter, set element dimensions for proper scaling, and add a specific app for Harmonia Settings
-        HomeScreenGridAdapter ga = new HomeScreenGridAdapter(CONTEXT, R.layout.app, Util.loadAllApps(this));
-        AppObject HarmoniaSettings = new AppObject(null, "Harmonia", R.drawable.harmonia_icon, false);
-        ga.add(HarmoniaSettings);
-        setElementDimens(ga, numCols, v);
-
-        gv.setAdapter(ga);
-        gv.setNumColumns(numCols);
-        gv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                AppObject app = (AppObject) parent.getItemAtPosition(position);
-                Log.d(TAG, app.toString() + " CLICKED");
-                String pkg = app.getPackageName();
-                if (pkg != null)
-                    Util.openApp(CONTEXT, pkg);
-                else if (app.getName().equalsIgnoreCase("Harmonia")) {
-                    //Use Fragment Transaction to open settings fragment in ViewPager
-                    ViewPager2 vp = getActivity().findViewById(R.id.ViewPager);
-                    vp.setCurrentItem(1, true);
-                }
-            }
-        });
-
         /*gv.setOnDragListener(new View.OnDragListener() {
             @Override
             public boolean onDrag(View view, DragEvent dragEvent) {
@@ -133,73 +98,17 @@ public class HomeScreenFragment extends HarmoniaFragment implements LockStatusCh
             }
         });*/
 
-        onScreen = true;
-
-        return v;
-    }
-
-    public void onDestroy()
+    @Override
+    public boolean onFling(MotionEvent event1, MotionEvent event2, float velocityX, float velocityY)
     {
-        super.onDestroy();
-        ConfigManager.writeHomeScreenApps(((HomeScreenGridAdapter)gv.getAdapter()).getAppList());
-    }
+        float e1y = event1.getY(), e2y = event2.getY();
+        float e1x = event1.getX(), e2x = event2.getX();
+        float xTranslation = e2x - e1x, yTranslation = e2y - e1y;
 
-    public void onStatusChanged() {
-        gv.setAdapter(new HomeScreenGridAdapter(getContext(), R.layout.app, Util.loadAllApps(this)));
-    }
-
-    @Override
-    public boolean onSingleTapConfirmed(MotionEvent e) {
-        //Check if view is created
-        if (gv == null || !onScreen)
-            return false;
-
-        for (int i = 0; i < ((AppGridAdapter) gv.getAdapter()).getCount(); i++) {
-            View v = gv.getChildAt(i);
-            if (v != null) {
-                Log.d(TAG, "View is Null: " + (v == null) + " at position " + i);
-                Point coords = Util.getLocationOnScreen(v);
-                Rect bounds = new Rect(coords.x, coords.y, coords.x + v.getWidth(), coords.y + v.getHeight());
-                if (bounds.contains((int) e.getX(), (int) e.getY())) {
-                    AppGridAdapter a = (AppGridAdapter) gv.getAdapter();
-                    AppObject app = a.get(i);
-                    if (!LockManager.isLocked(app.getPackageName())) {         //Check that app is not locked
-                        Util.openApp(this.CONTEXT, app.getPackageName());
-                        return true;
-                    }
-                }
-            }
-        }
-        return false;
-    }
-
-    @Override
-    public boolean onLongPress(MotionEvent e) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            for (int i = 0; i < gv.getChildCount(); i++) {
-                if (gv.getChildAt(i) != null) {
-                    Rect bounds = Util.getViewBounds(gv.getChildAt(i));
-                    if (bounds.contains((int) e.getX(), (int) e.getY())) {
-                        ClipData data = ClipData.newPlainText("", "");
-                        View.DragShadowBuilder shadow = new View.DragShadowBuilder(gv.getChildAt(i));
-                        gv.startDragAndDrop(data, shadow, gv.getChildAt(i), 0);
-                        gv.getChildAt(i).setVisibility(View.INVISIBLE);
-                    }
-                }
-            }
-        }
+        if (Math.abs(yTranslation) > Math.abs(xTranslation)) //Fling more vertical than horizontal
+            //Vertical flings will move between home screen and app drawer, sent to the viewpager in MainActivity.
+            if (yTranslation < -THRESHOLD) //Upward fling
+                ((MainActivity)getActivity()).setPage(1);
         return true;
-    }
-
-    //Methods for determining window size -----------------------------------------------------
-    private void setElementDimens(AppGridAdapter g, int numCols, View parentView) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-            Rect bounds = ((Activity) getContext()).getWindowManager().getCurrentWindowMetrics().getBounds();
-            int windowHeight = bounds.height();
-            int windowWidth = bounds.width();
-            int adjustedHeight = windowHeight - Util.getNavigationBarSize(CONTEXT).y;
-
-            g.setElementDimen(adjustedHeight, windowWidth);
-        }
     }
 }

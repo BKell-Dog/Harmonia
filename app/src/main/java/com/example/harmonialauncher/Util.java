@@ -94,6 +94,15 @@ public class Util {
     public static ArrayList<AppObject> loadAllApps(Fragment f)
     {return loadAllApps(f.getActivity());}
 
+    public static ArrayList<AppObject> loadFirstTwentyApps(@NonNull Context c)
+    {
+        ArrayList<AppObject> allApps = loadAllApps(c);
+        ArrayList<AppObject> apps = new ArrayList<>();
+        for (int i = 0; i < 20 && i < allApps.size(); i++)
+            apps.add(allApps.get(i));
+        return apps;
+    }
+
     /** Method to load AppObjects which are specific to the functionality of
      * Harmonia. For example, Harmonia settings or Lock Manager.
      * @return ArrayList<AppObject>

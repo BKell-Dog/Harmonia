@@ -1,5 +1,6 @@
 package com.example.harmonialauncher.Drawer;
 
+import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -8,6 +9,8 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.core.view.GestureDetectorCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.viewpager2.widget.ViewPager2;
@@ -26,6 +29,7 @@ public class DrawerFragment extends HarmoniaFragment {
     private int numOfPages;
     public ViewPager2 vp = null;
 
+    private GestureDetectorCompat gd;
     public final int THRESHOLD = 100;
 
     public DrawerFragment() {
@@ -34,12 +38,16 @@ public class DrawerFragment extends HarmoniaFragment {
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         //Load all apps into Arraylist, then find how many drawer pages are needed.
         //Each page in the drawer will hold twenty apps at most, a 5x4 grid (rows x cols)
         numOfPages = (Util.loadAllApps(this).size() / 20) + 1;
+
+        gd = new GestureDetectorCompat(this.getActivity(), new HarmoniaGestureDetector());
         HarmoniaGestureDetector.add(this);
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.drawer_fragment, container, false);
         if (v == null)
@@ -58,7 +66,14 @@ public class DrawerFragment extends HarmoniaFragment {
             @Override
             public void onPageSelected(int position) {
                 super.onPageSelected(position);
-                ((DrawerPageAdapter)vp.getAdapter()).setPageOnScreen(position);
+                ((DrawerPageAdapter) vp.getAdapter()).setPageOnScreen(position);
+            }
+        });
+
+        vp.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+                return gd.onTouchEvent(motionEvent);
             }
         });
 
@@ -77,13 +92,13 @@ public class DrawerFragment extends HarmoniaFragment {
         return vp != null ? (HarmoniaFragment) ((DrawerPageAdapter) vp.getAdapter()).createFragment(vp.getCurrentItem()) : null;
     }
 
+    @Override
     public boolean onFling(MotionEvent event1, MotionEvent event2, float velocityX, float velocityY) {
         float e1y = event1.getY(), e2y = event2.getY();
         float e1x = event1.getX(), e2x = event2.getX();
         float xTranslation = e2x - e1x, yTranslation = e2y - e1y;
-        float greaterTranslation = yTranslation - xTranslation;
 
-        if (greaterTranslation < 0) //Fling more horizontal than vertical
+        if (Math.abs(xTranslation) > Math.abs(yTranslation)) //Fling more horizontal than vertical
         {
             //Horizontal flings will move between pages of the drawer, sent to the viewpager in DrawerFragment.
             if (xTranslation > THRESHOLD && getCurrentPageIndex() > 0) //Rightward fling
@@ -91,6 +106,16 @@ public class DrawerFragment extends HarmoniaFragment {
             else if (xTranslation < -THRESHOLD && getCurrentPageIndex() < getLastPageIndex()) //Leftward fling
                 vp.setCurrentItem(getCurrentPageIndex() + 1);
         }
+        else if (Math.abs(yTranslation) > Math.abs(xTranslation)) //Fling more vertical than horizontal
+            //Vertical flings will move between home screen and app drawer, sent to the viewpager in MainActivity.
+            if (yTranslation > THRESHOLD) //Downward fling
+            {
+                MainActivity main = (MainActivity) getActivity();
+                if (main != null)
+                    main.setPage(0);
+                else
+                    Log.d(TAG, "Main Activity Reference in Null");
+            }
         return true;
     }
 
@@ -108,6 +133,7 @@ public class DrawerFragment extends HarmoniaFragment {
             }
         }
 
+        @NonNull
         @Override
         public Fragment createFragment(int position) {
             try {
@@ -133,7 +159,7 @@ public class DrawerFragment extends HarmoniaFragment {
     public String toString() {
         if (vp == null)
             return "";
-        String s = "";
+        String s = "Drawer Fragment. Children: ";
         for (int i = 0; i < vp.getAdapter().getItemCount(); i++) {
             s += ((DrawerPageAdapter) this.vp.getAdapter()).getFragment(i).toString() + "\n";
         }

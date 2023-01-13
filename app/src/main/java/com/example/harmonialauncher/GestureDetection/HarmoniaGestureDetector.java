@@ -7,8 +7,11 @@ import android.view.MotionEvent;
 import java.util.ArrayList;
 
 public class HarmoniaGestureDetector extends GestureDetector.SimpleOnGestureListener {
-    private static final String TAG = "Harmonia Gesture Detector";
+    private static final String TAG = "Harmonia Gest. Detector";
     private static ArrayList<Gesturable> classes = new ArrayList<>();
+
+    //Specific variables
+    public static final int THRESHOLD = 100;
 
     @Override
     public boolean onDown(MotionEvent event) {

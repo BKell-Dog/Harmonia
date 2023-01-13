@@ -44,19 +44,15 @@ public class MainActivity extends HarmoniaActivity {
 
     //Gesture Detection
     private GestureDetectorCompat gd;
-    public final int THRESHOLD = 100;
+    public static final int THRESHOLD = HarmoniaGestureDetector.THRESHOLD;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        HarmoniaGestureDetector gest = new HarmoniaGestureDetector();
-        gd = new GestureDetectorCompat(this, gest);
-        gest.add(this);
-
         vp = findViewById(R.id.ViewPager);
 
-        MainPageAdapter pa = new MainPageAdapter(this);
+        final MainPageAdapter pa = new MainPageAdapter(this);
         vp.setAdapter(pa);
 
         //Set page adapter to scroll vertically between home screen and drawer
@@ -67,51 +63,37 @@ public class MainActivity extends HarmoniaActivity {
         vp.setVisibility(View.VISIBLE);
 
         instance = this.getApplication();
+
+        vp.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
+            @Override
+            public void onPageSelected(int position) {
+                super.onPageSelected(position);
+                for (int i = 0; i < pa.getItemCount(); i++)
+                    if (i == position)
+                        ((HarmoniaFragment)pa.getFragment(i)).setOnScreen();
+                    else
+                        ((HarmoniaFragment)pa.getFragment(i)).setOffScreen();
+            }
+        });
+    }
+
+    public void setPage(int position)
+    {
+        if (position >= 0 && position < vp.getAdapter().getItemCount())
+        {
+            vp.setCurrentItem(position);
+        }
     }
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        this.gd.onTouchEvent(event);
+        //gd.onTouchEvent(event);
         return super.onTouchEvent(event);
     }
-
-    @Override
-    public boolean dispatchTouchEvent(MotionEvent e) {
-        return onTouchEvent(e);
-    }
-
 
     public static Context getContext() {
         return instance.getApplicationContext();
     }
-
-
-    @Override
-    public boolean onDown(MotionEvent event) {
-        return true;
-    }
-
-    @Override
-    public boolean onFling(MotionEvent event1, MotionEvent event2, float velocityX, float velocityY) {
-        float e1y = event1.getY(), e2y = event2.getY();
-        float e1x = event1.getX(), e2x = event2.getX();
-        float xTranslation = e2x - e1x, yTranslation = e2y - e1y;
-        float greaterTranslation = Math.abs(yTranslation - xTranslation);
-
-        if (greaterTranslation > 0) //Fling more vertical than horizontal
-        {
-            //Vertical flings will move between home screen and app drawer, sent to the viewpager in MainActivity.
-            if (yTranslation < -THRESHOLD) //Upward fling
-                vp.setCurrentItem(vp.getAdapter().getItemCount() - 1);
-            else if (yTranslation > THRESHOLD) //Downward fling
-                vp.setCurrentItem(vp.getCurrentItem() - 1);
-        }
-
-        Log.d(TAG, "onFling: " + event1.toString() + event2.toString());
-
-        return true;
-    }
-
 
     public class MainPageAdapter extends PageAdapter {
         public final String HOMESCREEN = "Home Screen", DRAWER = "Drawer";

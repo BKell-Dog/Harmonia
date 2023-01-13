@@ -20,11 +20,12 @@ import com.example.harmonialauncher.AppGridAdapter;
 import com.example.harmonialauncher.AppObject;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public class HomeScreenGridAdapter extends AppGridAdapter {
 
     private final static String TAG = "Grid Adapter";
-    public final int HOMESCREENAPPNUM = 15;
+    public static final int HOMESCREENAPPNUM = 15;
     private AppObject[] apps = new AppObject[HOMESCREENAPPNUM];
     private Context CONTEXT;
     private int layout_id;
@@ -87,6 +88,9 @@ public class HomeScreenGridAdapter extends AppGridAdapter {
             return null;
     }
 
-    public AppObject[] getAppList()
+    public ArrayList<AppObject> getAppList()
+    {return new ArrayList<>(Arrays.asList(apps));}
+
+    public AppObject[] getAppArray()
     {return apps;}
 }

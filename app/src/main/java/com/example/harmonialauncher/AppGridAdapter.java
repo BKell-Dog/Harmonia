@@ -7,6 +7,7 @@ import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
@@ -61,9 +62,9 @@ public class AppGridAdapter extends ArrayAdapter<AppObject> {
         //Set element dimens is called so that in case the app list had been refreshed and all dimensions
         // have been lost, we can reset them here. But it is only called if the apps dimensions are each
         // equal to -1.
-        Point p = getElementDimens();
-        if (p.y == -1 || p.x == -1)
-            setElementDimen(parent.getHeight(), parent.getWidth());
+        //Point p = getElementDimens();
+        //if (p.y == -1 || p.x == -1) //I commented these out because for some reason HScreen icons kept shrinking
+        setElementDimen(parent.getHeight(), parent.getWidth());
 
         //Get Icon and Label and set their values to the specific app
         TextView label = gridItemView.findViewById(R.id.label);
@@ -95,6 +96,28 @@ public class AppGridAdapter extends ArrayAdapter<AppObject> {
                 icon.setImageDrawable(Util.convertToGreyscale(app.getImage()));
         }
 
+        //Setting child views to not respond to touch events
+        if (true) {
+            gridItemView.setOnTouchListener(new View.OnTouchListener() {
+                @Override
+                public boolean onTouch(View view, MotionEvent motionEvent) {
+                    return false;
+                }
+            });
+            icon.setOnTouchListener(new View.OnTouchListener() {
+                @Override
+                public boolean onTouch(View view, MotionEvent motionEvent) {
+                    return false;
+                }
+            });
+            label.setOnTouchListener(new View.OnTouchListener() {
+                @Override
+                public boolean onTouch(View view, MotionEvent motionEvent) {
+                    return false;
+                }
+            });
+        }
+
         return gridItemView;
     }
 
@@ -113,6 +136,10 @@ public class AppGridAdapter extends ArrayAdapter<AppObject> {
             return null;
     }
 
+    public ArrayList<AppObject> getAppList() {
+        return apps;
+    }
+
     //This method resizes each GridView element size to fit the screen, and therefore, the gridView
     //won't scroll. This method must be called before Adapter.getView() to be effective.
     public void setElementDimen(int screenHeight, int screenWidth) {
@@ -129,35 +156,43 @@ public class AppGridAdapter extends ArrayAdapter<AppObject> {
         this.verticalBuffer = (int) (elementHeight * 0.1);
     }
 
-    public Point getElementDimens()
-    {
+    public Point getElementDimens() {
         return new Point(elementWidth, elementHeight);
     }
 
-    public int getMode()
-    {return mode;}
+    public int getMode() {
+        return mode;
+    }
 
-    public void setMode(int mode)
-    {
+    public void setMode(int mode) {
         if (mode == 0 || mode == 1)
             this.mode = mode;
         else
             Log.d(TAG, "Mode out of bounds. Possibly update method setMode to accommodate new modes.");
     }
 
-    public ArrayList<String> getLockedPacks()
-    {return lockedPacks;}
+    public ArrayList<String> getLockedPacks() {
+        return lockedPacks;
+    }
 
-    public boolean inLockedList(String packageName)
-    {
+    public boolean inLockedList(String packageName) {
         for (String pack : lockedPacks)
             if (pack.equalsIgnoreCase(packageName))
                 return true;
         return false;
     }
 
-    public String toString()
-    {
+    public AppGridAdapter copy() {
+        try {
+            return (AppGridAdapter) this.clone();
+        } catch (CloneNotSupportedException e) {
+            e.printStackTrace();
+            return null;
+        }
+
+    }
+
+    public String toString() {
         String s = "";
         for (AppObject a : apps)
             s += a.toString() + "\n";

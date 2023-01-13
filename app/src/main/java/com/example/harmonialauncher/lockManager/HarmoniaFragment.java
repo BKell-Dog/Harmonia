@@ -5,9 +5,6 @@ import android.view.MotionEvent;
 import androidx.fragment.app.Fragment;
 
 import com.example.harmonialauncher.GestureDetection.Gesturable;
-import com.example.harmonialauncher.lockManager.Lockable;
-
-import java.util.HashMap;
 
 public class HarmoniaFragment extends Fragment implements Lockable, Gesturable {
 
@@ -38,6 +35,12 @@ public class HarmoniaFragment extends Fragment implements Lockable, Gesturable {
     public boolean onLongPress(MotionEvent event) {return false;}
 
     public boolean onSingleTapConfirmed(MotionEvent event) {return false;}
+
+    public void setOnScreen()
+    {onScreen = true;}
+
+    public void setOffScreen()
+    {onScreen = false;}
 
     public boolean isOnScreen()
     {return onScreen;}
