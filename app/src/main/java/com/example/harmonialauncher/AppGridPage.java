@@ -1,5 +1,6 @@
 package com.example.harmonialauncher;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.ClipData;
 import android.content.Context;
@@ -54,6 +55,7 @@ public class AppGridPage extends HarmoniaFragment implements LockStatusChangeLis
         LockStatusChangeListener.add(this);
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate layout for this fragment
@@ -86,7 +88,7 @@ public class AppGridPage extends HarmoniaFragment implements LockStatusChangeLis
     public void onDestroy()
     {
         super.onDestroy();
-        ConfigManager.writeAppOrderToFile(this.getActivity(), adapter.getAppList());
+        ConfigManager.writeHomeAppsToFile(this.getActivity(), adapter.getAppList());
     }
 
     @Override

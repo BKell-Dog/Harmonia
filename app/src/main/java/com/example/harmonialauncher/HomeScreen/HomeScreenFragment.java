@@ -69,7 +69,15 @@ public class HomeScreenFragment extends AppGridPage implements LockStatusChangeL
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        adapter = new HomeScreenGridAdapter(CONTEXT, R.layout.app, Util.loadAllApps(CONTEXT));
+        adapter = new HomeScreenGridAdapter(CONTEXT, R.layout.app, ConfigManager.readHomeAppOrderFromFile(this.getActivity()));
+    }
+
+    @Override
+    public void onDestroy()
+    {
+        super.onDestroy();
+
+        ConfigManager.writeHomeAppsToFile(this.getActivity(), adapter.getAppList());
     }
         /*gv.setOnDragListener(new View.OnDragListener() {
             @Override

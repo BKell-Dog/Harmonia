@@ -7,17 +7,23 @@ import androidx.annotation.NonNull;
 
 import com.example.harmonialauncher.AppObject;
 import com.example.harmonialauncher.HomeScreen.HomeScreenGridAdapter;
+import com.example.harmonialauncher.Util;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
+import java.util.Scanner;
 
 public class ConfigManager {
     private static final String TAG = "Config Manager";
@@ -25,80 +31,164 @@ public class ConfigManager {
     //Variables for writing to file
     private static final String fileName = "app_config";
 
+    //Category Variables
+    public final static String HOMESCREENAPPS = "Home Screen Apps";
+
     //Variables for App Screen organization and ordering of app objects
     private AppObject[] homeScreenApps = new AppObject[HomeScreenGridAdapter.HOMESCREENAPPNUM];
     private ArrayList<AppObject> drawerApps = new ArrayList<>();
 
     /**
      * This method will write the drawer page app order to a file.
+     *
      * @param apps Arraylist of all drawer pages
      */
-    public static void writeAppOrderToFile(@NonNull Context context, @NonNull ArrayList<AppObject> apps)
-    {
-        Log.d(TAG, "REACHED WRITE TO FILE");
+    public static void writeHomeAppsToFile(@NonNull Context context, @NonNull ArrayList<AppObject> apps) {
         if (apps.size() == 0) {
             Log.d(TAG, "ArrayList is Empty!");
             return;
         }
 
-        String data = "";
-        for (AppObject a : apps)
-        {
-            data += a.getPackageName() + ";";
+        String data = "$" + HOMESCREENAPPS + "#";
+        for (AppObject a : apps) {
+            data += a.getPackageName() + ";"; //TODO: handle what to do in case app is null or signifies an empty space on screen.
         }
 
-        Log.d(TAG, "WRITE DATA: " + data);
 
+        //If file exists, extract text from it, parse data to find HOME SCREEN category, and insert new data.
+        if ((new File(fileName)).exists()) {
 
-        if ((new File(fileName)).exists() && false)
-        {
-            //File exists, extract data first and insert this data in correct position.
-        }
-        else
-        {
-            Log.d(TAG, "REACHED INNER TRY BLOCK");
-            //File does not exist, create new file from scratch
+            //Step 1: Iterate through data in config file
+            FileInputStream fis = null;
             try {
-                FileOutputStream fileOut = context.openFileOutput(fileName, Context.MODE_PRIVATE);
-                OutputStreamWriter outputWriter = new OutputStreamWriter(fileOut);
-                outputWriter.write(data);
-                outputWriter.close();
-                Log.d(TAG, "FILE WRITTEN SUCCESSFULLY");
+                fis = context.openFileInput(fileName);
+                InputStreamReader isr = new InputStreamReader(fis);
+                BufferedReader br = new BufferedReader(isr);
+                String text;
+                while ((text = br.readLine()) != null) {
+                    Scanner scan = new Scanner(text);
+                    scan.useDelimiter("$");
+                    StringBuilder newText = new StringBuilder();
+                    while (scan.hasNext())
+                    {
+                        Scanner scan2 = new Scanner(scan.next());
+                        scan2.useDelimiter("#");
+                        if (scan2.hasNext())
+                        {
+                            //We have now isolated a category title and its data.
+                            //Step 2: Fill category HOMESCREENAPPS with new data. Otherwise, pass on.
+                            String category = scan2.next();
+                            String oldData = scan2.next();
+                            if (category.equalsIgnoreCase(HOMESCREENAPPS)) {
+                                newText.append("$" + HOMESCREENAPPS + "#").append(data);
+                                break;
+                            }
+                            else {
+                                if (oldData != null)
+                                    newText.append("$").append(category).append("#").append(oldData);
+                            }
+                        }
+                    }
+                    //Step 3: Replace new data into config file later in method
+                    data = newText.toString();
+                }
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
+
+        //Print data into file
+        FileOutputStream fileOut = null;
+        try {
+            fileOut = context.openFileOutput(fileName, Context.MODE_PRIVATE);
+            OutputStreamWriter outputWriter = new OutputStreamWriter(fileOut);
+            outputWriter.write(data);
+            outputWriter.close();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            if (fileOut != null)
+                try {
+                    fileOut.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+        }
     }
 
     /**
-     * Thi smethod will write the home screen page app order to a file.
+     * This method will write the home screen page app order to a file.
+     *
      * @param apps Array of all homescreen apps.
      */
-    public static void writeAppOrderToFile(AppObject[] apps)
-    {
+    public static void writeAppOrderToFile(AppObject[] apps) {
 
     }
 
     /**
-     * This method will read drawer page app order from a file and return an arraylist of app
+     * This method will read Home page app order from a file and return an arraylist of app
      * objects in that order.
+     *
      * @return Arraylist of AppObjects in order of appearance in file.
      */
-    public static ArrayList<AppObject> readAppOrderFromFile()
-    {
-        return null;
+    public static ArrayList<AppObject> readHomeAppOrderFromFile(Context context) {
+        ArrayList<AppObject> appList = new ArrayList<>();
+
+        FileInputStream fis = null;
+        StringBuilder sb = new StringBuilder();
+
+        try {
+            fis = context.openFileInput(fileName);
+            InputStreamReader isr = new InputStreamReader(fis);
+            BufferedReader br = new BufferedReader(isr);
+            String text;
+            while ((text = br.readLine()) != null) {
+                sb.append(text);
+                Log.d(TAG, text);
+
+                // Remove semicolon from end of string
+                if (text.charAt(text.length() - 1) == ';')
+                    text = text.substring(0, text.length() - 1);
+
+                if (text.equalsIgnoreCase("") || text.equalsIgnoreCase("null") || text.equalsIgnoreCase("empty"))
+                    appList.add(null);
+                else
+                    appList.add(Util.findAppByPackageName(text, context));
+            }
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            if (fis != null)
+            try
+            {
+                fis.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+        return appList;
     }
 
     /**
      * This method will read home screen page app order from a file and return an array of app objects
      * in that order.
+     *
      * @return Array of AppObjects in order
      */
-    public static AppObject[] readAppOrderFromFiles()
-    {
+    public static AppObject[] readAppOrderFromFiles() {
         return null;
+    }
+
+
+    private void writeToFile(String categoryName, String data) {
+
     }
 
 }
