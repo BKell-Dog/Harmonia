@@ -7,7 +7,7 @@ import androidx.appcompat.content.res.AppCompatResources;
 import com.example.harmonialauncher.lockManager.Lockable;
 
 public class AppObject implements Lockable {
-    private String name, packageName;
+    private String name, packageName; //business stuff
     private Drawable image = null;
     private Boolean isAppInDrawer;
     private int imageId;
