@@ -1,7 +1,6 @@
-package com.example.harmonialauncher;
+package com.example.harmonialauncher.Adapters;
 
 import android.content.Context;
-import android.graphics.Color;
 import android.graphics.Point;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
@@ -17,28 +16,26 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.constraintlayout.widget.ConstraintLayout;
 
+import com.example.harmonialauncher.Helpers.AppObject;
 import com.example.harmonialauncher.R;
-import com.example.harmonialauncher.lockManager.LockManager;
+import com.example.harmonialauncher.Utils.Util;
+import com.example.harmonialauncher.Utils.LockManager;
 
 import java.util.ArrayList;
 
 public class AppGridAdapter extends ArrayAdapter<AppObject> {
 
     private final static String TAG = "Grid Adapter";
+    public final int INVISIBLE = 0, GREYSCALE = 1; //Variables for drawing locked apps
+    private int mode = GREYSCALE; //Change this variable to change disappearance mode
+    protected final int COLS = 4, ROWS = 5;
     protected ArrayList<AppObject> apps;
     protected Context CONTEXT;
     protected int layout_id;
-
-    protected final int COLS = 4, ROWS = 5;
     protected int horizontalBuffer = 300, verticalBuffer = 300;
     protected int pageHorizontalBuffer = 0, pageVerticalBuffer = 120;
     protected int elementHeight = -1, elementWidth = -1;
-
-    //Variables for drawing locked apps
-    public final int INVISIBLE = 0, GREYSCALE = 1;
-    private int mode = GREYSCALE; //Change this variable to change disappearance mode
     private ArrayList<String> lockedPacks = new ArrayList<String>();
 
     public AppGridAdapter(@NonNull Context context, int resource, ArrayList<AppObject> appList) {
@@ -192,6 +189,7 @@ public class AppGridAdapter extends ArrayAdapter<AppObject> {
 
     }
 
+    @NonNull
     public String toString() {
         String s = "";
         for (AppObject a : apps)

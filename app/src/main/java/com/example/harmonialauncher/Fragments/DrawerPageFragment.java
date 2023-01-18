@@ -1,37 +1,14 @@
-package com.example.harmonialauncher.Drawer;
+package com.example.harmonialauncher.Fragments;
 
-import android.app.Activity;
-import android.content.Context;
-import android.content.Intent;
-import android.graphics.Point;
-import android.graphics.Rect;
-import android.os.Build;
 import android.os.Bundle;
-import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.MotionEvent;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.GridLayout;
-import android.widget.GridView;
-import android.widget.LinearLayout;
-import android.widget.TextView;
 
-import androidx.constraintlayout.widget.ConstraintLayout;
-import androidx.core.view.GestureDetectorCompat;
-import androidx.viewpager2.widget.ViewPager2;
+import androidx.annotation.NonNull;
 
-import com.example.harmonialauncher.AppGridAdapter;
-import com.example.harmonialauncher.AppGridPage;
-import com.example.harmonialauncher.GestureDetection.HarmoniaGestureDetector;
-import com.example.harmonialauncher.LockActivity.LockStatusChangeListener;
+import com.example.harmonialauncher.Helpers.AppObject;
+import com.example.harmonialauncher.Adapters.DrawerGridAdapter;
+import com.example.harmonialauncher.Utils.LockStatusChangeListener;
 import com.example.harmonialauncher.R;
-import com.example.harmonialauncher.AppObject;
-import com.example.harmonialauncher.Config.ConfigManager;
-import com.example.harmonialauncher.Util;
-import com.example.harmonialauncher.lockManager.HarmoniaFragment;
-import com.example.harmonialauncher.lockManager.LockManager;
+import com.example.harmonialauncher.Utils.Util;
 
 import java.util.ArrayList;
 
@@ -56,8 +33,7 @@ public class DrawerPageFragment extends AppGridPage implements LockStatusChangeL
         adapter = new DrawerGridAdapter(CONTEXT, R.layout.app, getAppList());
     }
 
-    private ArrayList<AppObject> getAppList()
-    {
+    private ArrayList<AppObject> getAppList() {
         ArrayList<AppObject> appList = new ArrayList<AppObject>();
         ArrayList<AppObject> allApps = Util.loadAllApps(this);
         for (int k = pageNum * 20; k < (pageNum * 20) + 20; k++)
@@ -71,6 +47,7 @@ public class DrawerPageFragment extends AppGridPage implements LockStatusChangeL
         return appList;
     }
 
+    @NonNull
     public String toString() {
         return "Drawer Page Fragment #" + pageNum;
     }

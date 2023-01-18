@@ -1,4 +1,4 @@
-package com.example.harmonialauncher.GestureDetection;
+package com.example.harmonialauncher.Interfaces;
 
 import android.view.MotionEvent;
 

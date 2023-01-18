@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.provider.Settings;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,8 +16,7 @@ import androidx.fragment.app.Fragment;
 import androidx.viewpager2.widget.ViewPager2;
 
 import com.example.harmonialauncher.R;
-import com.example.harmonialauncher.*;
-import com.example.harmonialauncher.lockManager.LockManager;
+import com.example.harmonialauncher.Utils.LockManager;
 import com.example.harmonialauncher.lockManager.LockScreen;
 
 import java.util.ArrayList;
@@ -26,11 +24,10 @@ import java.util.ArrayList;
 public class SettingsHomeFragment extends Fragment {
 
     private final static String TAG = "Settings Home Fragment";
-    private Context CONTEXT;
-
     private final String setLauncher = "Set Launcher",
             setWhitelist = "Set Whitelist",
             exitHarmonia = "Exit Harmonia";
+    private Context CONTEXT;
 
     public SettingsHomeFragment() {
         super(R.layout.settings_screen);

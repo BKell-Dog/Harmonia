@@ -1,42 +1,27 @@
-package com.example.harmonialauncher.LockActivity;
+package com.example.harmonialauncher.Activities;
 
-import android.app.ActionBar;
 import android.app.Dialog;
 import android.content.Context;
-import android.content.DialogInterface;
-import android.graphics.BitmapFactory;
-import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.CountDownTimer;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.Button;
-import android.widget.CheckBox;
-import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.NumberPicker;
-import android.widget.PopupWindow;
-import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
-import android.widget.Spinner;
 import android.widget.TextView;
 
 import androidx.appcompat.widget.LinearLayoutCompat;
-import androidx.constraintlayout.widget.ConstraintLayout;
-import androidx.recyclerview.widget.LinearLayoutManager;
 
-import com.example.harmonialauncher.AppObject;
-import com.example.harmonialauncher.MainActivity;
+import com.example.harmonialauncher.Helpers.AppObject;
+import com.example.harmonialauncher.Utils.LockStatusChangeListener;
 import com.example.harmonialauncher.R;
-import com.example.harmonialauncher.Util;
-import com.example.harmonialauncher.lockManager.HarmoniaActivity;
-import com.example.harmonialauncher.lockManager.LockManager;
+import com.example.harmonialauncher.Utils.Util;
+import com.example.harmonialauncher.Utils.LockManager;
 
 import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
@@ -44,11 +29,11 @@ import java.util.concurrent.TimeUnit;
 /**
  * This class will display a list of all apps and prompt the user to lock any of them for an amount
  * of time. Each item in this scrollview will consist of the following.
- *
- *     ____________________________________________________
- *    | App Icon | App Name | App Lock Timer | Edit Button|
- *    |          |          |                |            |
- *    |  ...     |   ...    |      ...       |  ...       |
+ * <p>
+ * ____________________________________________________
+ * | App Icon | App Name | App Lock Timer | Edit Button|
+ * |          |          |                |            |
+ * |  ...     |   ...    |      ...       |  ...       |
  */
 
 //TODO: implement the above schema
@@ -59,8 +44,7 @@ public class LockActivity extends HarmoniaActivity {
     private Context context = this;
 
     @Override
-    public void onCreate(Bundle savedInstanceState)
-    {
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.lock_activity);
 
@@ -69,8 +53,7 @@ public class LockActivity extends HarmoniaActivity {
         //At the bottom of the LinearLayout is a button which applies lock times to LockManager.
         LinearLayout ll = (LinearLayout) findViewById(R.id.lock_activity_linearlayout);
         ArrayList<AppObject> apps = Util.loadAllApps(this);
-        for (AppObject a : apps)
-        {
+        for (AppObject a : apps) {
             LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             View v = inflater.inflate(R.layout.list_item, null);
             TextView text = (TextView) v.findViewById(R.id.app_name);
@@ -125,7 +108,7 @@ public class LockActivity extends HarmoniaActivity {
                     String appName = null;
                     for (int i = 0; i < parent.getChildCount(); i++) {
                         if (parent.getChildAt(i).getId() == R.id.app_name_layout) {
-                            appName = ((TextView)((RelativeLayout) parent.getChildAt(i)).getChildAt(0)).getText().toString();
+                            appName = ((TextView) ((RelativeLayout) parent.getChildAt(i)).getChildAt(0)).getText().toString();
                             //This line shows a TextView within a RelativeLayout, which is wihtin the same LinearLayoutCompat at the
                             //RelativeLayout which holds our CheckBox. We extract the app name from that TextView.
                         }
@@ -162,8 +145,7 @@ public class LockActivity extends HarmoniaActivity {
         }
     }
 
-    public void onDestroy()
-    {
+    public void onDestroy() {
         super.onDestroy();
         LockStatusChangeListener.onStatusChanged();
     }
@@ -171,8 +153,7 @@ public class LockActivity extends HarmoniaActivity {
     /**
      * Method to properly format timer text.
      */
-    private void setTimerText(TextView timer, int hour, int minute)
-    {
+    private void setTimerText(TextView timer, int hour, int minute) {
         String h = "", m = "";
         if (hour < 10)
             h = "0" + hour;

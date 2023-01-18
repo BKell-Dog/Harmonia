@@ -5,8 +5,6 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
 
-import com.example.harmonialauncher.Settings.*;
-
 import java.util.ArrayList;
 
 /*
@@ -17,11 +15,10 @@ ViewPager2 which switches between individual settings, handled here.
 public class SettingsPageAdapter extends FragmentStateAdapter {
 
     private static final String TAG = "Settings Page Adapter";
-    private ArrayList<Fragment> fragments = new ArrayList<Fragment>();
-
-    public ArrayList<String> nameIndex = new ArrayList<String>();
     public final String SETTINGSHOME = "Settings Home",
             WHITELIST = "Whitelist";
+    public ArrayList<String> nameIndex = new ArrayList<String>();
+    private ArrayList<Fragment> fragments = new ArrayList<Fragment>();
 
     public SettingsPageAdapter(@NonNull FragmentActivity fragmentActivity) {
         super(fragmentActivity);

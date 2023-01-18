@@ -9,8 +9,10 @@ import android.widget.PopupWindow;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.example.harmonialauncher.Interfaces.Lockable;
 import com.example.harmonialauncher.R;
-import com.example.harmonialauncher.Util;
+import com.example.harmonialauncher.Utils.LockManager;
+import com.example.harmonialauncher.Utils.Util;
 
 public class LockScreen {
 

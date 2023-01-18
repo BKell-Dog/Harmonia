@@ -8,19 +8,12 @@ import android.content.pm.ResolveInfo;
 import android.os.Build;
 import android.provider.MediaStore;
 import android.provider.Telephony;
-import android.util.Log;
-import android.widget.Toast;
-
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class PackageLoader {
     private final static String TAG = "package Loader";
-    //TODO: Fix or generalize filepath to not involve my personal username
-    private final String filePath = "C:/Users/nothi/AndroidStudioProjects/HarmoniaLauncher/app/src/main/java/com/example/harmonialauncher/package_config";
-    private Context CONTEXT;
-
     //Hard-coded preset packages for common android environments
     private final static ArrayList<String> presetDialer = new ArrayList<String>();
     private final static ArrayList<String> presetSMS = new ArrayList<String>();
@@ -31,6 +24,9 @@ public class PackageLoader {
     private final static ArrayList<String> presetSettings = new ArrayList<String>();
     private final static ArrayList<String> presetFiles = new ArrayList<String>();
     private final static ArrayList<String> presetCalendar = new ArrayList<String>();
+    //TODO: Fix or generalize filepath to not involve my personal username
+    private final String filePath = "C:/Users/nothi/AndroidStudioProjects/HarmoniaLauncher/app/src/main/java/com/example/harmonialauncher/package_config";
+    private Context CONTEXT;
 
     public PackageLoader(Context context) {
         CONTEXT = context;

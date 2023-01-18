@@ -11,9 +11,9 @@ import android.widget.ListView;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.viewpager2.widget.ViewPager2;
 
-import com.example.harmonialauncher.Util;
-import com.example.harmonialauncher.lockManager.HarmoniaFragment;
 import com.example.harmonialauncher.R;
+import com.example.harmonialauncher.Utils.Util;
+import com.example.harmonialauncher.Fragments.HarmoniaFragment;
 
 public class WhitelistFragment extends HarmoniaFragment {
 

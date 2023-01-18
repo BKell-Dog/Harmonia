@@ -1,4 +1,4 @@
-package com.example.harmonialauncher;
+package com.example.harmonialauncher.Fragments;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -17,25 +17,23 @@ import android.widget.GridView;
 
 import androidx.core.view.GestureDetectorCompat;
 
-import com.example.harmonialauncher.Config.ConfigManager;
-import com.example.harmonialauncher.Drawer.DrawerGridAdapter;
-import com.example.harmonialauncher.GestureDetection.HarmoniaGestureDetector;
-import com.example.harmonialauncher.HomeScreen.HomeScreenGridAdapter;
-import com.example.harmonialauncher.LockActivity.LockStatusChangeListener;
-import com.example.harmonialauncher.lockManager.HarmoniaFragment;
-import com.example.harmonialauncher.lockManager.LockManager;
+import com.example.harmonialauncher.Adapters.AppGridAdapter;
+import com.example.harmonialauncher.Helpers.AppObject;
+import com.example.harmonialauncher.Utils.ConfigManager;
+import com.example.harmonialauncher.Utils.HarmoniaGestureDetector;
+import com.example.harmonialauncher.Utils.LockStatusChangeListener;
+import com.example.harmonialauncher.R;
+import com.example.harmonialauncher.Utils.Util;
+import com.example.harmonialauncher.Utils.LockManager;
 
 public class AppGridPage extends HarmoniaFragment implements LockStatusChangeListener.LockStatusListener {
 
+    public static final int NUM_COLS = 4;
     private static final String TAG = "App Grid Page";
-
     protected Context CONTEXT;
-
     //Drawing Grid
     protected GridView gv;
     protected AppGridAdapter adapter;
-    public static final int NUM_COLS = 4;
-
     //Gesture Detection
     protected GestureDetectorCompat gd;
 
@@ -65,8 +63,7 @@ public class AppGridPage extends HarmoniaFragment implements LockStatusChangeLis
         //Get grid view
         gv = v.findViewById(R.id.app_page_grid);
 
-        if (adapter == null && getActivity() != null)
-        {
+        if (adapter == null && getActivity() != null) {
             adapter = new AppGridAdapter(CONTEXT, R.layout.app, Util.loadFirstTwentyApps(this.getActivity()));
         }
 
@@ -85,10 +82,10 @@ public class AppGridPage extends HarmoniaFragment implements LockStatusChangeLis
         return v;
     }
 
-    public void onDestroy()
-    {
+    public void onDestroy() {
         super.onDestroy();
-        ConfigManager.writeHomeAppsToFile(this.getActivity(), adapter.getAppList());
+        if (getActivity() != null)
+            ConfigManager.writeHomeAppsToFile(getActivity(), adapter.getAppList());
     }
 
     @Override

@@ -1,17 +1,31 @@
-package com.example.harmonialauncher.GestureDetection;
+package com.example.harmonialauncher.Utils;
 
-import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
+
+import com.example.harmonialauncher.Interfaces.Gesturable;
 
 import java.util.ArrayList;
 
 public class HarmoniaGestureDetector extends GestureDetector.SimpleOnGestureListener {
+    //Specific variables
+    public static final int THRESHOLD = 100;
     private static final String TAG = "Harmonia Gest. Detector";
     private static ArrayList<Gesturable> classes = new ArrayList<>();
 
-    //Specific variables
-    public static final int THRESHOLD = 100;
+    public static void add(Gesturable g) {
+        if (!classes.contains(g))
+            classes.add(g);
+    }
+
+    public static void remove(Gesturable g) {
+        if (classes.contains(g))
+            classes.remove(g);
+    }
+
+    public static boolean contains(Gesturable g) {
+        return classes.contains(g);
+    }
 
     @Override
     public boolean onDown(MotionEvent event) {
@@ -36,20 +50,5 @@ public class HarmoniaGestureDetector extends GestureDetector.SimpleOnGestureList
                 g.onSingleTapConfirmed(event);
         return true;
     }
-
-    public static void add(Gesturable g)
-    {
-        if (!classes.contains(g))
-            classes.add(g);
-    }
-
-    public static void remove(Gesturable g)
-    {
-        if (classes.contains(g))
-            classes.remove(g);
-    }
-
-    public static boolean contains(Gesturable g)
-    {return classes.contains(g);}
 }
 

@@ -1,34 +1,23 @@
 package com.example.harmonialauncher;
 
+import android.app.Application;
+import android.content.Context;
+import android.os.Bundle;
+import android.view.MotionEvent;
+import android.view.View;
+
 import androidx.annotation.NonNull;
-import androidx.annotation.RequiresApi;
 import androidx.core.view.GestureDetectorCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.viewpager2.widget.ViewPager2;
 
-import android.annotation.SuppressLint;
-import android.app.Application;
-import android.content.Context;
-import android.os.Build;
-import android.os.Bundle;
-import android.util.Log;
-import android.view.GestureDetector;
-import android.view.MotionEvent;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.TextView;
-
-import com.example.harmonialauncher.Drawer.DrawerFragment;
-import com.example.harmonialauncher.Drawer.DrawerPageFragment;
-import com.example.harmonialauncher.GestureDetection.HarmoniaGestureDetector;
-import com.example.harmonialauncher.HomeScreen.HomeScreenFragment;
-import com.example.harmonialauncher.R;
-import com.example.harmonialauncher.lockManager.HarmoniaActivity;
-import com.example.harmonialauncher.lockManager.HarmoniaFragment;
-
-import java.util.ArrayList;
-import java.util.HashMap;
+import com.example.harmonialauncher.Adapters.PageAdapter;
+import com.example.harmonialauncher.Fragments.DrawerFragment;
+import com.example.harmonialauncher.Utils.HarmoniaGestureDetector;
+import com.example.harmonialauncher.Fragments.HomeScreenFragment;
+import com.example.harmonialauncher.Activities.HarmoniaActivity;
+import com.example.harmonialauncher.Fragments.HarmoniaFragment;
 
 
 /*
@@ -37,14 +26,17 @@ It will switch from home to settings once the Harmonia settings button is presse
 home once the back button is pressed in the settings menu.
  */
 public class MainActivity extends HarmoniaActivity {
+    public static final int THRESHOLD = HarmoniaGestureDetector.THRESHOLD;
     private static final String TAG = "Main Activity";
-    public final Context CONTEXT = MainActivity.this;
     public static Application instance;
+    public final Context CONTEXT = MainActivity.this;
     public ViewPager2 vp;
-
     //Gesture Detection
     private GestureDetectorCompat gd;
-    public static final int THRESHOLD = HarmoniaGestureDetector.THRESHOLD;
+
+    public static Context getContext() {
+        return instance.getApplicationContext();
+    }
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -70,17 +62,15 @@ public class MainActivity extends HarmoniaActivity {
                 super.onPageSelected(position);
                 for (int i = 0; i < pa.getItemCount(); i++)
                     if (i == position)
-                        ((HarmoniaFragment)pa.getFragment(i)).setOnScreen();
+                        ((HarmoniaFragment) pa.getFragment(i)).setOnScreen();
                     else
-                        ((HarmoniaFragment)pa.getFragment(i)).setOffScreen();
+                        ((HarmoniaFragment) pa.getFragment(i)).setOffScreen();
             }
         });
     }
 
-    public void setPage(int position)
-    {
-        if (position >= 0 && position < vp.getAdapter().getItemCount())
-        {
+    public void setPage(int position) {
+        if (position >= 0 && position < vp.getAdapter().getItemCount()) {
             vp.setCurrentItem(position);
         }
     }
@@ -89,10 +79,6 @@ public class MainActivity extends HarmoniaActivity {
     public boolean onTouchEvent(MotionEvent event) {
         //gd.onTouchEvent(event);
         return super.onTouchEvent(event);
-    }
-
-    public static Context getContext() {
-        return instance.getApplicationContext();
     }
 
     public class MainPageAdapter extends PageAdapter {
@@ -107,6 +93,7 @@ public class MainActivity extends HarmoniaActivity {
             nameIndex.add(DRAWER);
         }
 
+        @NonNull
         public Fragment createFragment(int position) {
             if (position == 1 || position == 0)
                 return fragments.get(position);

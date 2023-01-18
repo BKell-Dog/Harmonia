@@ -4,7 +4,6 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,12 +12,11 @@ import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.example.harmonialauncher.AppObject;
+import com.example.harmonialauncher.Adapters.AppListAdapter;
+import com.example.harmonialauncher.Helpers.AppObject;
 import com.example.harmonialauncher.R;
-import com.example.harmonialauncher.AppListAdapter;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class WhitelistAdapter extends AppListAdapter {
 
@@ -63,10 +61,7 @@ public class WhitelistAdapter extends AppListAdapter {
 
         //Set app whitelisted checkbox to unchecked
         CheckBox check = v.findViewById(R.id.whitelist_checkbox);
-        if (WhitelistManager.isWhitelisted(app.getPackageName()))
-            check.setChecked(true);
-        else
-            check.setChecked(false);
+        check.setChecked(WhitelistManager.isWhitelisted(app.getPackageName()));
 
         check.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override

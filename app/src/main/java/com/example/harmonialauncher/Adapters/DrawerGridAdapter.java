@@ -1,10 +1,10 @@
-package com.example.harmonialauncher.Drawer;
+package com.example.harmonialauncher.Adapters;
 
 import android.content.Context;
 
 import androidx.annotation.NonNull;
-import com.example.harmonialauncher.AppGridAdapter;
-import com.example.harmonialauncher.AppObject;
+
+import com.example.harmonialauncher.Helpers.AppObject;
 
 import java.util.ArrayList;
 

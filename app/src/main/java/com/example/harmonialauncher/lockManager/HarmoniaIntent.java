@@ -2,7 +2,9 @@ package com.example.harmonialauncher.lockManager;
 
 import android.content.Intent;
 
-public class HarmoniaIntent extends Intent implements Lockable {
+import com.example.harmonialauncher.Interfaces.Lockable;
+
+public abstract class HarmoniaIntent extends Intent implements Lockable {
 
     protected boolean locked = false;
 

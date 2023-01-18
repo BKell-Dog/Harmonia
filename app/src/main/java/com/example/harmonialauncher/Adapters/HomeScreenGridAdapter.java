@@ -1,42 +1,33 @@
-package com.example.harmonialauncher.HomeScreen;
+package com.example.harmonialauncher.Adapters;
 
 import android.content.Context;
-import android.graphics.drawable.Drawable;
-import android.os.Build;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.example.harmonialauncher.Helpers.AppObject;
 import com.example.harmonialauncher.R;
-import com.example.harmonialauncher.AppGridAdapter;
-import com.example.harmonialauncher.AppObject;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 
 public class HomeScreenGridAdapter extends AppGridAdapter {
 
-    private final static String TAG = "Grid Adapter";
     public static final int HOMESCREENAPPNUM = 15;
+    private final static String TAG = "Grid Adapter";
     private AppObject[] apps = new AppObject[HOMESCREENAPPNUM];
-    private Context CONTEXT;
-    private int layout_id;
 
     //TODO: Alter the home screen system to reference a specified set of home screen apps, not the first 20 aps out of all apps.
     public HomeScreenGridAdapter(@NonNull Context context, int resource, ArrayList<AppObject> appList) {
         super(context, resource, appList);
-        CONTEXT = context;
-        layout_id = resource;
-        for (int i = 0; i < HOMESCREENAPPNUM && i < appList.size(); i++) {
-            apps[i] = appList.get(i);
+        for (int i = 0; i < HOMESCREENAPPNUM; i++) {
+            if (i < appList.size())
+                apps[i] = appList.get(i);
+            else
+                apps[i] = null;
         }
         super.pageVerticalBuffer = 150;
     }
@@ -44,12 +35,10 @@ public class HomeScreenGridAdapter extends AppGridAdapter {
     @NonNull
     @Override
     public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
-        if (position < 0 || position > apps.length)
-        {
+        if (position < 0 || position > apps.length) {
             LayoutInflater inflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             return inflater.inflate(R.layout.empty, null);
-        }
-        else
+        } else
             return super.getView(position, convertView, parent);
     }
 
@@ -61,6 +50,7 @@ public class HomeScreenGridAdapter extends AppGridAdapter {
     /**
      * Method removes the AppObject at the specified position, replaces it with the provided AppObject,
      * and returns the removed AppObject.
+     *
      * @param app
      * @param position
      * @return app which was removed from list
@@ -70,8 +60,7 @@ public class HomeScreenGridAdapter extends AppGridAdapter {
             AppObject a = apps[position];
             apps[position] = app;
             return a;
-        }
-        else
+        } else
             return null;
     }
 
@@ -88,9 +77,11 @@ public class HomeScreenGridAdapter extends AppGridAdapter {
             return null;
     }
 
-    public ArrayList<AppObject> getAppList()
-    {return new ArrayList<>(Arrays.asList(apps));}
+    public ArrayList<AppObject> getAppList() {
+        return new ArrayList<>(Arrays.asList(apps));
+    }
 
-    public AppObject[] getAppArray()
-    {return apps;}
+    public AppObject[] getAppArray() {
+        return apps;
+    }
 }

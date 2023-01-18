@@ -1,7 +1,6 @@
 package com.example.harmonialauncher.Settings;
 
-import com.example.harmonialauncher.AppObject;
-import com.example.harmonialauncher.Util;
+import com.example.harmonialauncher.Helpers.AppObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
