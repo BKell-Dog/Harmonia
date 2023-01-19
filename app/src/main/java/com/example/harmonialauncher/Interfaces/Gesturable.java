@@ -12,7 +12,7 @@ public interface Gesturable {
 
     public boolean onFling(MotionEvent event1, MotionEvent event2, float velocityX, float velocityY);
 
-    public boolean onLongPress(MotionEvent event);
+    public void onLongPress(MotionEvent event);
 
     public boolean onSingleTapConfirmed(MotionEvent event);
 

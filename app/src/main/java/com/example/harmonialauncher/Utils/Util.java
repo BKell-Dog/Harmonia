@@ -1,6 +1,7 @@
 package com.example.harmonialauncher.Utils;
 
 import android.app.Activity;
+import android.content.ClipData;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ApplicationInfo;
@@ -16,6 +17,7 @@ import android.provider.Settings;
 import android.util.Log;
 import android.view.Display;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.WindowManager;
 
 import androidx.annotation.NonNull;
@@ -39,6 +41,24 @@ public class Util {
             LAUNCHER_SETTINGS_APP_NAME = "Select Launcher";
     private static final String TAG = "Util";
     private static ArrayList<AppObject> apps = new ArrayList<AppObject>();
+
+
+    public static View findChildAt(@NonNull ViewGroup v, int x, int y)
+    {
+        int children = v.getChildCount();
+        if (children == 0)
+            return null;
+
+        for (int i = 0; i < v.getChildCount(); i++) {
+            if (v.getChildAt(i) != null) {
+                Rect bounds = getViewBounds(v.getChildAt(i));
+                if (bounds.contains(x, y)) {
+                    return v.getChildAt(i);
+                }
+            }
+        }
+        return null;
+    }
 
     public static ArrayList<AppObject> loadAllApps(Context c) {
 

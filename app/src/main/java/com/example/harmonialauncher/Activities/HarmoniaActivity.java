@@ -45,8 +45,7 @@ public abstract class HarmoniaActivity extends AppCompatActivity implements Lock
         return false;
     }
 
-    public boolean onLongPress(MotionEvent event) {
-        return false;
+    public void onLongPress(MotionEvent event) {
     }
 
     public boolean onSingleTapConfirmed(MotionEvent event) {

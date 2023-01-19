@@ -1,9 +1,11 @@
 package com.example.harmonialauncher.Adapters;
 
 import android.content.Context;
+import android.graphics.Point;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -32,19 +34,46 @@ public class HomeScreenGridAdapter extends AppGridAdapter {
         super.pageVerticalBuffer = 150;
     }
 
-    @NonNull
-    @Override
-    public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
-        if (position < 0 || position > apps.length) {
-            LayoutInflater inflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            return inflater.inflate(R.layout.empty, null);
-        } else
-            return super.getView(position, convertView, parent);
+    public AppObject get(int position) {
+        if (position >= 0 && position < apps.length)
+            return apps[position];
+        else
+            return null;
+    }
+
+    public AppObject[] getAppArray() {
+        return apps;
+    }
+
+    public ArrayList<AppObject> getAppList() {
+        return new ArrayList<>(Arrays.asList(apps));
     }
 
     @Override
     public int getCount() {
-        return apps.length;
+        return HOMESCREENAPPNUM;
+    }
+
+    @NonNull
+    @Override
+    public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
+        //Apps[position] is either null or an AppObject. If null, inflate empty view to fill app space.
+        if (apps[position] == null || position > apps.length) {
+            LayoutInflater inflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            View v = inflater.inflate(R.layout.empty, null);
+
+            Point dimens = setElementDimen(parent.getHeight(), parent.getWidth());
+            v.setLayoutParams(new LinearLayout.LayoutParams(dimens.x, dimens.y));
+
+            return v;
+        } else
+            return super.getView(position, convertView, parent);
+    }
+
+    public AppObject remove(int position) {
+        AppObject a = apps[position];
+        apps[position] = null;
+        return a;
     }
 
     /**
@@ -62,26 +91,5 @@ public class HomeScreenGridAdapter extends AppGridAdapter {
             return a;
         } else
             return null;
-    }
-
-    public AppObject remove(int position) {
-        AppObject a = apps[position];
-        apps[position] = null;
-        return a;
-    }
-
-    public AppObject get(int position) {
-        if (position >= 0 && position < apps.length)
-            return apps[position];
-        else
-            return null;
-    }
-
-    public ArrayList<AppObject> getAppList() {
-        return new ArrayList<>(Arrays.asList(apps));
-    }
-
-    public AppObject[] getAppArray() {
-        return apps;
     }
 }

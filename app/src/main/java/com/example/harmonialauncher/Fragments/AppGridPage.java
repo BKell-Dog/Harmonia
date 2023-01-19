@@ -89,7 +89,7 @@ public class AppGridPage extends HarmoniaFragment implements LockStatusChangeLis
     }
 
     @Override
-    public boolean onLongPress(MotionEvent e) {
+    public void onLongPress(MotionEvent e) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             for (int i = 0; i < gv.getChildCount(); i++) {
                 if (gv.getChildAt(i) != null) {
@@ -103,7 +103,6 @@ public class AppGridPage extends HarmoniaFragment implements LockStatusChangeLis
                 }
             }
         }
-        return true;
     }
 
     @Override

@@ -37,8 +37,7 @@ public abstract class HarmoniaFragment extends Fragment implements Lockable, Ges
         return false;
     }
 
-    public boolean onLongPress(MotionEvent event) {
-        return false;
+    public void onLongPress(MotionEvent event) {
     }
 
     public boolean onSingleTapConfirmed(MotionEvent event) {

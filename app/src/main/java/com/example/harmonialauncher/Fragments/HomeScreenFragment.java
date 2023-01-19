@@ -2,12 +2,21 @@ package com.example.harmonialauncher.Fragments;
 
 import static com.example.harmonialauncher.MainActivity.THRESHOLD;
 
+import android.content.ClipData;
+import android.graphics.Color;
 import android.os.Bundle;
+import android.view.DragEvent;
+import android.view.LayoutInflater;
 import android.view.MotionEvent;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.GridView;
 
+import com.example.harmonialauncher.Adapters.AppGridAdapter;
 import com.example.harmonialauncher.Helpers.AppObject;
 import com.example.harmonialauncher.Utils.ConfigManager;
 import com.example.harmonialauncher.Adapters.HomeScreenGridAdapter;
+import com.example.harmonialauncher.Utils.HarmoniaGestureDetector;
 import com.example.harmonialauncher.Utils.LockStatusChangeListener;
 import com.example.harmonialauncher.MainActivity;
 import com.example.harmonialauncher.R;
@@ -37,6 +46,59 @@ public class HomeScreenFragment extends AppGridPage implements LockStatusChangeL
             adapter = new HomeScreenGridAdapter(CONTEXT, R.layout.app, receivedApps);
         else
             adapter = new HomeScreenGridAdapter(CONTEXT, R.layout.app, Util.loadFirstTwentyApps(this.getActivity()));
+    }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        View v = super.onCreateView(inflater, container, savedInstanceState);
+
+        gv.setOnDragListener(new View.OnDragListener() {
+            @Override
+            public boolean onDrag(View v, DragEvent event) {
+                int action = event.getAction();
+                switch (action) {
+                    case DragEvent.ACTION_DRAG_STARTED:
+                        // handle drag started
+                        break;
+                    case DragEvent.ACTION_DRAG_ENTERED:
+                        // get the view that was entered
+                        View enteredView = (View) event.getLocalState();
+                        // change the background color of the entered view
+                        v.setBackgroundColor(Color.GREEN);
+                        break;
+                    case DragEvent.ACTION_DRAG_EXITED:
+                        // get the view that was exited
+                        View exitedView = (View) event.getLocalState();
+                        // change the background color of the exited view back to its original color
+                        v.setBackgroundColor(Color.RED);
+                        break;
+                    case DragEvent.ACTION_DROP:
+                        // update app grid
+                        // get the view that was dropped
+                        View droppedView = (View) event.getLocalState();
+                        // get the container view that the view was dropped on
+                        ViewGroup container = (ViewGroup) v;
+                        // get the index of the dropped view within the container
+                        int index = container.indexOfChild(droppedView);
+                        // get the index of the view that was previously in the dropped view's position
+                        int oldIndex = gv.indexOfChild(droppedView);
+                        // remove the dropped view from its original position
+                        gv.removeView(droppedView);
+                        // add the dropped view to its new position
+                        gv.addView(droppedView, index);
+                        // update app grid array
+                        adapter.swap(oldIndex, index);
+                        break;
+                    case DragEvent.ACTION_DRAG_ENDED:
+                        // handle drag ended
+                        break;
+                    default:
+                }
+                return true;
+            }
+        });
+
+        return v;
     }
 
     @Override
@@ -83,5 +145,17 @@ public class HomeScreenFragment extends AppGridPage implements LockStatusChangeL
             if (yTranslation < -THRESHOLD) //Upward fling
                 ((MainActivity) getActivity()).setPage(1);
         return true;
+    }
+
+    @Override
+    public void onLongPress(MotionEvent event)
+    {
+        View tappedView = Util.findChildAt(gv, (int) event.getX(), (int) event.getY());
+        if (tappedView != null) {
+            ClipData data = ClipData.newPlainText("", "");
+            View.DragShadowBuilder shadowBuilder = new View.DragShadowBuilder(tappedView);
+            tappedView.startDrag(data, shadowBuilder, gv, 0);
+            tappedView.setVisibility(View.INVISIBLE);
+        }
     }
 }

@@ -23,6 +23,7 @@ import com.example.harmonialauncher.Utils.Util;
 import com.example.harmonialauncher.Utils.LockManager;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 public class AppGridAdapter extends ArrayAdapter<AppObject> {
 
@@ -43,6 +44,46 @@ public class AppGridAdapter extends ArrayAdapter<AppObject> {
         CONTEXT = context;
         apps = appList;
         layout_id = resource;
+    }
+
+    public void add(AppObject app) {
+        apps.add(app);
+    }
+
+    public AppGridAdapter copy() {
+        try {
+            return (AppGridAdapter) this.clone();
+        } catch (CloneNotSupportedException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public AppObject get(int position) {
+        if (position >= 0 && position < apps.size())
+            return apps.get(position);
+        else
+            return null;
+    }
+
+    public ArrayList<AppObject> getAppList() {
+        return apps;
+    }
+
+    public int getCount() {
+        return apps.size();
+    }
+
+    public Point getElementDimens() {
+        return new Point(elementWidth, elementHeight);
+    }
+
+    public ArrayList<String> getLockedPacks() {
+        return lockedPacks;
+    }
+
+    public int getMode() {
+        return mode;
     }
 
     @NonNull
@@ -118,30 +159,19 @@ public class AppGridAdapter extends ArrayAdapter<AppObject> {
         return gridItemView;
     }
 
-    public int getCount() {
-        return apps.size();
+    public boolean inLockedList(String packageName) {
+        for (String pack : lockedPacks)
+            if (pack.equalsIgnoreCase(packageName))
+                return true;
+        return false;
     }
 
-    public void add(AppObject app) {
-        apps.add(app);
-    }
-
-    public AppObject get(int position) {
-        if (position >= 0 && position < apps.size())
-            return apps.get(position);
-        else
-            return null;
-    }
-
-    public ArrayList<AppObject> getAppList() {
-        return apps;
-    }
-
-    //This method resizes each GridView element size to fit the screen, and therefore, the gridView
-    //won't scroll. This method must be called before Adapter.getView() to be effective.
-    public void setElementDimen(int screenHeight, int screenWidth) {
+    /**This method resizes each GridView element size to fit the screen, and therefore, the gridView
+     * won't scroll. This method must be called before Adapter.getView() to be effective.
+     */
+    public Point setElementDimen(int screenHeight, int screenWidth) {
         if (screenHeight <= 0 || screenWidth <= 0)
-            return;
+            return null;
 
         elementHeight = (screenHeight - pageVerticalBuffer) / ROWS;
         elementWidth = (screenWidth - pageHorizontalBuffer) / COLS;
@@ -151,14 +181,8 @@ public class AppGridAdapter extends ArrayAdapter<AppObject> {
         }
         this.horizontalBuffer = (int) (elementWidth * 0.2);
         this.verticalBuffer = (int) (elementHeight * 0.1);
-    }
 
-    public Point getElementDimens() {
         return new Point(elementWidth, elementHeight);
-    }
-
-    public int getMode() {
-        return mode;
     }
 
     public void setMode(int mode) {
@@ -168,25 +192,11 @@ public class AppGridAdapter extends ArrayAdapter<AppObject> {
             Log.d(TAG, "Mode out of bounds. Possibly update method setMode to accommodate new modes.");
     }
 
-    public ArrayList<String> getLockedPacks() {
-        return lockedPacks;
-    }
-
-    public boolean inLockedList(String packageName) {
-        for (String pack : lockedPacks)
-            if (pack.equalsIgnoreCase(packageName))
-                return true;
-        return false;
-    }
-
-    public AppGridAdapter copy() {
-        try {
-            return (AppGridAdapter) this.clone();
-        } catch (CloneNotSupportedException e) {
-            e.printStackTrace();
-            return null;
+    public void swap(int a, int b) {
+        if (a >= 0 && b >= 0 && a < apps.size() && b < apps.size())
+        {
+            Collections.swap(apps, a, b);
         }
-
     }
 
     @NonNull

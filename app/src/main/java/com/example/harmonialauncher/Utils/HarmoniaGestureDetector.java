@@ -44,6 +44,14 @@ public class HarmoniaGestureDetector extends GestureDetector.SimpleOnGestureList
     }
 
     @Override
+    public void onLongPress(MotionEvent event)
+    {
+        for (Gesturable g : classes)
+            if (g.isOnScreen())
+                g.onLongPress(event);
+    }
+
+    @Override
     public boolean onSingleTapConfirmed(MotionEvent event) {
         for (Gesturable g : classes)
             if (g.isOnScreen())
