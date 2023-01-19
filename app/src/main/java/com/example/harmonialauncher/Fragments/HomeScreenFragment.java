@@ -5,6 +5,7 @@ import static com.example.harmonialauncher.MainActivity.THRESHOLD;
 import android.content.ClipData;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.DragEvent;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -32,6 +33,7 @@ pressing of buttons and opening of apps. This screen is the home screen and laun
 
 public class HomeScreenFragment extends AppGridPage implements LockStatusChangeListener.LockStatusListener {
     private final static String TAG = "Home Screen Fragment";
+    private static boolean firstBoot = true;
 
     public HomeScreenFragment() {
         super(R.layout.app_grid_page);
@@ -41,11 +43,13 @@ public class HomeScreenFragment extends AppGridPage implements LockStatusChangeL
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        ArrayList<AppObject> receivedApps = ConfigManager.readHomeAppOrderFromFile(this.getActivity());
-        if (receivedApps != null)
-            adapter = new HomeScreenGridAdapter(CONTEXT, R.layout.app, receivedApps);
-        else
-            adapter = new HomeScreenGridAdapter(CONTEXT, R.layout.app, Util.loadFirstTwentyApps(this.getActivity()));
+        if (firstBoot) {
+            adapter = new HomeScreenGridAdapter(CONTEXT, R.layout.app, Util.loadFirstTwentyApps(getActivity()));
+        } else {
+            ArrayList<AppObject> receivedApps = ConfigManager.readHomeAppOrderFromFile(getActivity());
+            if (receivedApps != null)
+                adapter = new HomeScreenGridAdapter(CONTEXT, R.layout.app, receivedApps);
+        }
     }
 
     @Override
@@ -63,6 +67,8 @@ public class HomeScreenFragment extends AppGridPage implements LockStatusChangeL
                     case DragEvent.ACTION_DRAG_ENTERED:
                         // get the view that was entered
                         View enteredView = (View) event.getLocalState();
+                        Log.d(TAG, enteredView.toString());
+                        Log.d(TAG, v.toString());
                         // change the background color of the entered view
                         v.setBackgroundColor(Color.GREEN);
                         break;
@@ -73,7 +79,7 @@ public class HomeScreenFragment extends AppGridPage implements LockStatusChangeL
                         v.setBackgroundColor(Color.RED);
                         break;
                     case DragEvent.ACTION_DROP:
-                        // update app grid
+                        /*// update app grid
                         // get the view that was dropped
                         View droppedView = (View) event.getLocalState();
                         // get the container view that the view was dropped on
@@ -87,7 +93,9 @@ public class HomeScreenFragment extends AppGridPage implements LockStatusChangeL
                         // add the dropped view to its new position
                         gv.addView(droppedView, index);
                         // update app grid array
-                        adapter.swap(oldIndex, index);
+                        adapter.swap(oldIndex, index);*/
+                        ((View)event.getLocalState()).setVisibility(View.VISIBLE);
+                        v.setBackgroundColor(Color.RED);
                         break;
                     case DragEvent.ACTION_DRAG_ENDED:
                         // handle drag ended
@@ -105,8 +113,11 @@ public class HomeScreenFragment extends AppGridPage implements LockStatusChangeL
     public void onDestroy() {
         super.onDestroy();
 
-        ConfigManager.writeHomeAppsToFile(this.getActivity(), adapter.getAppList());
+        Log.d(TAG, adapter.getAppList().toString());
+        if (getActivity() != null)
+            ConfigManager.writeHomeAppsToFile(this.getActivity(), adapter.getAppList()); //TODO: Adapter is possibly returning list of nul appobjects. Investigate.
     }
+
         /*gv.setOnDragListener(new View.OnDragListener() {
             @Override
             public boolean onDrag(View view, DragEvent dragEvent) {
@@ -157,5 +168,11 @@ public class HomeScreenFragment extends AppGridPage implements LockStatusChangeL
             tappedView.startDrag(data, shadowBuilder, gv, 0);
             tappedView.setVisibility(View.INVISIBLE);
         }
+    }
+
+    public void onResume()
+    {
+        super.onResume();
+        firstBoot = false;
     }
 }

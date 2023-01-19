@@ -82,12 +82,6 @@ public class AppGridPage extends HarmoniaFragment implements LockStatusChangeLis
         return v;
     }
 
-    public void onDestroy() {
-        super.onDestroy();
-        if (getActivity() != null)
-            ConfigManager.writeHomeAppsToFile(getActivity(), adapter.getAppList());
-    }
-
     @Override
     public void onLongPress(MotionEvent e) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
@@ -123,7 +117,7 @@ public class AppGridPage extends HarmoniaFragment implements LockStatusChangeLis
                     Log.d(TAG, "View Rect: " + bounds);
                     Log.d(TAG, "Tap Coords: (" + e.getX() + ", " + e.getY() + ")");
                     Log.d(TAG, "TAP INTERSECTS " + app);
-                    if (!LockManager.isLocked(app.getPackageName())) {         //Check that app is not locked
+                    if (app != null && !LockManager.isLocked(app.getPackageName())) {         //Check that app is not locked
                         Util.openApp(this.CONTEXT, app.getPackageName());
                         return true;
                     }

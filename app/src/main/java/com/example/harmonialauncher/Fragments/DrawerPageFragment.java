@@ -6,6 +6,7 @@ import androidx.annotation.NonNull;
 
 import com.example.harmonialauncher.Helpers.AppObject;
 import com.example.harmonialauncher.Adapters.DrawerGridAdapter;
+import com.example.harmonialauncher.Utils.ConfigManager;
 import com.example.harmonialauncher.Utils.LockStatusChangeListener;
 import com.example.harmonialauncher.R;
 import com.example.harmonialauncher.Utils.Util;
@@ -31,6 +32,14 @@ public class DrawerPageFragment extends AppGridPage implements LockStatusChangeL
         super.onCreate(savedInstanceState);
 
         adapter = new DrawerGridAdapter(CONTEXT, R.layout.app, getAppList());
+    }
+
+    @Override
+    public void onDestroy()
+    {
+        super.onDestroy();
+        if (getActivity() != null)
+            ConfigManager.writeDrawerAppsToFile(getActivity(), adapter.getAppList());
     }
 
     private ArrayList<AppObject> getAppList() {

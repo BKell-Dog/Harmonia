@@ -2,6 +2,7 @@ package com.example.harmonialauncher.Adapters;
 
 import android.content.Context;
 import android.graphics.Point;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -61,6 +62,7 @@ public class HomeScreenGridAdapter extends AppGridAdapter {
         if (apps[position] == null || position > apps.length) {
             LayoutInflater inflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             View v = inflater.inflate(R.layout.empty, null);
+
 
             Point dimens = setElementDimen(parent.getHeight(), parent.getWidth());
             v.setLayoutParams(new LinearLayout.LayoutParams(dimens.x, dimens.y));

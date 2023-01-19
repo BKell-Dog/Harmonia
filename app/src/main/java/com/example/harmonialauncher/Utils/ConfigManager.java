@@ -15,7 +15,8 @@ import java.util.ArrayList;
 
 public class ConfigManager {
     //Category Variables
-    public final static String HOMESCREENAPPS = "Home Screen Apps";
+    public final static String HOMESCREENAPPS = "Home Screen Apps",
+                                DRAWERSCREENAPPS = "Drawer Screen Apps";
     public final static String EMPTY = "EMPTY";
     private static final String TAG = "Config Manager";
     //Variables for writing to file
@@ -29,6 +30,35 @@ public class ConfigManager {
      *
      * @param apps Arraylist of all drawer pages
      */
+    public static void writeDrawerAppsToFile(@NonNull Context context, @NonNull ArrayList<AppObject> apps) {
+        if (apps.size() == 0) {
+            Log.d(TAG, "ArrayList is Empty!");
+            return;
+        }
+
+        ArrayList<String> data = new ArrayList<>();
+        for (AppObject a : apps) {
+            if (a != null)
+                data.add(a.getPackageName());
+            else
+                data.add(EMPTY);
+        }
+
+        Log.d(TAG, data.toString());
+
+        SharedPreferences sharedPreferences = context.getSharedPreferences(fileName, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        Gson gson = new Gson();
+        String json = gson.toJson(data);
+        editor.putString(DRAWERSCREENAPPS, json);
+        editor.apply();
+    }
+
+        /**
+         * This method will write the home page app order to a file.
+         *
+         * @param apps Arraylist of all home pages
+         */
     public static void writeHomeAppsToFile(@NonNull Context context, @NonNull ArrayList<AppObject> apps) {
         if (apps.size() == 0) {
             Log.d(TAG, "ArrayList is Empty!");
@@ -42,6 +72,8 @@ public class ConfigManager {
             else
                 data.add(EMPTY);
         }
+
+        Log.d(TAG, data.toString());
 
         SharedPreferences sharedPreferences = context.getSharedPreferences(fileName, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
@@ -129,7 +161,7 @@ public class ConfigManager {
      * @return Arraylist of AppObjects in order of appearance in file. If null, it means there was
      * no previous file for sharedpreferences to read from, implying this is a first time boot.
      */
-    public static ArrayList<AppObject> readHomeAppOrderFromFile(Context context) {
+    public static ArrayList<AppObject> readHomeAppOrderFromFile(Context context) { //TODO: PROBLEM HERE, ARRAY ALWAYS RETURN FULL OF NULLS, FOR NO REASON
         ArrayList<AppObject> appList = new ArrayList<>();
         Gson gson = new Gson();
         String json = context.getSharedPreferences(fileName, Context.MODE_PRIVATE).getString(HOMESCREENAPPS, null); //If this is the first time, method will return null;
@@ -143,6 +175,7 @@ public class ConfigManager {
             else
                 appList.add(Util.findAppByPackageName(pack, context));
         }
+        Log.d(TAG, "////////" + json + " --- " + appList.toString());
         return appList;
         /*ArrayList<AppObject> appList = new ArrayList<>();
 

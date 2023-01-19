@@ -10,7 +10,6 @@ import androidx.viewpager2.adapter.FragmentStateAdapter;
 import java.util.ArrayList;
 
 public abstract class PageAdapter extends FragmentStateAdapter {
-
     private static final String TAG = "Page Adapter";
     protected ArrayList<Fragment> fragments = new ArrayList<Fragment>();
 

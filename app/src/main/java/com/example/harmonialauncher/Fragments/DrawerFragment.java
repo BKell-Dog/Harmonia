@@ -14,6 +14,7 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.viewpager2.widget.ViewPager2;
 
+import com.example.harmonialauncher.Adapters.DrawerPageAdapter;
 import com.example.harmonialauncher.Utils.HarmoniaGestureDetector;
 import com.example.harmonialauncher.MainActivity;
 import com.example.harmonialauncher.Adapters.PageAdapter;
@@ -109,7 +110,7 @@ public class DrawerFragment extends HarmoniaFragment {
                 if (main != null)
                     main.setPage(0);
                 else
-                    Log.d(TAG, "Main Activity Reference in Null");
+                    Log.d(TAG, "Main Activity Reference is Null");
             }
         return true;
     }
@@ -123,41 +124,5 @@ public class DrawerFragment extends HarmoniaFragment {
             s += ((DrawerPageAdapter) this.vp.getAdapter()).getFragment(i).toString() + "\n";
         }
         return s;
-    }
-
-    public class DrawerPageAdapter extends PageAdapter {
-        private static final String TAG = "Drawer Page Adapter";
-
-        public DrawerPageAdapter(@NonNull FragmentActivity fragmentActivity, int numOfPages) {
-            super(fragmentActivity);
-
-            //i < nOP - 1, this is to create one less drawer page than currently
-            for (int i = 0; i <= numOfPages - 1; i++) {
-                //Log.d(TAG, "Create Drawer Page " + i);
-                super.fragments.add(new DrawerPageFragment(i));
-                super.nameIndex.add("Drawer Page " + i);
-            }
-        }
-
-        @Override
-        public Fragment createFragment(int position) {
-            try {
-                return super.fragments.get(position);
-            } catch (IndexOutOfBoundsException e) {
-                Log.d(TAG, "Out of Bounds Exception: Index out of bounds in Drawer Page list.");
-                return null;
-            } catch (Exception e) {
-                e.printStackTrace();
-                return null;
-            }
-        }
-
-        public void setPageOnScreen(int index) {
-            for (int i = 0; i < fragments.size(); i++)
-                if (i == index)
-                    ((DrawerPageFragment) fragments.get(i)).setOnScreen();
-                else
-                    ((DrawerPageFragment) fragments.get(i)).setOffScreen();
-        }
     }
 }

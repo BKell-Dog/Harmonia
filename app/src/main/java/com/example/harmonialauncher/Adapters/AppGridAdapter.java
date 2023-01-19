@@ -1,10 +1,12 @@
 package com.example.harmonialauncher.Adapters;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.graphics.Point;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.util.Log;
+import android.view.DragEvent;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -92,7 +94,7 @@ public class AppGridAdapter extends ArrayAdapter<AppObject> {
         View gridItemView = convertView;
         if (gridItemView == null) {
             // Layout Inflater inflates each item to be displayed in GridView.
-            LayoutInflater inflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            LayoutInflater inflater = (LayoutInflater) CONTEXT.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             gridItemView = inflater.inflate(R.layout.app, null);
         }
         AppObject app = apps.get(position);
@@ -135,26 +137,60 @@ public class AppGridAdapter extends ArrayAdapter<AppObject> {
         }
 
         //Setting child views to not respond to touch events
-        if (true) {
-            gridItemView.setOnTouchListener(new View.OnTouchListener() {
-                @Override
-                public boolean onTouch(View view, MotionEvent motionEvent) {
-                    return false;
+        gridItemView.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+                return false;
+            }
+        });
+        icon.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+                return false;
+            }
+        });
+        label.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+                return false;
+            }
+        });
+
+        gridItemView.setOnDragListener(new View.OnDragListener() {
+            @Override
+            public boolean onDrag(View view, DragEvent dragEvent) {
+                int action = dragEvent.getAction();
+                switch (action) {
+                    case DragEvent.ACTION_DRAG_STARTED:
+                        // handle drag started
+                        break;
+                    case DragEvent.ACTION_DRAG_ENTERED:
+                        // get the view that was entered
+                        View enteredView = (View) dragEvent.getLocalState();
+                        Log.d(TAG, enteredView.toString());
+                        Log.d(TAG, view.toString());
+                        // change the background color of the entered view
+                        view.setBackgroundColor(Color.GREEN);
+                        break;
+                    case DragEvent.ACTION_DRAG_EXITED:
+                        // get the view that was exited
+                        View exitedView = (View) dragEvent.getLocalState();
+                        // change the background color of the exited view back to its original color
+                        view.setBackgroundColor(Color.RED);
+                        break;
+                    case DragEvent.ACTION_DROP:
+
+                        break;
+                    case DragEvent.ACTION_DRAG_ENDED:
+                        // handle drag ended
+                        break;
+                    default:
                 }
-            });
-            icon.setOnTouchListener(new View.OnTouchListener() {
-                @Override
-                public boolean onTouch(View view, MotionEvent motionEvent) {
-                    return false;
-                }
-            });
-            label.setOnTouchListener(new View.OnTouchListener() {
-                @Override
-                public boolean onTouch(View view, MotionEvent motionEvent) {
-                    return false;
-                }
-            });
-        }
+                return true;
+            }
+        });
+
+        gridItemView.setBackgroundColor(Color.BLACK);
 
         return gridItemView;
     }
@@ -166,18 +202,21 @@ public class AppGridAdapter extends ArrayAdapter<AppObject> {
         return false;
     }
 
-    /**This method resizes each GridView element size to fit the screen, and therefore, the gridView
+    /**
+     * This method resizes each GridView element size to fit the screen, and therefore, the gridView
      * won't scroll. This method must be called before Adapter.getView() to be effective.
      */
     public Point setElementDimen(int screenHeight, int screenWidth) {
         if (screenHeight <= 0 || screenWidth <= 0)
-            return null;
+            return new Point(0, 0);
 
         elementHeight = (screenHeight - pageVerticalBuffer) / ROWS;
         elementWidth = (screenWidth - pageHorizontalBuffer) / COLS;
         for (AppObject app : apps) {
-            app.setWidth(elementWidth);
-            app.setHeight(elementHeight);
+            if (app != null) {
+                app.setWidth(elementWidth);
+                app.setHeight(elementHeight);
+            }
         }
         this.horizontalBuffer = (int) (elementWidth * 0.2);
         this.verticalBuffer = (int) (elementHeight * 0.1);
@@ -193,8 +232,7 @@ public class AppGridAdapter extends ArrayAdapter<AppObject> {
     }
 
     public void swap(int a, int b) {
-        if (a >= 0 && b >= 0 && a < apps.size() && b < apps.size())
-        {
+        if (a >= 0 && b >= 0 && a < apps.size() && b < apps.size()) {
             Collections.swap(apps, a, b);
         }
     }
