@@ -10,6 +10,8 @@ import androidx.annotation.NonNull;
 import androidx.core.view.GestureDetectorCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
+import androidx.lifecycle.ViewModel;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.viewpager2.widget.ViewPager2;
 
 import com.example.harmonialauncher.Adapters.PageAdapter;
@@ -18,6 +20,7 @@ import com.example.harmonialauncher.Utils.HarmoniaGestureDetector;
 import com.example.harmonialauncher.Fragments.HomeScreenFragment;
 import com.example.harmonialauncher.Activities.HarmoniaActivity;
 import com.example.harmonialauncher.Fragments.HarmoniaFragment;
+import com.example.harmonialauncher.ViewModels.MainActivityViewModel;
 
 
 /*
@@ -28,19 +31,18 @@ home once the back button is pressed in the settings menu.
 public class MainActivity extends HarmoniaActivity {
     public static final int THRESHOLD = HarmoniaGestureDetector.THRESHOLD;
     private static final String TAG = "Main Activity";
+    private MainActivityViewModel vm;
     public static Application instance;
     public final Context CONTEXT = MainActivity.this;
     public ViewPager2 vp;
     //Gesture Detection
     private GestureDetectorCompat gd;
 
-    public static Context getContext() {
-        return instance.getApplicationContext();
-    }
-
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        vm = new ViewModelProvider(this).get(MainActivityViewModel.class);
 
         vp = findViewById(R.id.ViewPager);
 
@@ -50,11 +52,8 @@ public class MainActivity extends HarmoniaActivity {
         //Set page adapter to scroll vertically between home screen and drawer
         vp.setUserInputEnabled(false);
         vp.setOrientation(ViewPager2.ORIENTATION_VERTICAL);
-
-        vp.setCurrentItem(0);
+        vp.setCurrentItem(vm.getCurrentPage());
         vp.setVisibility(View.VISIBLE);
-
-        instance = this.getApplication();
 
         vp.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
             @Override

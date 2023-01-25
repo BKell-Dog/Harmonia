@@ -9,7 +9,7 @@ public class WhitelistManager {
 
     //An AppObject is primarily defined by its unique package, so it is useless to make a hashmap of
     //AppObjects when we can deal directly with the packages they wrap around.
-    private static HashMap<String, Boolean> whitelisted = new HashMap<String, Boolean>();
+    private static final HashMap<String, Boolean> whitelisted = new HashMap<String, Boolean>();
 
     public static void whitelist(String packageName) {
         whitelisted.put(packageName, true);

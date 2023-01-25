@@ -22,7 +22,7 @@ public class WhitelistAdapter extends AppListAdapter {
 
     private final static String TAG = "Whitelist Adapter";
 
-    private static ArrayList<AppObject> whitelistedApps = new ArrayList<AppObject>();
+    private static final ArrayList<AppObject> whitelistedApps = new ArrayList<AppObject>();
 
     //Resource should be R.layout.list_menu_item
     public WhitelistAdapter(Context c, int resource) {

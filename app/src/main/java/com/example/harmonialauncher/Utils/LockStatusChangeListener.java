@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 public class LockStatusChangeListener {
 
-    private static ArrayList<LockStatusListener> listeners = new ArrayList<LockStatusListener>();
+    private static final ArrayList<LockStatusListener> listeners = new ArrayList<LockStatusListener>();
 
     public static void add(LockStatusListener l) {
         listeners.add(l);
@@ -20,6 +20,6 @@ public class LockStatusChangeListener {
     }
 
     public interface LockStatusListener {
-        public void onStatusChanged();
+        void onStatusChanged();
     }
 }

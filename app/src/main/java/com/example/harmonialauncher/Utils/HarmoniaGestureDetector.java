@@ -11,7 +11,7 @@ public class HarmoniaGestureDetector extends GestureDetector.SimpleOnGestureList
     //Specific variables
     public static final int THRESHOLD = 100;
     private static final String TAG = "Harmonia Gest. Detector";
-    private static ArrayList<Gesturable> classes = new ArrayList<>();
+    private static final ArrayList<Gesturable> classes = new ArrayList<>();
 
     public static void add(Gesturable g) {
         if (!classes.contains(g))
@@ -19,8 +19,7 @@ public class HarmoniaGestureDetector extends GestureDetector.SimpleOnGestureList
     }
 
     public static void remove(Gesturable g) {
-        if (classes.contains(g))
-            classes.remove(g);
+        classes.remove(g);
     }
 
     public static boolean contains(Gesturable g) {

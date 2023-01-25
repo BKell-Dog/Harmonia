@@ -13,9 +13,11 @@
     <!-- App APK names -->
     <string name="phone_apk">com.sec.android.app.phoneutil</string>
 
-    <!-- Settings Menu Names -->
+    <!-- Settings Activity -->
     <string name="menu_item_name">Menu Item Name</string>
     <string name="menu_item_icon">Menu Item Icon</string>
+    <string name="settings_activity_title">Settings</string>
+
     <!-- Whitelist -->
     <string name="whitelist">Whitelist</string>
     <string name="whitelist_title">Select Apps to be Whitelisted</string>

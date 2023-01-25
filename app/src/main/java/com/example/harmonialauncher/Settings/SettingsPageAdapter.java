@@ -18,7 +18,7 @@ public class SettingsPageAdapter extends FragmentStateAdapter {
     public final String SETTINGSHOME = "Settings Home",
             WHITELIST = "Whitelist";
     public ArrayList<String> nameIndex = new ArrayList<String>();
-    private ArrayList<Fragment> fragments = new ArrayList<Fragment>();
+    private final ArrayList<Fragment> fragments = new ArrayList<Fragment>();
 
     public SettingsPageAdapter(@NonNull FragmentActivity fragmentActivity) {
         super(fragmentActivity);

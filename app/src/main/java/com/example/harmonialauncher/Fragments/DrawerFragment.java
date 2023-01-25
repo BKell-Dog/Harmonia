@@ -58,7 +58,7 @@ public class DrawerFragment extends HarmoniaFragment {
         vp.canScrollHorizontally(1);
         vp.setCurrentItem(0);
         vp.setVisibility(View.VISIBLE);
-        vp.setOffscreenPageLimit(2);
+        vp.setOffscreenPageLimit(7);
         vp.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
             @Override
             public void onPageSelected(int position) {
@@ -91,6 +91,11 @@ public class DrawerFragment extends HarmoniaFragment {
 
     @Override
     public boolean onFling(MotionEvent event1, MotionEvent event2, float velocityX, float velocityY) {
+        //Log.d(TAG, event1 + " --- " + event2);
+
+        if (event1 == null || event2 == null)
+            return false;
+
         float e1y = event1.getY(), e2y = event2.getY();
         float e1x = event1.getX(), e2x = event2.getX();
         float xTranslation = e2x - e1x, yTranslation = e2y - e1y;
@@ -121,7 +126,7 @@ public class DrawerFragment extends HarmoniaFragment {
             return "";
         String s = "Drawer Fragment. Children: ";
         for (int i = 0; i < vp.getAdapter().getItemCount(); i++) {
-            s += ((DrawerPageAdapter) this.vp.getAdapter()).getFragment(i).toString() + "\n";
+            s += ((DrawerPageAdapter) this.vp.getAdapter()).getFragment(i) + "\n";
         }
         return s;
     }

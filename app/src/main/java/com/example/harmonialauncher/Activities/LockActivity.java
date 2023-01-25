@@ -41,7 +41,7 @@ import java.util.concurrent.TimeUnit;
 public class LockActivity extends HarmoniaActivity {
 
     private static final String TAG = "Lock Activity";
-    private Context context = this;
+    private final Context context = this;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -51,15 +51,15 @@ public class LockActivity extends HarmoniaActivity {
         //Populate LinearLayout with items
         //Each item consists of app icon, app name, and time picker.
         //At the bottom of the LinearLayout is a button which applies lock times to LockManager.
-        LinearLayout ll = (LinearLayout) findViewById(R.id.lock_activity_linearlayout);
+        LinearLayout ll = findViewById(R.id.lock_activity_linearlayout);
         ArrayList<AppObject> apps = Util.loadAllApps(this);
         for (AppObject a : apps) {
             LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             View v = inflater.inflate(R.layout.list_item, null);
-            TextView text = (TextView) v.findViewById(R.id.app_name);
-            ImageView icon = (ImageView) v.findViewById(R.id.app_icon);
-            TextView timer = (TextView) v.findViewById(R.id.lock_timer_text);
-            Button button = (Button) v.findViewById(R.id.edit_button);
+            TextView text = v.findViewById(R.id.app_name);
+            ImageView icon = v.findViewById(R.id.app_icon);
+            TextView timer = v.findViewById(R.id.lock_timer_text);
+            Button button = v.findViewById(R.id.edit_button);
 
             text.setText(a.getName());
             if (a.getImage() != null)
@@ -91,10 +91,10 @@ public class LockActivity extends HarmoniaActivity {
                     d.setContentView(R.layout.time_picker);
                     d.show();
 
-                    final NumberPicker hours = (NumberPicker) d.findViewById(R.id.numberPicker1);
-                    final NumberPicker minutes = (NumberPicker) d.findViewById(R.id.numberPicker2);
-                    Button ok = (Button) d.findViewById(R.id.submit_time_button);
-                    Button cancel = (Button) d.findViewById(R.id.cancel_button);
+                    final NumberPicker hours = d.findViewById(R.id.numberPicker1);
+                    final NumberPicker minutes = d.findViewById(R.id.numberPicker2);
+                    Button ok = d.findViewById(R.id.submit_time_button);
+                    Button cancel = d.findViewById(R.id.cancel_button);
 
                     hours.setMinValue(0);
                     hours.setMaxValue(99);

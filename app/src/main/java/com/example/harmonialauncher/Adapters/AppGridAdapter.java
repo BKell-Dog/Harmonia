@@ -1,5 +1,6 @@
 package com.example.harmonialauncher.Adapters;
 
+import android.content.ClipData;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.Point;
@@ -12,6 +13,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -39,7 +41,7 @@ public class AppGridAdapter extends ArrayAdapter<AppObject> {
     protected int horizontalBuffer = 300, verticalBuffer = 300;
     protected int pageHorizontalBuffer = 0, pageVerticalBuffer = 120;
     protected int elementHeight = -1, elementWidth = -1;
-    private ArrayList<String> lockedPacks = new ArrayList<String>();
+    private final ArrayList<String> lockedPacks = new ArrayList<String>();
 
     public AppGridAdapter(@NonNull Context context, int resource, ArrayList<AppObject> appList) {
         super(context, resource, appList);
@@ -156,41 +158,18 @@ public class AppGridAdapter extends ArrayAdapter<AppObject> {
             }
         });
 
-        gridItemView.setOnDragListener(new View.OnDragListener() {
+        gridItemView.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
-            public boolean onDrag(View view, DragEvent dragEvent) {
-                int action = dragEvent.getAction();
-                switch (action) {
-                    case DragEvent.ACTION_DRAG_STARTED:
-                        // handle drag started
-                        break;
-                    case DragEvent.ACTION_DRAG_ENTERED:
-                        // get the view that was entered
-                        View enteredView = (View) dragEvent.getLocalState();
-                        Log.d(TAG, enteredView.toString());
-                        Log.d(TAG, view.toString());
-                        // change the background color of the entered view
-                        view.setBackgroundColor(Color.GREEN);
-                        break;
-                    case DragEvent.ACTION_DRAG_EXITED:
-                        // get the view that was exited
-                        View exitedView = (View) dragEvent.getLocalState();
-                        // change the background color of the exited view back to its original color
-                        view.setBackgroundColor(Color.RED);
-                        break;
-                    case DragEvent.ACTION_DROP:
-
-                        break;
-                    case DragEvent.ACTION_DRAG_ENDED:
-                        // handle drag ended
-                        break;
-                    default:
+            public boolean onLongClick(View view) {
+                if (view != null) {
+                    ClipData data = ClipData.newPlainText("", "");
+                    View.DragShadowBuilder shadowBuilder = new View.DragShadowBuilder(view);
+                    view.startDrag(data, shadowBuilder, view, 0);
+                    view.setVisibility(View.INVISIBLE);
                 }
                 return true;
             }
         });
-
-        gridItemView.setBackgroundColor(Color.BLACK);
 
         return gridItemView;
     }
