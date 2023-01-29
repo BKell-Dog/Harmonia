@@ -15,30 +15,39 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.GridView;
 
+import androidx.annotation.NonNull;
 import androidx.core.view.GestureDetectorCompat;
+import androidx.lifecycle.ViewModelProvider;
 
 import com.example.harmonialauncher.Adapters.AppGridAdapter;
 import com.example.harmonialauncher.Helpers.AppObject;
-import com.example.harmonialauncher.Utils.ConfigManager;
 import com.example.harmonialauncher.Utils.HarmoniaGestureDetector;
-import com.example.harmonialauncher.Utils.LockStatusChangeListener;
+import com.example.harmonialauncher.Listeners.LockStatusChangeListener;
 import com.example.harmonialauncher.R;
 import com.example.harmonialauncher.Utils.Util;
 import com.example.harmonialauncher.Utils.LockManager;
+import com.example.harmonialauncher.ViewModels.AppGridViewModel;
 
 public class AppGridPage extends HarmoniaFragment implements LockStatusChangeListener.LockStatusListener {
 
-    public static final int NUM_COLS = 4;
     private static final String TAG = "App Grid Page";
     protected Context CONTEXT;
+    protected AppGridViewModel vm;
     //Drawing Grid
     protected GridView gv;
     protected AppGridAdapter adapter;
+    public static final int NUM_COLS = 4;
     //Gesture Detection
     protected GestureDetectorCompat gd;
 
     public AppGridPage(int resource) {
         super(resource);
+    }
+
+    @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+        vm = new ViewModelProvider(requireActivity()).get(AppGridViewModel.class);
     }
 
     @Override
@@ -59,16 +68,14 @@ public class AppGridPage extends HarmoniaFragment implements LockStatusChangeLis
         // Inflate layout for this fragment
         View v = inflater.inflate(R.layout.app_grid_page, container, false);
 
+        if (adapter == null)
+            adapter = new AppGridAdapter(CONTEXT, R.id.app_page_grid, vm.getAppList());
+
         //Populate Grid Layout in home_screen.xml with instances of app.xml
         //Get grid view
         gv = v.findViewById(R.id.app_page_grid);
-
-        if (adapter == null && getActivity() != null) {
-            adapter = new AppGridAdapter(CONTEXT, R.layout.app, Util.loadFirstTwentyApps(this.getActivity()));
-        }
-
         gv.setAdapter(adapter);
-        gv.setNumColumns(NUM_COLS);
+        gv.setNumColumns(vm.NUM_COLS);
         setElementDimens(adapter, NUM_COLS, v);
 
 
@@ -76,6 +83,13 @@ public class AppGridPage extends HarmoniaFragment implements LockStatusChangeLis
             @Override
             public boolean onTouch(View view, MotionEvent motionEvent) {
                 return gd.onTouchEvent(motionEvent);
+            }
+        });
+        
+        v.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+                return false;
             }
         });
 
@@ -105,7 +119,7 @@ public class AppGridPage extends HarmoniaFragment implements LockStatusChangeLis
         if (gv == null || !onScreen)
             return false;
 
-        for (int i = 0; i < ((AppGridAdapter) gv.getAdapter()).getCount(); i++) {
+        for (int i = 0; i < gv.getAdapter().getCount(); i++) {
             View v = gv.getChildAt(i);
             if (v != null) {
                 Point coords = Util.getLocationOnScreen(v);

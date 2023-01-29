@@ -22,8 +22,8 @@ public class ConfigManager {
     //Variables for writing to file
     private static final String fileName = "app_config";
     //Variables for App Screen organization and ordering of app objects
-    private AppObject[] homeScreenApps = new AppObject[HomeScreenGridAdapter.HOMESCREENAPPNUM];
-    private ArrayList<AppObject> drawerApps = new ArrayList<>();
+    private final AppObject[] homeScreenApps = new AppObject[HomeScreenGridAdapter.HOMESCREENAPPNUM];
+    private final ArrayList<AppObject> drawerApps = new ArrayList<>();
 
     /**
      * This method will write the drawer page app order to a file.
@@ -175,45 +175,7 @@ public class ConfigManager {
             else
                 appList.add(Util.findAppByPackageName(pack, context));
         }
-        Log.d(TAG, "////////" + json + " --- " + appList.toString());
         return appList;
-        /*ArrayList<AppObject> appList = new ArrayList<>();
-
-        FileInputStream fis = null;
-        StringBuilder sb = new StringBuilder();
-
-        try {
-            fis = context.openFileInput(fileName);
-            InputStreamReader isr = new InputStreamReader(fis);
-            BufferedReader br = new BufferedReader(isr);
-            String text;
-            while ((text = br.readLine()) != null) {
-                sb.append(text);
-                Log.d(TAG, text);
-
-                // Remove semicolon from end of string
-                if (text.charAt(text.length() - 1) == ';')
-                    text = text.substring(0, text.length() - 1);
-
-                if (text.equalsIgnoreCase("") || text.equalsIgnoreCase("null") || text.equalsIgnoreCase("empty"))
-                    appList.add(null);
-                else
-                    appList.add(Util.findAppByPackageName(text, context));
-            }
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
-            if (fis != null)
-                try {
-                    fis.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-        }
-
-        return appList;*/
     }
 
     /**

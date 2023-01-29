@@ -4,4 +4,5 @@
     <item name="whitelist_text" type="id" />
     <item name="whitelist_icon" type="id" />
     <item name="whitelist_checkbox" type="id" />
+    <item name="FlingCatcher" type="id"/>
 </resources>

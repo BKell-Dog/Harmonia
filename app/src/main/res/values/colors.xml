@@ -17,6 +17,7 @@
     <!-- Settings Screen -->
     <color name="settings_top">#EFEFEF</color>
     <color name="settings_bottom">#E1E1E1</color>
+    <color name="settings_activity_background">#F3EFEE</color>
     <color name="grey">#595959</color>
     <color name="menu_button">#FFFFFF</color>
 

@@ -8,13 +8,13 @@ import android.view.MotionEvent;
  */
 public interface Gesturable {
 
-    public boolean onDown(MotionEvent event);
+    boolean onDown(MotionEvent event);
 
-    public boolean onFling(MotionEvent event1, MotionEvent event2, float velocityX, float velocityY);
+    boolean onFling(MotionEvent event1, MotionEvent event2, float velocityX, float velocityY);
 
-    public void onLongPress(MotionEvent event);
+    void onLongPress(MotionEvent event);
 
-    public boolean onSingleTapConfirmed(MotionEvent event);
+    boolean onSingleTapConfirmed(MotionEvent event);
 
-    public boolean isOnScreen();
+    boolean isOnScreen();
 }

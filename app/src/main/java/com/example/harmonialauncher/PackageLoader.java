@@ -26,7 +26,7 @@ public class PackageLoader {
     private final static ArrayList<String> presetCalendar = new ArrayList<String>();
     //TODO: Fix or generalize filepath to not involve my personal username
     private final String filePath = "C:/Users/nothi/AndroidStudioProjects/HarmoniaLauncher/app/src/main/java/com/example/harmonialauncher/package_config";
-    private Context CONTEXT;
+    private final Context CONTEXT;
 
     public PackageLoader(Context context) {
         CONTEXT = context;
