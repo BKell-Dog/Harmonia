@@ -36,7 +36,6 @@ public class DrawerFragment extends HarmoniaFragment implements PageHolder {
     private static final String TAG = DrawerFragment.class.getSimpleName();
     public final int THRESHOLD = 100;
     public ViewPager2 vp = null;
-    private GestureDetectorCompat gd;
     private DrawerViewModel vm;
     private FlingCatcher fc;
 
@@ -52,8 +51,6 @@ public class DrawerFragment extends HarmoniaFragment implements PageHolder {
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        gd = new GestureDetectorCompat(requireActivity(), new DrawerGestureDetector());
     }
 
     @SuppressLint("ClickableViewAccessibility")
@@ -80,13 +77,6 @@ public class DrawerFragment extends HarmoniaFragment implements PageHolder {
             public void onPageSelected(int position) {
                 super.onPageSelected(position);
                 ((DrawerPageAdapter) vp.getAdapter()).setPageOnScreen(position);
-            }
-        });
-
-        vp.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View view, MotionEvent motionEvent) {
-                return gd.onTouchEvent(motionEvent);
             }
         });
 
@@ -120,41 +110,6 @@ public class DrawerFragment extends HarmoniaFragment implements PageHolder {
             Log.d(TAG, "decrementPage: ");
             vp.setCurrentItem(vp.getCurrentItem() - 1);
             vp.invalidate();
-        }
-    }
-
-    public class DrawerGestureDetector extends GestureDetector.SimpleOnGestureListener
-    {
-        /**
-         * This method will intercept fling events which are more horizontal than they are vertical
-         * as passed down from the MainActivity, and based on the direction of the fling will adjust
-         * the viewpager accordingly between child view fragments. No child views will consume fling
-         * events, so we always return true.
-         * @return true.
-         */
-        @Override
-        public boolean onFling(MotionEvent event1,MotionEvent event2, float velocity1, float velocity2)
-        {
-            if (event1 == null || event2 == null)
-                return false;
-
-            float e1y = event1.getY(), e2y = event2.getY();
-            float e1x = event1.getX(), e2x = event2.getX();
-            float xTranslation = e2x - e1x, yTranslation = e2y - e1y;
-
-            if (Math.abs(yTranslation) < Math.abs(xTranslation)) //Fling more vertical than horizontal
-                if (e2x - e1x < -THRESHOLD && vm.getCurrentPage() < 0) //Leftward fling
-                {
-                    vm.setCurrentPage(vm.getCurrentPage() - 1);
-                    vp.invalidate();
-                }
-                else {
-                    if (Objects.requireNonNull(vp.getAdapter()).getItemCount() > vm.getCurrentPage()) {
-                        vm.setCurrentPage(0);
-                        vp.invalidate();
-                    }
-                }
-            return true;
         }
     }
 

@@ -2,21 +2,14 @@ package com.example.harmonialauncher.Fragments;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.util.Log;
 
 import androidx.annotation.NonNull;
-import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 
-import com.example.harmonialauncher.Helpers.AppObject;
 import com.example.harmonialauncher.Adapters.DrawerGridAdapter;
-import com.example.harmonialauncher.Utils.ConfigManager;
-import com.example.harmonialauncher.Utils.LockStatusChangeListener;
+import com.example.harmonialauncher.Listeners.LockStatusChangeListener;
 import com.example.harmonialauncher.R;
-import com.example.harmonialauncher.Utils.Util;
 import com.example.harmonialauncher.ViewModels.DrawerPageViewModel;
-
-import java.util.ArrayList;
 
 // Purpose of this class: retrieve app data for all installed apps, and display app name as well as
 // app icon (type Drawable) on the screen in a grid. Grid will not exceed 4 columns and 5 rows, and

@@ -39,8 +39,6 @@ public class MainActivity extends HarmoniaActivity implements PageHolder {
     public static final int THRESHOLD = HarmoniaGestureDetector.THRESHOLD;
     private static final String TAG = "Main Activity";
     private MainActivityViewModel vm;
-    public static Application instance;
-    public final Context CONTEXT = MainActivity.this;
     public ViewPager2 vp;
     private FlingCatcher fc;
     public FragmentContainerView fcv;
@@ -81,24 +79,20 @@ public class MainActivity extends HarmoniaActivity implements PageHolder {
                         ((HarmoniaFragment) pa.getFragment(i)).setOffScreen();
             }
         });
-/*
-        fcv = findViewById(R.id.MainActivityFragment);
+        update();
+    }
 
-
-        manager = getSupportFragmentManager();
-        manager.beginTransaction()
-                .add(R.id.MainActivityFragment, new HomeScreenFragment(), HomeScreenFragment.class.getSimpleName())
-                .add(R.id.MainActivityFragment, new DrawerFragment(), DrawerFragment.class.getSimpleName())
-                .commit();
-
-        update();*/
+    public void update()
+    {
+        vp.setCurrentItem(vm.getCurrentPage());
+        vp.invalidate();
     }
 
     public void incrementPage()
     {
        if (vp.getCurrentItem() == 0) {
            vm.setCurrentPage(1);
-           vp.setCurrentItem(1);
+           update();
        }
     }
 
@@ -106,51 +100,9 @@ public class MainActivity extends HarmoniaActivity implements PageHolder {
     {
         if (vp.getCurrentItem() == 1) {
             vm.setCurrentPage(0);
-            vp.setCurrentItem(0);
+            update();
         }
     }
-
-    public class MainPageGestureDetector extends GestureDetector.SimpleOnGestureListener {
-
-        @Override
-        public boolean onDown(MotionEvent e) {
-            return true;
-        }
-
-        /**
-         * This method will intercept fling events which are more vertical than they are horizontal,
-         * and based on the direction of the fling will adjust the viewpager accordingly between
-         * Home Screen Fragment and Drawer Fragment. If the fling is more horizontal than it is
-         * vertical, the event is passed to children (i.e. Drawer Fragment) where it is processed.
-         *
-         * @return true is vertical, false if horizontal.
-         */
-        @Override
-        public boolean onFling(MotionEvent event1, MotionEvent event2, float velocity1, float velocity2) {
-            Log.d(TAG, "MAIN ACTIVITY ON FLING");
-            if (event1 == null || event2 == null)
-                return false;
-
-            float e1y = event1.getY(), e2y = event2.getY();
-            float e1x = event1.getX(), e2x = event2.getX();
-            float xTranslation = e2x - e1x, yTranslation = e2y - e1y;
-
-            if (Math.abs(yTranslation) > Math.abs(xTranslation)) //Fling more vertical than horizontal
-                if (e2y - e1y < -THRESHOLD) //Upward fling
-                {
-                    vm.setCurrentPage(1);
-                    vp.invalidate();
-                    return true;
-                } else {
-                    vm.setCurrentPage(0);
-                    vp.invalidate();
-                    return true;
-                }
-            else
-                return false;
-        }
-    }
-
 
     public class MainPageAdapter extends PageAdapter {
         public final String HOMESCREEN = "Home Screen", DRAWER = "Drawer";

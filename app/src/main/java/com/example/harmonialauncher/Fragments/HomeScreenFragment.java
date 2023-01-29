@@ -1,35 +1,22 @@
 package com.example.harmonialauncher.Fragments;
 
-import static com.example.harmonialauncher.MainActivity.THRESHOLD;
-
 import android.content.ClipData;
 import android.content.Context;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.DragEvent;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.GridView;
-import android.widget.LinearLayout;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.ViewModelProvider;
 
-import com.example.harmonialauncher.Adapters.AppGridAdapter;
-import com.example.harmonialauncher.Helpers.AppObject;
-import com.example.harmonialauncher.Utils.ConfigManager;
 import com.example.harmonialauncher.Adapters.HomeScreenGridAdapter;
-import com.example.harmonialauncher.Utils.HarmoniaGestureDetector;
-import com.example.harmonialauncher.Utils.LockStatusChangeListener;
-import com.example.harmonialauncher.MainActivity;
+import com.example.harmonialauncher.Listeners.LockStatusChangeListener;
 import com.example.harmonialauncher.R;
 import com.example.harmonialauncher.Utils.Util;
 import com.example.harmonialauncher.ViewModels.HomeScreenViewModel;
-
-import java.util.ArrayList;
 
 /*
 This class will manage the GridView which displays the apps, its construction and popualtion, and will

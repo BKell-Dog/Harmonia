@@ -21,14 +21,12 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.example.harmonialauncher.Adapters.AppGridAdapter;
 import com.example.harmonialauncher.Helpers.AppObject;
-import com.example.harmonialauncher.Utils.ConfigManager;
 import com.example.harmonialauncher.Utils.HarmoniaGestureDetector;
-import com.example.harmonialauncher.Utils.LockStatusChangeListener;
+import com.example.harmonialauncher.Listeners.LockStatusChangeListener;
 import com.example.harmonialauncher.R;
 import com.example.harmonialauncher.Utils.Util;
 import com.example.harmonialauncher.Utils.LockManager;
 import com.example.harmonialauncher.ViewModels.AppGridViewModel;
-import com.example.harmonialauncher.ViewModels.MainActivityViewModel;
 
 public class AppGridPage extends HarmoniaFragment implements LockStatusChangeListener.LockStatusListener {
 

@@ -175,7 +175,6 @@ public class ConfigManager {
             else
                 appList.add(Util.findAppByPackageName(pack, context));
         }
-        Log.d(TAG, "////////" + json + " --- " + appList);
         return appList;
     }
 

@@ -18,7 +18,7 @@ import android.widget.TextView;
 import androidx.appcompat.widget.LinearLayoutCompat;
 
 import com.example.harmonialauncher.Helpers.AppObject;
-import com.example.harmonialauncher.Utils.LockStatusChangeListener;
+import com.example.harmonialauncher.Listeners.LockStatusChangeListener;
 import com.example.harmonialauncher.R;
 import com.example.harmonialauncher.Utils.Util;
 import com.example.harmonialauncher.Utils.LockManager;
