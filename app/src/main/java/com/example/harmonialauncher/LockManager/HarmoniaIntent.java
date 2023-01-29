@@ -1,4 +1,4 @@
-package com.example.harmonialauncher.lockManager;
+package com.example.harmonialauncher.LockManager;
 
 import android.content.Intent;
 

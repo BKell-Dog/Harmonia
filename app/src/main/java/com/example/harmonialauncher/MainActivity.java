@@ -3,7 +3,6 @@ package com.example.harmonialauncher;
 import android.annotation.SuppressLint;
 import android.app.Application;
 import android.content.Context;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.GestureDetector;
@@ -29,8 +28,6 @@ import com.example.harmonialauncher.Activities.HarmoniaActivity;
 import com.example.harmonialauncher.Fragments.HarmoniaFragment;
 import com.example.harmonialauncher.ViewModels.MainActivityViewModel;
 import com.example.harmonialauncher.Views.FlingCatcher;
-import com.example.harmonialauncher.Views.HarmoniaConstraintLayout;
-import com.example.harmonialauncher.Views.ViewPagerWrapper;
 
 
 /*

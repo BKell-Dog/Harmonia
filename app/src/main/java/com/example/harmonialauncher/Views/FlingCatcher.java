@@ -1,25 +1,16 @@
 package com.example.harmonialauncher.Views;
 
-import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.content.Context;
-import android.content.res.TypedArray;
 import android.os.Build;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.AbsoluteLayout;
-import android.widget.FrameLayout;
 
-import androidx.annotation.RequiresApi;
 import androidx.constraintlayout.widget.ConstraintLayout;
 
 import com.example.harmonialauncher.Helpers.FlingDetector;
-import com.example.harmonialauncher.Helpers.VerticalFlingDetector;
 import com.example.harmonialauncher.Interfaces.PageHolder;
-import com.example.harmonialauncher.MainActivity;
 
 public class FlingCatcher extends ConstraintLayout {
     private static final String TAG = FlingCatcher.class.getSimpleName();
