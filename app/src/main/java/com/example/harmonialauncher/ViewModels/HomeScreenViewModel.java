@@ -20,7 +20,7 @@ public class HomeScreenViewModel extends AppGridViewModel {
         super(application);
         this.application = application;
 
-        ArrayList<AppObject> receivedApps = ConfigManager.readHomeAppOrderFromFile(application.getApplicationContext());
+        ArrayList<AppObject> receivedApps = null;// ConfigManager.readHomeAppOrderFromFile(application.getApplicationContext());
         if (receivedApps != null)
             setAppList(ConfigManager.readHomeAppOrderFromFile(application.getApplicationContext()));
         else

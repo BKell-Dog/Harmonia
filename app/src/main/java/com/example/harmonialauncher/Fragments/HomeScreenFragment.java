@@ -61,73 +61,15 @@ public class HomeScreenFragment extends AppGridPage implements LockStatusChangeL
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View v = super.onCreateView(inflater, container, savedInstanceState);
-
-        /*v.setOnDragListener(new View.OnDragListener() {
+        v.setOnTouchListener(new View.OnTouchListener() {
             @Override
-            public boolean onDrag(View view, DragEvent dragEvent) {
-                int action = dragEvent.getAction();
-
-
-                //originalView is the original app object that was long tapped.
-                //view is the view which is not underneath the drag shadow.
-                View originalView = (View) dragEvent.getLocalState();
-                int index1 = -1, index2 = -1;
-                for (int i = 0; i < gv.getChildCount(); i++)
-                    if (gv.getChildAt(i).equals(view))
-                        index1 = i;
-                    else if (gv.getChildAt(i).equals(originalView))
-                        index2 = i;
-                Log.d(TAG, "ON DRAG " + index1 + ", " + index2);
-
-
-                switch (action) {
-                    case DragEvent.ACTION_DRAG_STARTED:
-                        // handle drag started
-                        break;
-                    case DragEvent.ACTION_DRAG_ENTERED:
-                        Log.d(TAG, "ON ACTION DRAG ENTERED");
-
-                        if (Math.abs(index1 - index2) == 1)
-                        {
-                            adapter.swap(index1, index2);
-                            gv.setAdapter(new HomeScreenGridAdapter(CONTEXT, R.layout.app, adapter.getAppList()));
-                        }
-                        else if (index2 < index1)
-                        {
-                            for (int i = index1; i > index2; i--)
-                            {
-                                adapter.swap(i, i - 1);
-                            }
-                        }
-                        else if (index2 > index1)
-                        {
-                            for (int i = index1; i < index2; i++)
-                            {
-                                adapter.swap(i, i + 1);
-                            }
-                        }
-                        break;
-                    case DragEvent.ACTION_DRAG_EXITED:
-                        // get the view that was exited
-                        View exitedView = (View) dragEvent.getLocalState();
-                        // change the background color of the exited view back to its original color
-                        view.setBackgroundColor(Color.RED);
-                        break;
-                    case DragEvent.ACTION_DROP:
-
-                        break;
-                    case DragEvent.ACTION_DRAG_LOCATION:
-                        Log.d(TAG, "ON DRAG LOCATION");
-
-                        break;
-                    case DragEvent.ACTION_DRAG_ENDED:
-                        originalView.setVisibility(View.VISIBLE);
-                        break;
-                    default:
-                }
-                return true;
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+                Log.d(TAG, "onTouch: REGISTERED");
+                return false;
             }
-        });*/
+        });
+
+        Log.d(TAG, "onCreateView: ");
 
         return v;
     }
@@ -165,21 +107,6 @@ public class HomeScreenFragment extends AppGridPage implements LockStatusChangeL
             }
         });*/
 
-    @Override
-    public boolean onFling(MotionEvent event1, MotionEvent event2, float velocityX, float velocityY) {
-        if (event1 == null || event2 == null)
-            return false;
-
-        float e1y = event1.getY(), e2y = event2.getY();
-        float e1x = event1.getX(), e2x = event2.getX();
-        float xTranslation = e2x - e1x, yTranslation = e2y - e1y;
-
-        if (Math.abs(yTranslation) > Math.abs(xTranslation)) //Fling more vertical than horizontal
-            //Vertical flings will move between home screen and app drawer, sent to the viewpager in MainActivity.
-            if (yTranslation < -THRESHOLD) //Upward fling
-                ((MainActivity) getActivity()).setPage(1);
-        return true;
-    }
 
     @Override
     public void onLongPress(MotionEvent event) {

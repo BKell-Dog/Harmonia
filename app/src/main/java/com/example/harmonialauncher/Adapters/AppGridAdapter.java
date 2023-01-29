@@ -22,6 +22,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.example.harmonialauncher.Helpers.AppObject;
+import com.example.harmonialauncher.Helpers.SingleTapDetector;
 import com.example.harmonialauncher.R;
 import com.example.harmonialauncher.Utils.Util;
 import com.example.harmonialauncher.Utils.LockManager;
@@ -42,12 +43,14 @@ public class AppGridAdapter extends ArrayAdapter<AppObject> {
     protected int pageHorizontalBuffer = 0, pageVerticalBuffer = 120;
     protected int elementHeight = -1, elementWidth = -1;
     private final ArrayList<String> lockedPacks = new ArrayList<String>();
+    private SingleTapDetector std;
 
     public AppGridAdapter(@NonNull Context context, int resource, ArrayList<AppObject> appList) {
         super(context, resource, appList);
         CONTEXT = context;
         apps = appList;
         layout_id = resource;
+        std = new SingleTapDetector(context);
     }
 
     public void add(AppObject app) {
@@ -141,19 +144,17 @@ public class AppGridAdapter extends ArrayAdapter<AppObject> {
         //Setting child views to not respond to touch events
         gridItemView.setOnTouchListener(new View.OnTouchListener() {
             @Override
-            public boolean onTouch(View view, MotionEvent motionEvent) {
-                return false;
-            }
-        });
-        icon.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View view, MotionEvent motionEvent) {
-                return false;
-            }
-        });
-        label.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View view, MotionEvent motionEvent) {
+            public boolean onTouch(View view, MotionEvent event) {
+                if (std.onTouch(null, event)) {
+                    // Isolate app package name
+                    LinearLayout layout = (LinearLayout) view;
+                    LinearLayout innerLayout = (LinearLayout) layout.getChildAt(1);
+                    TextView text = (TextView) innerLayout.getChildAt(0);
+                    String appName = text.getText().toString();
+                    String appPackageName = Util.findAppByName(appName, CONTEXT).getPackageName();
+                    Util.openApp(CONTEXT, appPackageName);
+                    return true;
+                }
                 return false;
             }
         });

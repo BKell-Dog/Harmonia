@@ -87,6 +87,13 @@ public class AppGridPage extends HarmoniaFragment implements LockStatusChangeLis
                 return gd.onTouchEvent(motionEvent);
             }
         });
+        
+        v.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+                return false;
+            }
+        });
 
         return v;
     }

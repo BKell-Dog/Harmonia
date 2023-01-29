@@ -1,8 +1,10 @@
 package com.example.harmonialauncher.Fragments;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.GestureDetector;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -12,36 +14,46 @@ import androidx.annotation.NonNull;
 import androidx.core.view.GestureDetectorCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.viewpager2.widget.ViewPager2;
 
 import com.example.harmonialauncher.Adapters.DrawerPageAdapter;
+import com.example.harmonialauncher.Helpers.FlingDetector;
+import com.example.harmonialauncher.Interfaces.PageHolder;
 import com.example.harmonialauncher.Utils.HarmoniaGestureDetector;
 import com.example.harmonialauncher.MainActivity;
 import com.example.harmonialauncher.Adapters.PageAdapter;
 import com.example.harmonialauncher.R;
 import com.example.harmonialauncher.Utils.Util;
+import com.example.harmonialauncher.ViewModels.DrawerPageViewModel;
+import com.example.harmonialauncher.ViewModels.DrawerViewModel;
+import com.example.harmonialauncher.Views.FlingCatcher;
 
-public class DrawerFragment extends HarmoniaFragment {
+import java.util.Objects;
 
-    private static final String TAG = "Drawer Fragment";
+public class DrawerFragment extends HarmoniaFragment implements PageHolder {
+
+    private static final String TAG = DrawerFragment.class.getSimpleName();
     public final int THRESHOLD = 100;
     public ViewPager2 vp = null;
-    private int numOfPages;
     private GestureDetectorCompat gd;
+    private DrawerViewModel vm;
+    private FlingCatcher fc;
 
     public DrawerFragment() {
         super(R.layout.drawer_fragment);
     }
 
+    public void onAttach(@NonNull Context context)
+    {
+        super.onAttach(context);
+        vm = new ViewModelProvider(requireActivity()).get(DrawerViewModel.class);
+    }
+
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        //Load all apps into Arraylist, then find how many drawer pages are needed.
-        //Each page in the drawer will hold twenty apps at most, a 5x4 grid (rows x cols)
-        numOfPages = (Util.loadAllApps(this).size() / 20) + 1;
-
-        gd = new GestureDetectorCompat(this.getActivity(), new HarmoniaGestureDetector());
-        HarmoniaGestureDetector.add(this);
+        gd = new GestureDetectorCompat(requireActivity(), new DrawerGestureDetector());
     }
 
     @SuppressLint("ClickableViewAccessibility")
@@ -50,9 +62,13 @@ public class DrawerFragment extends HarmoniaFragment {
         if (v == null || getActivity() == null)
             return null;
 
+        fc = v.findViewById(R.id.fling_detector);
+        fc.setCallback(this);
+        fc.setMode(FlingDetector.HORIZONTAL);
+
         //Initialize view pager to scroll horizontally
         vp = v.findViewById(R.id.drawer_view_pager);
-        vp.setAdapter(new DrawerPageAdapter(this.getActivity(), numOfPages));
+        vp.setAdapter(new DrawerPageAdapter(this.getActivity()));
         vp.setUserInputEnabled(false);
         vp.setOrientation(ViewPager2.ORIENTATION_HORIZONTAL);
         vp.canScrollHorizontally(1);
@@ -82,52 +98,74 @@ public class DrawerFragment extends HarmoniaFragment {
     }
 
     public int getLastPageIndex() {
-        return vp != null ? vp.getAdapter().getItemCount() - 1 : -1;
+        return vp != null ? Objects.requireNonNull(vp.getAdapter()).getItemCount() - 1 : -1;
     }
 
     public HarmoniaFragment getCurrentPage() {
         return vp != null ? (HarmoniaFragment) ((DrawerPageAdapter) vp.getAdapter()).createFragment(vp.getCurrentItem()) : null;
     }
 
-    @Override
-    public boolean onFling(MotionEvent event1, MotionEvent event2, float velocityX, float velocityY) {
-        //Log.d(TAG, event1 + " --- " + event2);
+    public void incrementPage()
+    {
+        if (vp.getCurrentItem() < vp.getAdapter().getItemCount()) {
+            Log.d(TAG, "incrementPage: ");
+            vp.setCurrentItem(vp.getCurrentItem() + 1);
+            vp.invalidate();
+        }
+    }
 
-        if (event1 == null || event2 == null)
-            return false;
+    public void decrementPage()
+    {
+        if (vp.getCurrentItem() > 0) {
+            Log.d(TAG, "decrementPage: ");
+            vp.setCurrentItem(vp.getCurrentItem() - 1);
+            vp.invalidate();
+        }
+    }
 
-        float e1y = event1.getY(), e2y = event2.getY();
-        float e1x = event1.getX(), e2x = event2.getX();
-        float xTranslation = e2x - e1x, yTranslation = e2y - e1y;
-
-        if (Math.abs(xTranslation) > Math.abs(yTranslation)) //Fling more horizontal than vertical
+    public class DrawerGestureDetector extends GestureDetector.SimpleOnGestureListener
+    {
+        /**
+         * This method will intercept fling events which are more horizontal than they are vertical
+         * as passed down from the MainActivity, and based on the direction of the fling will adjust
+         * the viewpager accordingly between child view fragments. No child views will consume fling
+         * events, so we always return true.
+         * @return true.
+         */
+        @Override
+        public boolean onFling(MotionEvent event1,MotionEvent event2, float velocity1, float velocity2)
         {
-            //Horizontal flings will move between pages of the drawer, sent to the viewpager in DrawerFragment.
-            if (xTranslation > THRESHOLD && getCurrentPageIndex() > 0) //Rightward fling
-                vp.setCurrentItem(getCurrentPageIndex() - 1);
-            else if (xTranslation < -THRESHOLD && getCurrentPageIndex() < getLastPageIndex()) //Leftward fling
-                vp.setCurrentItem(getCurrentPageIndex() + 1);
-        } else if (Math.abs(yTranslation) > Math.abs(xTranslation)) //Fling more vertical than horizontal
-            //Vertical flings will move between home screen and app drawer, sent to the viewpager in MainActivity.
-            if (yTranslation > THRESHOLD) //Downward fling
-            {
-                MainActivity main = (MainActivity) getActivity();
-                if (main != null)
-                    main.setPage(0);
-                else
-                    Log.d(TAG, "Main Activity Reference is Null");
-            }
-        return true;
+            if (event1 == null || event2 == null)
+                return false;
+
+            float e1y = event1.getY(), e2y = event2.getY();
+            float e1x = event1.getX(), e2x = event2.getX();
+            float xTranslation = e2x - e1x, yTranslation = e2y - e1y;
+
+            if (Math.abs(yTranslation) < Math.abs(xTranslation)) //Fling more vertical than horizontal
+                if (e2x - e1x < -THRESHOLD && vm.getCurrentPage() < 0) //Leftward fling
+                {
+                    vm.setCurrentPage(vm.getCurrentPage() - 1);
+                    vp.invalidate();
+                }
+                else {
+                    if (Objects.requireNonNull(vp.getAdapter()).getItemCount() > vm.getCurrentPage()) {
+                        vm.setCurrentPage(0);
+                        vp.invalidate();
+                    }
+                }
+            return true;
+        }
     }
 
     @NonNull
     public String toString() {
         if (vp == null)
             return "";
-        String s = "Drawer Fragment. Children: ";
-        for (int i = 0; i < vp.getAdapter().getItemCount(); i++) {
-            s += ((DrawerPageAdapter) this.vp.getAdapter()).getFragment(i) + "\n";
+        StringBuilder s = new StringBuilder("Drawer Fragment. Children: ");
+        for (int i = 0; i < Objects.requireNonNull(vp.getAdapter()).getItemCount(); i++) {
+            s.append(((DrawerPageAdapter) this.vp.getAdapter()).getFragment(i)).append("\n");
         }
-        return s;
+        return s.toString();
     }
 }
