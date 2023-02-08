@@ -1,5 +1,6 @@
 package com.example.harmonialauncher.Helpers;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -20,6 +21,7 @@ public class SingleTapDetector implements View.OnTouchListener {
         mSingleTapTimeout = ViewConfiguration.getTapTimeout();
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     public boolean onTouch(View view, MotionEvent event) {
         switch (event.getAction()) {

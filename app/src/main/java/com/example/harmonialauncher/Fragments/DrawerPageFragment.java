@@ -1,7 +1,11 @@
 package com.example.harmonialauncher.Fragments;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.ViewModelProvider;
@@ -17,7 +21,7 @@ import com.example.harmonialauncher.ViewModels.DrawerPageViewModel;
 // will not resize as more space on the screen appears. When an app element is tapped, the app opens.
 // When an app element is held down, options appear and the app may move to where the finger decides.
 public class DrawerPageFragment extends AppGridPage implements LockStatusChangeListener.LockStatusListener {
-    private static final String TAG = "Drawer Page Fragment";
+    private static final String TAG = DrawerPageFragment.class.getSimpleName();
     private DrawerPageViewModel vm;
     private int pageNum;
 
@@ -41,7 +45,13 @@ public class DrawerPageFragment extends AppGridPage implements LockStatusChangeL
         adapter = new DrawerGridAdapter(CONTEXT, R.layout.app, vm.getAppList());
     }
 
-    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        View v = super.onCreateView(inflater, container, savedInstanceState);
+        v.setBackgroundColor(Color.RED);
+        return v;
+    }
+
+        @Override
     public void onDestroy()
     {
         super.onDestroy();

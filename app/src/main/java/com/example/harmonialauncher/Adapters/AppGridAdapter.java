@@ -1,40 +1,39 @@
 package com.example.harmonialauncher.Adapters;
 
+import android.annotation.SuppressLint;
 import android.content.ClipData;
 import android.content.Context;
-import android.graphics.Color;
 import android.graphics.Point;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.util.Log;
-import android.view.DragEvent;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.GridView;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.example.harmonialauncher.Helpers.AppObject;
 import com.example.harmonialauncher.Helpers.SingleTapDetector;
+import com.example.harmonialauncher.Interfaces.AppHolder;
 import com.example.harmonialauncher.R;
 import com.example.harmonialauncher.Utils.Util;
 import com.example.harmonialauncher.Utils.LockManager;
+import com.example.harmonialauncher.Views.AppView;
 
 import java.util.ArrayList;
 import java.util.Collections;
 
-public class AppGridAdapter extends ArrayAdapter<AppObject> {
+public class AppGridAdapter extends ArrayAdapter<AppObject> implements AppHolder {
 
-    private final static String TAG = "Grid Adapter";
+    private final static String TAG = "App Grid Adapter";
     public final int INVISIBLE = 0, GREYSCALE = 1; //Variables for drawing locked apps
-    private int mode = GREYSCALE; //Change this variable to change disappearance mode
+    private int lockMode = GREYSCALE; //Change this variable to change disappearance mode
     protected final int COLS = 4, ROWS = 5;
     protected ArrayList<AppObject> apps;
     protected Context CONTEXT;
@@ -89,10 +88,11 @@ public class AppGridAdapter extends ArrayAdapter<AppObject> {
         return lockedPacks;
     }
 
-    public int getMode() {
-        return mode;
+    public int getLockMode() {
+        return lockMode;
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     @NonNull
     @Override
     public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
@@ -104,6 +104,8 @@ public class AppGridAdapter extends ArrayAdapter<AppObject> {
         }
         AppObject app = apps.get(position);
 
+        AppView appView = gridItemView.findViewById(R.id.app_layout);
+
         //Set element dimens is called so that in case the app list had been refreshed and all dimensions
         // have been lost, we can reset them here. But it is only called if the apps dimensions are each
         // equal to -1.
@@ -111,10 +113,7 @@ public class AppGridAdapter extends ArrayAdapter<AppObject> {
         //if (p.y == -1 || p.x == -1) //I commented these out because for some reason HScreen icons kept shrinking
         setElementDimen(parent.getHeight(), parent.getWidth());
 
-        //Get Icon and Label and set their values to the specific app
-        TextView label = gridItemView.findViewById(R.id.label);
-        ImageView icon = gridItemView.findViewById(R.id.image);
-        label.setText(app.getName());
+        appView.setText(app.getName());
         Drawable image = app.getImage();
         if (image == null) {
             if (Build.VERSION.SDK_INT > 21)
@@ -122,36 +121,33 @@ public class AppGridAdapter extends ArrayAdapter<AppObject> {
             else
                 image = CONTEXT.getResources().getDrawable(app.getImageId());
         }
-        icon.setImageDrawable(image);
+        appView.setImageDrawable(image);
 
         //Resize icon to fit within the GridView area
-        icon.setLayoutParams(new LinearLayout.LayoutParams(app.getWidth() - horizontalBuffer, app.getHeight() - verticalBuffer));
+        appView.setIconLayoutParams(new LinearLayout.LayoutParams(app.getWidth() - horizontalBuffer, app.getHeight() - verticalBuffer));
 
         //Resize the Grid Item to the app's previously defined height and width, which are set below
-        gridItemView.setLayoutParams(new LinearLayout.LayoutParams(app.getWidth(), app.getHeight()));
+        appView.setLayoutParams(new LinearLayout.LayoutParams(app.getWidth(), app.getHeight()));
 
         //Make app invisible or greyscale if it is meant to be locked
         if (app.isLocked() || LockManager.isLocked(app.getPackageName())) {
             if (inLockedList(app.getPackageName()))
                 lockedPacks.add(app.getPackageName());
 
-            if (mode == INVISIBLE)
-                gridItemView.setVisibility(View.INVISIBLE);
-            else if (mode == GREYSCALE)
-                icon.setImageDrawable(Util.convertToGreyscale(app.getImage()));
+            if (lockMode == INVISIBLE)
+                appView.setVisibility(View.INVISIBLE);
+            else if (lockMode == GREYSCALE)
+                appView.setImageDrawable(Util.convertToGreyscale(app.getImage()));
         }
 
-        //Setting child views to not respond to touch events
-        gridItemView.setOnTouchListener(new View.OnTouchListener() {
+        appView.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View view, MotionEvent event) {
                 if (std.onTouch(null, event)) {
                     // Isolate app package name
-                    LinearLayout layout = (LinearLayout) view;
-                    LinearLayout innerLayout = (LinearLayout) layout.getChildAt(1);
-                    TextView text = (TextView) innerLayout.getChildAt(0);
-                    String appName = text.getText().toString();
-                    String appPackageName = Util.findAppByName(appName, CONTEXT).getPackageName();
+                    String appPackageName = Util.findAppByName(appView.getText(), CONTEXT).getPackageName();
+
+                    //Start app
                     Util.openApp(CONTEXT, appPackageName);
                     return true;
                 }
@@ -159,7 +155,7 @@ public class AppGridAdapter extends ArrayAdapter<AppObject> {
             }
         });
 
-        gridItemView.setOnLongClickListener(new View.OnLongClickListener() {
+        appView.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View view) {
                 if (view != null) {
@@ -172,7 +168,7 @@ public class AppGridAdapter extends ArrayAdapter<AppObject> {
             }
         });
 
-        return gridItemView;
+        return appView;
     }
 
     public boolean inLockedList(String packageName) {
@@ -204,11 +200,11 @@ public class AppGridAdapter extends ArrayAdapter<AppObject> {
         return new Point(elementWidth, elementHeight);
     }
 
-    public void setMode(int mode) {
-        if (mode == 0 || mode == 1)
-            this.mode = mode;
+    public void setLockMode(int lockMode) {
+        if (lockMode == INVISIBLE || lockMode == GREYSCALE)
+            this.lockMode = lockMode;
         else
-            Log.d(TAG, "Mode out of bounds. Possibly update method setMode to accommodate new modes.");
+            Log.d(TAG, "Mode out of bounds!");
     }
 
     public void swap(int a, int b) {

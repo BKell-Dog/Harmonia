@@ -98,7 +98,6 @@ public class DrawerFragment extends HarmoniaFragment implements PageHolder {
     public void incrementPage()
     {
         if (vp.getCurrentItem() < vp.getAdapter().getItemCount()) {
-            Log.d(TAG, "incrementPage: ");
             vp.setCurrentItem(vp.getCurrentItem() + 1);
             vp.invalidate();
         }
@@ -107,7 +106,6 @@ public class DrawerFragment extends HarmoniaFragment implements PageHolder {
     public void decrementPage()
     {
         if (vp.getCurrentItem() > 0) {
-            Log.d(TAG, "decrementPage: ");
             vp.setCurrentItem(vp.getCurrentItem() - 1);
             vp.invalidate();
         }

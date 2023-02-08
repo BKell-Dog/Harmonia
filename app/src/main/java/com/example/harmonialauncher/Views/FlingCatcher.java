@@ -6,6 +6,7 @@ import android.os.Build;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
+import android.widget.Toast;
 
 import androidx.constraintlayout.widget.ConstraintLayout;
 
@@ -55,7 +56,6 @@ public class FlingCatcher extends ConstraintLayout {
                         callback.incrementPage(); //Upward fling, return to HomeScreen
                     else
                         callback.decrementPage(); //Downward fling, go to DrawerScreen
-                    Log.d(TAG, "dispatchTouchEvent: INNER VERT " + firstY + " --- " + event.getY());
                 }
                 else if (fd.getMode() == FlingDetector.HORIZONTAL)
                 {
@@ -63,7 +63,6 @@ public class FlingCatcher extends ConstraintLayout {
                         callback.decrementPage();
                     else
                         callback.incrementPage();
-                    Log.d(TAG, "dispatchTouchEvent: INNER HORIZ");
                 }
             } else
                 Log.e(TAG, "Callback Runnable was not instantiated.");

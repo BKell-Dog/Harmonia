@@ -26,7 +26,6 @@ public class DrawerPageAdapter extends PageAdapter {
     public Fragment createFragment(int position) {
         DrawerPageFragment dpf = new DrawerPageFragment(position);
         fragments.set(position, dpf);
-        Log.d(TAG, "createFragment: ");
         return dpf;
     }
 

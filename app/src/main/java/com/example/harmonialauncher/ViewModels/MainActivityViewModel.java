@@ -13,7 +13,7 @@ import java.util.ArrayList;
 
 public class MainActivityViewModel extends ViewModel {
 
-    private static final String TAG = "Main Activity View Model";
+    private static final String TAG = MainActivityViewModel.class.getSimpleName();
     private int currentPage = 0;
 
     public int getCurrentPage() {

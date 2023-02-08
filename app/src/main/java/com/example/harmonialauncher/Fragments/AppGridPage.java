@@ -30,7 +30,7 @@ import com.example.harmonialauncher.ViewModels.AppGridViewModel;
 
 public class AppGridPage extends HarmoniaFragment implements LockStatusChangeListener.LockStatusListener {
 
-    private static final String TAG = "App Grid Page";
+    private static final String TAG = AppGridPage.class.getSimpleName();
     protected Context CONTEXT;
     protected AppGridViewModel vm;
     //Drawing Grid
@@ -83,13 +83,6 @@ public class AppGridPage extends HarmoniaFragment implements LockStatusChangeLis
             @Override
             public boolean onTouch(View view, MotionEvent motionEvent) {
                 return gd.onTouchEvent(motionEvent);
-            }
-        });
-        
-        v.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View view, MotionEvent motionEvent) {
-                return false;
             }
         });
 

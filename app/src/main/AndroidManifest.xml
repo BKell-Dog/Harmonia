@@ -19,7 +19,7 @@
             android:excludeFromRecents="true"
             android:launchMode="singleTask"
             android:screenOrientation="nosensor"
-            android:showWhenLocked="true"
+            android:showWhenLocked="false"
             android:turnScreenOn="true"
             android:exported="true">
             <intent-filter>

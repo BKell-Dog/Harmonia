@@ -11,7 +11,7 @@ import com.example.harmonialauncher.Utils.Util;
 import java.util.ArrayList;
 
 public class DrawerPageViewModel extends AppGridViewModel {
-    private static final String TAG = "Drawer Page View Model";
+    private static final String TAG = DrawerPageViewModel.class.getSimpleName();
     private int pageNum = -1;
 
     public DrawerPageViewModel(@NonNull Application application) {

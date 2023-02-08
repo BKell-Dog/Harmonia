@@ -7,7 +7,7 @@ import androidx.annotation.NonNull;
 import com.example.harmonialauncher.Interfaces.Lockable;
 
 public class AppObject implements Lockable {
-    private String name, packageName; //business stuff
+    private String name, packageName;
     private Drawable image = null;
     private Boolean isAppInDrawer;
     private int imageId;

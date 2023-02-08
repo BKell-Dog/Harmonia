@@ -7,6 +7,7 @@ import android.view.MotionEvent;
 import android.view.VelocityTracker;
 import android.view.View;
 import android.view.ViewConfiguration;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 
@@ -61,20 +62,19 @@ public class FlingDetector implements View.OnTouchListener {
             case MotionEvent.ACTION_UP:
                 if (mode == VERTICAL && mShouldCheckVerticalFling) {
                     mVelocityTracker.computeCurrentVelocity(SEC_IN_MILLIS, mMaximumFlingVelocity);
-                    // only when fling is detected in down direction
-                    if (mVelocityTracker.getYVelocity() > mMinimumFlingVelocity) {
+                    if (Math.abs(mVelocityTracker.getYVelocity()) > mMinimumFlingVelocity) {
                         cleanUp();
                         return true;
                     }
                 }
                 if (mode == HORIZONTAL && mShouldCheckHorizontalFling) {
                     mVelocityTracker.computeCurrentVelocity(SEC_IN_MILLIS, mMaximumFlingVelocity);
-                    // only when fling is detected in down direction
-                    if (mVelocityTracker.getXVelocity() > mMinimumFlingVelocity) {
+                    if (Math.abs(mVelocityTracker.getXVelocity()) > mMinimumFlingVelocity) {
                         cleanUp();
                         return true;
                     }
                 }
+                cleanUp();
             case MotionEvent.ACTION_CANCEL:
                 cleanUp();
         }

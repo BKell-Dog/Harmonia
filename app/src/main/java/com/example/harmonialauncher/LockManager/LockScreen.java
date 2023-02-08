@@ -16,7 +16,7 @@ import com.example.harmonialauncher.Utils.Util;
 
 public class LockScreen {
 
-    private static final String TAG = "Lock Screen";
+    private static final String TAG = LockScreen.class.getSimpleName();
 
     public void showLockScreenWindow(View parent, Lockable l) {
         //Inflate lock screen view
@@ -39,9 +39,9 @@ public class LockScreen {
         //Show the popup window
         popupWindow.showAtLocation(parent, Gravity.CENTER, 0, 0);
 
-        final long totalTime = LockManager.getTimeRemaining(l);
+        final long totalTime =100; //LockManager.getTimeRemaining(l);
 
-        new CountDownTimer(LockManager.getTimeRemaining(l), 1000) {
+        new CountDownTimer(/*LockManager.getTimeRemaining(l)*/ 30000, 1000) {
             @Override
             public void onTick(long millisUntilFinished) {
                 long minutes = millisUntilFinished / 60000;

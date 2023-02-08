@@ -56,7 +56,6 @@ public class HomeScreenFragment extends AppGridPage implements LockStatusChangeL
             }
         });
 
-        Log.d(TAG, "onCreateView: ");
 
         return v;
     }
@@ -65,44 +64,5 @@ public class HomeScreenFragment extends AppGridPage implements LockStatusChangeL
     public void onDestroy() {
         super.onDestroy();
         vm.writeAppsToFile();
-    }
-
-        /*gv.setOnDragListener(new View.OnDragListener() {
-            @Override
-            public boolean onDrag(View view, DragEvent dragEvent) {
-                switch (dragEvent.getAction()) {
-                    case DragEvent.ACTION_DRAG_STARTED:
-                        view.setVisibility(View.INVISIBLE);
-                        break;
-                    case DragEvent.ACTION_DRAG_ENTERED:
-                        break;
-                    case DragEvent.ACTION_DRAG_LOCATION:
-                        Point p = new Point((int) dragEvent.getX(), (int) dragEvent.getY());
-                        for (int i = 0; i < gv.getChildCount(); i++) {
-                            if (gv.getChildAt(i) != null) {
-                                Point viewLoc = Util.getLocationOnScreen(gv.getChildAt(i));
-                                Point viewBound = new Point(viewLoc.x + gv.getChildAt(i).getWidth(), viewLoc.y + gv.getChildAt(i).getHeight());
-                                Rect bounds = new Rect(viewLoc.x, viewLoc.y, viewBound.x, viewBound.y);
-                                if (bounds.contains(p.x, p.y)) {
-                                    ((AppGridAdapter) gv.getAdapter()).swap();
-                                }
-                            }
-                        }
-                        break;
-                }
-                return true;
-            }
-        });*/
-
-
-    @Override
-    public void onLongPress(MotionEvent event) {
-        View tappedView = Util.findChildAt(gv, (int) event.getX(), (int) event.getY());
-        if (tappedView != null) {
-            ClipData data = ClipData.newPlainText("", "");
-            View.DragShadowBuilder shadowBuilder = new View.DragShadowBuilder(tappedView);
-            tappedView.startDrag(data, shadowBuilder, gv, 0);
-            tappedView.setVisibility(View.INVISIBLE);
-        }
     }
 }

@@ -21,6 +21,7 @@ import android.view.ViewGroup;
 import android.view.WindowManager;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.res.ResourcesCompat;
 import androidx.fragment.app.Fragment;
 
 import com.example.harmonialauncher.Activities.LockActivity;
@@ -309,6 +310,11 @@ public class Util {
         d.setColorFilter(filter);
 
         return d;
+    }
+
+    public static Drawable getDrawableById(Context context, int resourceId)
+    {
+        return ResourcesCompat.getDrawable(context.getResources(), resourceId, null);
     }
 
     public static ArrayList<AppObject> getLockedApps(Context c) {
