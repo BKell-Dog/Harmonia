@@ -1,6 +1,7 @@
 package com.example.harmonialauncher.ViewModels;
 
 import android.app.Application;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 
@@ -19,12 +20,17 @@ public class DrawerPageViewModel extends AppGridViewModel {
     }
 
     public int getPageNum() {
-        return pageNum;
+        Log.d(TAG, "getPageNum: " + pageNum);return pageNum;
+    }
+
+    public ArrayList<AppObject> getAppList() {
+        Log.d(TAG, "getAppList: " + pageNum);return appList;
     }
 
     public void setDrawerPageApps(int pageNum) {
         ArrayList<AppObject> allApps = Util.loadAllApps(application.getApplicationContext()); //TODO: change this to read from ConfigManager.
         appList.clear();
+        Log.d(TAG, "setDrawerPageApps: " + System.identityHashCode(appList));
         for (int k = pageNum * NUMOFAPPSONPAGE; k < (pageNum * NUMOFAPPSONPAGE) + NUMOFAPPSONPAGE && k < allApps.size(); k++)
             appList.add(allApps.get(k));
     }

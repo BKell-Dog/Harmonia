@@ -16,7 +16,7 @@ public class DrawerViewModel extends AndroidViewModel {
     public DrawerViewModel(@NonNull Application application)
     {
         super(application);
-        this.numOfPages = Util.loadAllApps(application).size();
+        this.numOfPages = 2;//Util.loadAllApps(application).size();
     }
 
     public int getCurrentPage() {
@@ -24,6 +24,9 @@ public class DrawerViewModel extends AndroidViewModel {
     }
 
     public void setCurrentPage(int currentPage) {
-        this.currentPage = currentPage;
+        this.currentPage = (currentPage >= 0 && currentPage < numOfPages) ? currentPage : this.currentPage;
     }
+
+    public int getNumOfPages()
+    {return numOfPages;}
 }

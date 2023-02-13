@@ -10,25 +10,18 @@ import com.example.harmonialauncher.Fragments.DrawerFragment;
 import com.example.harmonialauncher.Fragments.HomeScreenFragment;
 
 public class HomePageAdapter extends PageAdapter {
-    private static final String TAG = "Drawer Page Adapter";
+    private static final String TAG = HomePageAdapter.class.getSimpleName();
 
     public HomePageAdapter(@NonNull FragmentActivity fragmentActivity, int numOfPages) {
-        super(fragmentActivity);
+        super(fragmentActivity, 2);
     }
 
+    @NonNull
     @Override
     public Fragment createFragment(int position) {
-        switch (position) {
-            case 0:
-                return new HomeScreenFragment();
-            case 1:
-                return new DrawerFragment();
-            default:
-                return null;
+        if (position == 1) {
+            return new DrawerFragment();
         }
+        return new HomeScreenFragment();
     }
-
-    @Override
-    public int getItemCount()
-    {return 2;}
 }

@@ -1,6 +1,5 @@
 package com.example.harmonialauncher.Fragments;
 
-import android.content.ClipData;
 import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
@@ -15,7 +14,7 @@ import androidx.lifecycle.ViewModelProvider;
 import com.example.harmonialauncher.Adapters.HomeScreenGridAdapter;
 import com.example.harmonialauncher.Listeners.LockStatusChangeListener;
 import com.example.harmonialauncher.R;
-import com.example.harmonialauncher.Utils.Util;
+import com.example.harmonialauncher.ViewModels.AppGridViewModel;
 import com.example.harmonialauncher.ViewModels.HomeScreenViewModel;
 
 /*
@@ -24,25 +23,25 @@ generate the apps to display as well. It will manage the default and preset pack
 pressing of buttons and opening of apps. This screen is the home screen and launcher.
  */
 
-public class HomeScreenFragment extends AppGridPage implements LockStatusChangeListener.LockStatusListener {
-    private final static String TAG = "Home Screen Fragment";
-    private HomeScreenViewModel vm;
+public class HomeScreenFragment extends AppGridFragment implements LockStatusChangeListener.LockStatusListener {
+    private final static String TAG = HomeScreenFragment.class.getSimpleName();
+    private AppGridViewModel vm;
 
     public HomeScreenFragment() {
-        super(R.layout.app_grid_page);
+        super(AppGridViewModel.TYPE_HOME, 0);
     }
 
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
-        vm = new ViewModelProvider(requireActivity()).get(HomeScreenViewModel.class);
+        vm = new ViewModelProvider(requireActivity()).get(AppGridViewModel.class);
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        adapter = new HomeScreenGridAdapter(CONTEXT, R.layout.app, vm.getAppList());
+        adapter = new HomeScreenGridAdapter(CONTEXT, R.layout.app, vm.getAppList(AppGridViewModel.TYPE_HOME, 0));
     }
 
     @Override
@@ -63,6 +62,5 @@ public class HomeScreenFragment extends AppGridPage implements LockStatusChangeL
     @Override
     public void onDestroy() {
         super.onDestroy();
-        vm.writeAppsToFile();
     }
 }

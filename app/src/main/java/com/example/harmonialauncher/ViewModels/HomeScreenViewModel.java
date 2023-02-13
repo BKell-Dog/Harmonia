@@ -14,7 +14,7 @@ import com.example.harmonialauncher.Utils.Util;
 import java.util.ArrayList;
 
 public class HomeScreenViewModel extends AppGridViewModel {
-    private static final String TAG = "Home Screen View Model";
+    private static final String TAG = HomeScreenViewModel.class.getSimpleName();
     private final Application application;
 
     public HomeScreenViewModel(@NonNull Application application) {
@@ -22,11 +22,11 @@ public class HomeScreenViewModel extends AppGridViewModel {
         this.application = application;
 
         ArrayList<AppObject> receivedApps = null;// ConfigManager.readHomeAppOrderFromFile(application.getApplicationContext());
-        if (receivedApps != null)
+        /*if (receivedApps != null)
             setAppList(ConfigManager.readHomeAppOrderFromFile(application.getApplicationContext()));
         else
             setAppList(Util.loadFirstTwentyApps(application.getApplicationContext()));
-    }
+   */ }
 
 
     public void writeAppsToFile()

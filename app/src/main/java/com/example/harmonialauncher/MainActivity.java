@@ -1,15 +1,8 @@
 package com.example.harmonialauncher;
 
 import android.annotation.SuppressLint;
-import android.app.Application;
-import android.content.Context;
-import android.graphics.Color;
 import android.os.Bundle;
-import android.util.Log;
-import android.view.GestureDetector;
-import android.view.MotionEvent;
 import android.view.View;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.core.view.GestureDetectorCompat;
@@ -27,7 +20,6 @@ import com.example.harmonialauncher.Interfaces.PageHolder;
 import com.example.harmonialauncher.Utils.HarmoniaGestureDetector;
 import com.example.harmonialauncher.Fragments.HomeScreenFragment;
 import com.example.harmonialauncher.Activities.HarmoniaActivity;
-import com.example.harmonialauncher.Fragments.HarmoniaFragment;
 import com.example.harmonialauncher.ViewModels.MainActivityViewModel;
 import com.example.harmonialauncher.Views.FlingCatcher;
 
@@ -38,8 +30,8 @@ It will switch from home to settings once the Harmonia settings button is presse
 home once the back button is pressed in the settings menu.
  */
 public class MainActivity extends HarmoniaActivity implements PageHolder {
+    private static final String TAG = MainActivity.class.getSimpleName();
     public static final int THRESHOLD = HarmoniaGestureDetector.THRESHOLD;
-    private static final String TAG = "Main Activity";
     private MainActivityViewModel vm;
     public ViewPager2 vp;
     private FlingCatcher fc;
@@ -51,7 +43,7 @@ public class MainActivity extends HarmoniaActivity implements PageHolder {
     @SuppressLint({"ClickableViewAccessibility", "MissingInflatedId"})
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.vertical_app_pager);
 
         vm = new ViewModelProvider(this).get(MainActivityViewModel.class);
         vm.setCurrentPage(0);
@@ -70,17 +62,6 @@ public class MainActivity extends HarmoniaActivity implements PageHolder {
         vp.setCurrentItem(vm.getCurrentPage());
         vp.setVisibility(View.VISIBLE);
 
-        vp.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
-            @Override
-            public void onPageSelected(int position) {
-                super.onPageSelected(position);
-                for (int i = 0; i < pa.getItemCount(); i++)
-                    if (i == position)
-                        ((HarmoniaFragment) pa.getFragment(i)).setOnScreen();
-                    else
-                        ((HarmoniaFragment) pa.getFragment(i)).setOffScreen();
-            }
-        });
         update();
     }
 
@@ -107,15 +88,8 @@ public class MainActivity extends HarmoniaActivity implements PageHolder {
     }
 
     public class MainPageAdapter extends PageAdapter {
-        public final String HOMESCREEN = "Home Screen", DRAWER = "Drawer";
-
         public MainPageAdapter(@NonNull FragmentActivity fragmentActivity) {
-            super(fragmentActivity);
-
-            fragments.add(new HomeScreenFragment());
-            nameIndex.add(HOMESCREEN);
-            fragments.add(new DrawerFragment());
-            nameIndex.add(DRAWER);
+            super(fragmentActivity, 2);
         }
 
         @NonNull

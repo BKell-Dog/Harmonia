@@ -28,20 +28,26 @@ import com.example.harmonialauncher.Utils.Util;
 import com.example.harmonialauncher.Utils.LockManager;
 import com.example.harmonialauncher.ViewModels.AppGridViewModel;
 
-public class AppGridPage extends HarmoniaFragment implements LockStatusChangeListener.LockStatusListener {
+import java.util.ArrayList;
 
-    private static final String TAG = AppGridPage.class.getSimpleName();
+public class AppGridFragment extends HarmoniaFragment implements LockStatusChangeListener.LockStatusListener {
+
+    private static final String TAG = AppGridFragment.class.getSimpleName();
     protected Context CONTEXT;
     protected AppGridViewModel vm;
     //Drawing Grid
     protected GridView gv;
     protected AppGridAdapter adapter;
     public static final int NUM_COLS = 4;
+    private int pageNum;
+    private String type;
     //Gesture Detection
     protected GestureDetectorCompat gd;
 
-    public AppGridPage(int resource) {
-        super(resource);
+    public AppGridFragment(String type, int pageNum) {
+        super(R.id.app_page_grid);
+        this.type = type;
+        this.pageNum = pageNum;
     }
 
     @Override
@@ -69,7 +75,7 @@ public class AppGridPage extends HarmoniaFragment implements LockStatusChangeLis
         View v = inflater.inflate(R.layout.app_grid_page, container, false);
 
         if (adapter == null)
-            adapter = new AppGridAdapter(CONTEXT, R.id.app_page_grid, vm.getAppList());
+            adapter = new AppGridAdapter(CONTEXT, R.id.app_page_grid, vm.getAppList(type, pageNum));
 
         //Populate Grid Layout in home_screen.xml with instances of app.xml
         //Get grid view

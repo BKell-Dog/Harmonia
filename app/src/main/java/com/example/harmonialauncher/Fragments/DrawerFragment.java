@@ -4,28 +4,18 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.GestureDetector;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
-import androidx.core.view.GestureDetectorCompat;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentActivity;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.viewpager2.widget.ViewPager2;
 
 import com.example.harmonialauncher.Adapters.DrawerPageAdapter;
 import com.example.harmonialauncher.Helpers.FlingDetector;
 import com.example.harmonialauncher.Interfaces.PageHolder;
-import com.example.harmonialauncher.Utils.HarmoniaGestureDetector;
-import com.example.harmonialauncher.MainActivity;
-import com.example.harmonialauncher.Adapters.PageAdapter;
 import com.example.harmonialauncher.R;
-import com.example.harmonialauncher.Utils.Util;
-import com.example.harmonialauncher.ViewModels.DrawerPageViewModel;
 import com.example.harmonialauncher.ViewModels.DrawerViewModel;
 import com.example.harmonialauncher.Views.FlingCatcher;
 
@@ -34,17 +24,15 @@ import java.util.Objects;
 public class DrawerFragment extends HarmoniaFragment implements PageHolder {
 
     private static final String TAG = DrawerFragment.class.getSimpleName();
-    public final int THRESHOLD = 100;
     public ViewPager2 vp = null;
     private DrawerViewModel vm;
     private FlingCatcher fc;
 
     public DrawerFragment() {
-        super(R.layout.drawer_fragment);
+        super(R.layout.horiz_app_pager);
     }
 
-    public void onAttach(@NonNull Context context)
-    {
+    public void onAttach(@NonNull Context context) {
         super.onAttach(context);
         vm = new ViewModelProvider(requireActivity()).get(DrawerViewModel.class);
     }
@@ -55,7 +43,7 @@ public class DrawerFragment extends HarmoniaFragment implements PageHolder {
 
     @SuppressLint("ClickableViewAccessibility")
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View v = inflater.inflate(R.layout.drawer_fragment, container, false);
+        View v = inflater.inflate(R.layout.horiz_app_pager, container, false);
         if (v == null || getActivity() == null)
             return null;
 
@@ -69,22 +57,20 @@ public class DrawerFragment extends HarmoniaFragment implements PageHolder {
         vp.setUserInputEnabled(false);
         vp.setOrientation(ViewPager2.ORIENTATION_HORIZONTAL);
         vp.canScrollHorizontally(1);
-        vp.setCurrentItem(0);
-        vp.setVisibility(View.VISIBLE);
-        vp.setOffscreenPageLimit(7);
-        vp.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
-            @Override
-            public void onPageSelected(int position) {
-                super.onPageSelected(position);
-                ((DrawerPageAdapter) vp.getAdapter()).setPageOnScreen(position);
-            }
-        });
+        vm.setCurrentPage(0);
+        vp.setCurrentItem(vm.getCurrentPage());
+        vp.setOffscreenPageLimit(2);
 
         return v;
     }
 
+    public void onResume() {
+        super.onResume();
+        Log.d(TAG, "onResume: " + vm.getNumOfPages());
+    }
+
     public int getCurrentPageIndex() {
-        return vp != null ? vp.getCurrentItem() : -1;
+        return vm.getCurrentPage();
     }
 
     public int getLastPageIndex() {
@@ -95,30 +81,28 @@ public class DrawerFragment extends HarmoniaFragment implements PageHolder {
         return vp != null ? (HarmoniaFragment) ((DrawerPageAdapter) vp.getAdapter()).createFragment(vp.getCurrentItem()) : null;
     }
 
-    public void incrementPage()
-    {
-        if (vp.getCurrentItem() < vp.getAdapter().getItemCount()) {
-            vp.setCurrentItem(vp.getCurrentItem() + 1);
-            vp.invalidate();
-        }
+    public void incrementPage() {
+        Log.d(TAG, "incrementPage: FLING DETECTED");
+        vm.setCurrentPage(vm.getCurrentPage() + 1);
+        update();
     }
 
-    public void decrementPage()
+    public void decrementPage() {
+        Log.d(TAG, "decrementPage: FLING DETECTED");
+        vm.setCurrentPage(vm.getCurrentPage() - 1);
+        update();
+    }
+
+    public void update()
     {
-        if (vp.getCurrentItem() > 0) {
-            vp.setCurrentItem(vp.getCurrentItem() - 1);
-            vp.invalidate();
-        }
+        vp.setCurrentItem(vm.getCurrentPage());
     }
 
     @NonNull
     public String toString() {
         if (vp == null)
             return "";
-        StringBuilder s = new StringBuilder("Drawer Fragment. Children: ");
-        for (int i = 0; i < Objects.requireNonNull(vp.getAdapter()).getItemCount(); i++) {
-            s.append(((DrawerPageAdapter) this.vp.getAdapter()).getFragment(i)).append("\n");
-        }
+        StringBuilder s = new StringBuilder("Drawer Fragment. Children: " + vm.getNumOfPages());
         return s.toString();
     }
 }
