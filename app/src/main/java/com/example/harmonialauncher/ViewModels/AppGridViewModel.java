@@ -30,7 +30,7 @@ public class AppGridViewModel extends AndroidViewModel {
         super(application);
         this.application = application;
 
-        homeScreenApps = Util.loadFirstTwentyApps(application);
+        homeScreenApps = Util.loadFirstFifteenApps(application);
         drawerScreenApps = Util.loadAllApps(application);
 
         //repository = new AppRepository(application); //TODO: Uncomment these lines when work on the repository and database continue
@@ -55,6 +55,12 @@ public class AppGridViewModel extends AndroidViewModel {
         else
             return null;
     }
+
+    public int getNumOfPages()
+    {
+        return (int) Math.ceil((double) drawerScreenApps.size() / (double) NUMOFAPPSONPAGE);
+    }
+
     public boolean isFirstBoot() {
         return firstBoot;
     }
@@ -96,12 +102,16 @@ public class AppGridViewModel extends AndroidViewModel {
     public static class AppObjectFactory {
         public static ArrayList<AppObject> toAppObjects(Context context, ArrayList<AppEntity> entities) {
             ArrayList<AppObject> apps = new ArrayList<>();
-            for (AppEntity entity : entities) {
-                AppObject app = new AppObject(entity.packageName, entity.appName, entity.imageId, false);
-                app.setImage(Util.getDrawableById(context, entity.imageId));
-                apps.add(app);
-            }
+            for (AppEntity entity : entities)
+                apps.add(toAppObject(context, entity));
             return apps;
+        }
+
+        public static AppObject toAppObject(Context context, AppEntity entity)
+        {
+            AppObject app = new AppObject(entity.packageName, entity.appName, entity.imageId, false);
+            app.setImage(Util.getDrawableById(context, entity.imageId));
+            return app;
         }
     }
 }

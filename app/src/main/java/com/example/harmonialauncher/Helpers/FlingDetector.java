@@ -2,12 +2,10 @@ package com.example.harmonialauncher.Helpers;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.VelocityTracker;
 import android.view.View;
 import android.view.ViewConfiguration;
-import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 

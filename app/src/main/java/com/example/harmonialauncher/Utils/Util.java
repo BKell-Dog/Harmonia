@@ -1,7 +1,6 @@
 package com.example.harmonialauncher.Utils;
 
 import android.app.Activity;
-import android.content.ClipData;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ApplicationInfo;
@@ -114,10 +113,10 @@ public class Util {
         return loadAllApps(f.getActivity());
     }
 
-    public static ArrayList<AppObject> loadFirstTwentyApps(@NonNull Context c) {
+    public static ArrayList<AppObject> loadFirstFifteenApps(@NonNull Context c) {
         ArrayList<AppObject> allApps = loadAllApps(c);
         ArrayList<AppObject> apps = new ArrayList<>();
-        for (int i = 0; i < 20 && i < allApps.size(); i++)
+        for (int i = 0; i < 15 && i < allApps.size(); i++)
             apps.add(allApps.get(i));
         return apps;
     }

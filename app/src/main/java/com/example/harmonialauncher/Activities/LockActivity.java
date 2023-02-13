@@ -25,7 +25,6 @@ import com.example.harmonialauncher.Utils.Util;
 import com.example.harmonialauncher.Utils.LockManager;
 
 import java.util.ArrayList;
-import java.util.concurrent.TimeUnit;
 
 /**
  * This class will display a list of all apps and prompt the user to lock any of them for an amount

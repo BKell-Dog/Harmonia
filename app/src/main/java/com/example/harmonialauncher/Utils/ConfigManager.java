@@ -7,7 +7,6 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 
 import com.example.harmonialauncher.Helpers.AppObject;
-import com.example.harmonialauncher.Adapters.HomeScreenGridAdapter;
 import com.google.gson.Gson;
 
 import java.util.ArrayList;
@@ -22,7 +21,7 @@ public class ConfigManager {
     //Variables for writing to file
     private static final String fileName = "app_config";
     //Variables for App Screen organization and ordering of app objects
-    private final AppObject[] homeScreenApps = new AppObject[HomeScreenGridAdapter.HOMESCREENAPPNUM];
+    private final ArrayList<AppObject> homeScreenApps = new ArrayList<AppObject>();
     private final ArrayList<AppObject> drawerApps = new ArrayList<>();
 
     /**

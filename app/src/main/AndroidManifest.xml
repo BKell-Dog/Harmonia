@@ -15,7 +15,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".MainActivity"
+            android:name=".Activities.MainActivity"
             android:excludeFromRecents="true"
             android:launchMode="singleTask"
             android:screenOrientation="nosensor"

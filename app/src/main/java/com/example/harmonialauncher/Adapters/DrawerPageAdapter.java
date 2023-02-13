@@ -1,14 +1,10 @@
 package com.example.harmonialauncher.Adapters;
 
-import android.util.Log;
-
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 
 import com.example.harmonialauncher.Fragments.AppGridFragment;
-import com.example.harmonialauncher.Fragments.DrawerFragment;
-import com.example.harmonialauncher.Fragments.DrawerPageFragment;
 import com.example.harmonialauncher.Utils.Util;
 import com.example.harmonialauncher.ViewModels.AppGridViewModel;
 

@@ -13,7 +13,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.LinearLayout;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -21,6 +20,7 @@ import androidx.annotation.Nullable;
 import com.example.harmonialauncher.Helpers.AppObject;
 import com.example.harmonialauncher.Helpers.SingleTapDetector;
 import com.example.harmonialauncher.Interfaces.AppHolder;
+import com.example.harmonialauncher.Listeners.AppOnDragListener;
 import com.example.harmonialauncher.R;
 import com.example.harmonialauncher.Utils.Util;
 import com.example.harmonialauncher.Utils.LockManager;
@@ -31,7 +31,7 @@ import java.util.Collections;
 
 public class AppGridAdapter extends ArrayAdapter<AppObject> implements AppHolder {
 
-    private final static String TAG = "App Grid Adapter";
+    private final static String TAG = AppGridAdapter.class.getSimpleName();
     public final int INVISIBLE = 0, GREYSCALE = 1; //Variables for drawing locked apps
     private int lockMode = GREYSCALE; //Change this variable to change disappearance mode
     protected final int COLS = 4, ROWS = 5;
@@ -41,7 +41,6 @@ public class AppGridAdapter extends ArrayAdapter<AppObject> implements AppHolder
     protected int horizontalBuffer = 300, verticalBuffer = 300;
     protected int pageHorizontalBuffer = 0, pageVerticalBuffer = 120;
     protected int elementHeight = -1, elementWidth = -1;
-    private final ArrayList<String> lockedPacks = new ArrayList<String>();
     private SingleTapDetector std;
 
     public AppGridAdapter(@NonNull Context context, int resource, ArrayList<AppObject> appList) {
@@ -84,9 +83,6 @@ public class AppGridAdapter extends ArrayAdapter<AppObject> implements AppHolder
         return new Point(elementWidth, elementHeight);
     }
 
-    public ArrayList<String> getLockedPacks() {
-        return lockedPacks;
-    }
 
     public int getLockMode() {
         return lockMode;
@@ -110,7 +106,7 @@ public class AppGridAdapter extends ArrayAdapter<AppObject> implements AppHolder
         // have been lost, we can reset them here. But it is only called if the apps dimensions are each
         // equal to -1.
         //Point p = getElementDimens();
-        //if (p.y == -1 || p.x == -1) //I commented these out because for some reason HScreen icons kept shrinking
+        //if (p.y == -1 || p.x == -1) //I commented these out because for some reason HomeScreen icons kept shrinking
         setElementDimen(parent.getHeight(), parent.getWidth());
 
         appView.setText(app.getName());
@@ -131,9 +127,6 @@ public class AppGridAdapter extends ArrayAdapter<AppObject> implements AppHolder
 
         //Make app invisible or greyscale if it is meant to be locked
         if (app.isLocked() || LockManager.isLocked(app.getPackageName())) {
-            if (inLockedList(app.getPackageName()))
-                lockedPacks.add(app.getPackageName());
-
             if (lockMode == INVISIBLE)
                 appView.setVisibility(View.INVISIBLE);
             else if (lockMode == GREYSCALE)
@@ -169,13 +162,6 @@ public class AppGridAdapter extends ArrayAdapter<AppObject> implements AppHolder
         });
 
         return appView;
-    }
-
-    public boolean inLockedList(String packageName) {
-        for (String pack : lockedPacks)
-            if (pack.equalsIgnoreCase(packageName))
-                return true;
-        return false;
     }
 
     /**
@@ -215,9 +201,9 @@ public class AppGridAdapter extends ArrayAdapter<AppObject> implements AppHolder
 
     @NonNull
     public String toString() {
-        String s = "";
+        StringBuilder s = new StringBuilder();
         for (AppObject a : apps)
-            s += a.toString() + "\n";
-        return s;
+            s.append(a.toString()).append("\n");
+        return s.toString();
     }
 }

@@ -2,20 +2,17 @@ package com.example.harmonialauncher.Fragments;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.ViewModelProvider;
 
-import com.example.harmonialauncher.Adapters.HomeScreenGridAdapter;
+import com.example.harmonialauncher.Adapters.AppGridAdapter;
 import com.example.harmonialauncher.Listeners.LockStatusChangeListener;
 import com.example.harmonialauncher.R;
 import com.example.harmonialauncher.ViewModels.AppGridViewModel;
-import com.example.harmonialauncher.ViewModels.HomeScreenViewModel;
 
 /*
 This class will manage the GridView which displays the apps, its construction and popualtion, and will
@@ -41,26 +38,11 @@ public class HomeScreenFragment extends AppGridFragment implements LockStatusCha
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        adapter = new HomeScreenGridAdapter(CONTEXT, R.layout.app, vm.getAppList(AppGridViewModel.TYPE_HOME, 0));
+        adapter = new AppGridAdapter(CONTEXT, R.layout.app, vm.getAppList(AppGridViewModel.TYPE_HOME, 0));
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View v = super.onCreateView(inflater, container, savedInstanceState);
-        v.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View view, MotionEvent motionEvent) {
-                Log.d(TAG, "onTouch: REGISTERED");
-                return false;
-            }
-        });
-
-
-        return v;
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
+        return super.onCreateView(inflater, container, savedInstanceState);
     }
 }

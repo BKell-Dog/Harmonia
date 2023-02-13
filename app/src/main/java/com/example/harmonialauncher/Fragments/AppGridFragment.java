@@ -28,8 +28,6 @@ import com.example.harmonialauncher.Utils.Util;
 import com.example.harmonialauncher.Utils.LockManager;
 import com.example.harmonialauncher.ViewModels.AppGridViewModel;
 
-import java.util.ArrayList;
-
 public class AppGridFragment extends HarmoniaFragment implements LockStatusChangeListener.LockStatusListener {
 
     private static final String TAG = AppGridFragment.class.getSimpleName();

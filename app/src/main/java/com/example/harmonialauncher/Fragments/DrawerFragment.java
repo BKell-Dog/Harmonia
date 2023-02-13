@@ -16,6 +16,7 @@ import com.example.harmonialauncher.Adapters.DrawerPageAdapter;
 import com.example.harmonialauncher.Helpers.FlingDetector;
 import com.example.harmonialauncher.Interfaces.PageHolder;
 import com.example.harmonialauncher.R;
+import com.example.harmonialauncher.ViewModels.AppGridViewModel;
 import com.example.harmonialauncher.ViewModels.DrawerViewModel;
 import com.example.harmonialauncher.Views.FlingCatcher;
 
@@ -34,7 +35,8 @@ public class DrawerFragment extends HarmoniaFragment implements PageHolder {
 
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
-        vm = new ViewModelProvider(requireActivity()).get(DrawerViewModel.class);
+        AppGridViewModel agvm = new ViewModelProvider(requireActivity()).get(AppGridViewModel.class);
+        vm = new ViewModelProvider(requireActivity(), new DrawerViewModel.DrawerViewModelFactory(this.getActivity().getApplication(), agvm.getNumOfPages())).get(DrawerViewModel.class);
     }
 
     public void onCreate(Bundle savedInstanceState) {
@@ -59,7 +61,7 @@ public class DrawerFragment extends HarmoniaFragment implements PageHolder {
         vp.canScrollHorizontally(1);
         vm.setCurrentPage(0);
         vp.setCurrentItem(vm.getCurrentPage());
-        vp.setOffscreenPageLimit(2);
+        vp.setOffscreenPageLimit(5);
 
         return v;
     }
@@ -67,18 +69,6 @@ public class DrawerFragment extends HarmoniaFragment implements PageHolder {
     public void onResume() {
         super.onResume();
         Log.d(TAG, "onResume: " + vm.getNumOfPages());
-    }
-
-    public int getCurrentPageIndex() {
-        return vm.getCurrentPage();
-    }
-
-    public int getLastPageIndex() {
-        return vp != null ? Objects.requireNonNull(vp.getAdapter()).getItemCount() - 1 : -1;
-    }
-
-    public HarmoniaFragment getCurrentPage() {
-        return vp != null ? (HarmoniaFragment) ((DrawerPageAdapter) vp.getAdapter()).createFragment(vp.getCurrentItem()) : null;
     }
 
     public void incrementPage() {

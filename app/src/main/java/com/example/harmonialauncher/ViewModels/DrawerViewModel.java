@@ -5,18 +5,17 @@ import android.app.Application;
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.ViewModel;
-
-import com.example.harmonialauncher.Utils.Util;
+import androidx.lifecycle.ViewModelProvider;
 
 public class DrawerViewModel extends AndroidViewModel {
     private static final String TAG = DrawerViewModel.class.getSimpleName();
     private int currentPage = -1;
     private final int numOfPages;
 
-    public DrawerViewModel(@NonNull Application application)
+    public DrawerViewModel(@NonNull Application application, int numOfPages)
     {
         super(application);
-        this.numOfPages = 2;//Util.loadAllApps(application).size();
+        this.numOfPages = numOfPages;
     }
 
     public int getCurrentPage() {
@@ -29,4 +28,22 @@ public class DrawerViewModel extends AndroidViewModel {
 
     public int getNumOfPages()
     {return numOfPages;}
+
+    public static class DrawerViewModelFactory implements ViewModelProvider.Factory
+    {
+        private final Application application;
+        private final int numOfPages;
+        public DrawerViewModelFactory(Application application, int numOfPages)
+        {
+            this.application = application;
+            this.numOfPages = numOfPages;
+        }
+
+        @NonNull
+        @Override
+        public <T extends ViewModel> T create(@NonNull Class<T> modelClass)
+        {
+            return (T) new DrawerViewModel(application, numOfPages);
+        }
+    }
 }

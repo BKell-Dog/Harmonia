@@ -1,14 +1,10 @@
 package com.example.harmonialauncher.Listeners;
 
-import android.graphics.Color;
-import android.graphics.Point;
 import android.graphics.Rect;
 import android.util.Log;
 import android.view.DragEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewParent;
-import android.widget.TextView;
 
 import com.example.harmonialauncher.Interfaces.AppHolder;
 
@@ -88,12 +84,7 @@ public class AppOnDragListener implements View.OnDragListener {
                 Log.d(TAG, "ON DRAG LOCATION");
                 break;
             case DragEvent.ACTION_DRAG_ENDED:
-                originalView.post(new Runnable(){
-                    @Override
-                    public void run() {
-                        originalView.setVisibility(View.VISIBLE);
-                    }
-                });
+                originalView.setVisibility(View.VISIBLE);
                 considerEvent = false;
                 break;
         }
