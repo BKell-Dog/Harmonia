@@ -6,7 +6,7 @@
     android:layout_height="match_parent">
 
 
-    <GridView
+    <com.example.harmonialauncher.Views.AppGridView
         android:id="@+id/app_page_grid"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -19,6 +19,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-    </GridView>
+    </com.example.harmonialauncher.Views.AppGridView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

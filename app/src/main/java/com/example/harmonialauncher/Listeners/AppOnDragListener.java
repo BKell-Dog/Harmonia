@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.harmonialauncher.Interfaces.AppHolder;
+import com.example.harmonialauncher.Views.AppView;
 
 public class AppOnDragListener implements View.OnDragListener {
     private static final String TAG = AppOnDragListener.class.getSimpleName();
@@ -26,8 +27,11 @@ public class AppOnDragListener implements View.OnDragListener {
 
         //originalView is the original app object that was long pressed.
         //view is the view which is now underneath the drag shadow.
-        final ViewGroup originalView = (ViewGroup) dragEvent.getLocalState();
-        ViewGroup view2 = (ViewGroup) view;
+        final AppView originalView = (AppView) dragEvent.getLocalState();
+        AppView overView = null;
+        try{
+            overView = (AppView) view;
+        } catch (Exception e) {e.printStackTrace(); return false;}
 
         //We must now extract the app names from the TextViews within the app.xml layout.
         //If any changes are made to this file they must be reflected here.
@@ -45,7 +49,7 @@ public class AppOnDragListener implements View.OnDragListener {
                 considerEvent = true;
 
                 // Define region where the shadow must enter in order to initiate a swap.
-                float l = view2.getX(), t = view2.getY(), r = l + view2.getMeasuredWidth(), b = t + view2.getMeasuredHeight();
+                float l = overView.getX(), t = overView.getY(), r = l + overView.getMeasuredWidth(), b = t + overView.getMeasuredHeight();
                 float centerY = (b + t) / 2;
                 leftArea = new Rect((int) l, (int) centerY - boxToleranceY, (int) l + boxToleranceX, (int) centerY + boxToleranceY);
                 rightArea = new Rect((int) r - boxToleranceX, (int) centerY - boxToleranceY, (int) r, (int) centerY + boxToleranceY);
@@ -60,12 +64,12 @@ public class AppOnDragListener implements View.OnDragListener {
                 break;
             case DragEvent.ACTION_DRAG_LOCATION:
                 Rect shadowArea = new Rect((int) dragEvent.getX(), (int) dragEvent.getY(), (int) dragEvent.getX() + originalView.getMeasuredWidth(), (int) dragEvent.getY() + originalView.getMeasuredHeight());
-                ViewGroup parent = (ViewGroup) view2.getParent();
+                ViewGroup parent = (ViewGroup) overView.getParent();
                 Log.d(TAG, "onDrag: Right Rect: " + rightArea + " Left Rect: " + leftArea + " ShadowRect: " + shadowArea);
                 Log.d(TAG, "onDrag: " + rightArea.intersect(shadowArea));
                 if (callback != null && rightArea.intersect(shadowArea))
                 {
-                    int index = parent.indexOfChild(view2);
+                    int index = parent.indexOfChild(overView);
                     if (index < parent.getChildCount() - 1)
                     {
                         int originalIndex = parent.indexOfChild(originalView);
@@ -74,7 +78,7 @@ public class AppOnDragListener implements View.OnDragListener {
                 }
                 else if (leftArea.intersect(shadowArea))
                 {
-                    int index = parent.indexOfChild(view2);
+                    int index = parent.indexOfChild(overView);
                     if (index < 0)
                     {
                         int originalIndex = parent.indexOfChild(originalView);

@@ -41,6 +41,7 @@ public class AppGridAdapter extends ArrayAdapter<AppObject> implements AppHolder
     protected int horizontalBuffer = 300, verticalBuffer = 300;
     protected int pageHorizontalBuffer = 0, pageVerticalBuffer = 120;
     protected int elementHeight = -1, elementWidth = -1;
+    private int dragInvisibleIndex = -1;
     private SingleTapDetector std;
 
     public AppGridAdapter(@NonNull Context context, int resource, ArrayList<AppObject> appList) {
@@ -126,8 +127,8 @@ public class AppGridAdapter extends ArrayAdapter<AppObject> implements AppHolder
         appView.setLayoutParams(new LinearLayout.LayoutParams(app.getWidth(), app.getHeight()));
 
         //Make app invisible or greyscale if it is meant to be locked
-        if (app.isLocked() || LockManager.isLocked(app.getPackageName())) {
-            if (lockMode == INVISIBLE)
+        if (position == dragInvisibleIndex || app.isLocked() || LockManager.isLocked(app.getPackageName())) {
+            if (lockMode == INVISIBLE || dragInvisibleIndex != -1)
                 appView.setVisibility(View.INVISIBLE);
             else if (lockMode == GREYSCALE)
                 appView.setImageDrawable(Util.convertToGreyscale(app.getImage()));
@@ -153,8 +154,12 @@ public class AppGridAdapter extends ArrayAdapter<AppObject> implements AppHolder
             public boolean onLongClick(View view) {
                 if (view != null) {
                     ClipData data = ClipData.newPlainText("", "");
+                    Log.d(TAG, "onLongPress: START DRAG EVENT NOW NIUGGAH");
                     View.DragShadowBuilder shadowBuilder = new View.DragShadowBuilder(view);
-                    view.startDrag(data, shadowBuilder, view, 0);
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N)
+                        view.startDragAndDrop(data, shadowBuilder, view, 0);
+                    else
+                        view.startDrag(data, shadowBuilder, view, 0);
                     view.setVisibility(View.INVISIBLE);
                 }
                 return true;
@@ -162,6 +167,11 @@ public class AppGridAdapter extends ArrayAdapter<AppObject> implements AppHolder
         });
 
         return appView;
+    }
+
+    public void setDragInvisible(int index)
+    {
+        dragInvisibleIndex = index;
     }
 
     /**

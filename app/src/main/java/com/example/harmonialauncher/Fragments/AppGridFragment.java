@@ -27,6 +27,7 @@ import com.example.harmonialauncher.R;
 import com.example.harmonialauncher.Utils.Util;
 import com.example.harmonialauncher.Utils.LockManager;
 import com.example.harmonialauncher.ViewModels.AppGridViewModel;
+import com.example.harmonialauncher.Views.AppGridView;
 
 public class AppGridFragment extends HarmoniaFragment implements LockStatusChangeListener.LockStatusListener {
 
@@ -34,7 +35,7 @@ public class AppGridFragment extends HarmoniaFragment implements LockStatusChang
     protected Context CONTEXT;
     protected AppGridViewModel vm;
     //Drawing Grid
-    protected GridView gv;
+    protected AppGridView gv;
     protected AppGridAdapter adapter;
     public static final int NUM_COLS = 4;
     private int pageNum;
@@ -91,23 +92,6 @@ public class AppGridFragment extends HarmoniaFragment implements LockStatusChang
         });
 
         return v;
-    }
-
-    @Override
-    public void onLongPress(MotionEvent e) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            for (int i = 0; i < gv.getChildCount(); i++) {
-                if (gv.getChildAt(i) != null) {
-                    Rect bounds = Util.getViewBounds(gv.getChildAt(i));
-                    if (bounds.contains((int) e.getX(), (int) e.getY())) {
-                        ClipData data = ClipData.newPlainText("", "");
-                        View.DragShadowBuilder shadow = new View.DragShadowBuilder(gv.getChildAt(i));
-                        gv.startDragAndDrop(data, shadow, gv.getChildAt(i), 0);
-                        gv.getChildAt(i).setVisibility(View.INVISIBLE);
-                    }
-                }
-            }
-        }
     }
 
     @Override
