@@ -17,7 +17,7 @@ import android.widget.TextView;
 
 import androidx.appcompat.widget.LinearLayoutCompat;
 
-import com.example.harmonialauncher.Helpers.AppObject;
+import com.example.harmonialauncher.AppGrid.AppObject;
 import com.example.harmonialauncher.Helpers.TimeHelper;
 import com.example.harmonialauncher.Listeners.LockStatusChangeListener;
 import com.example.harmonialauncher.R;
@@ -63,7 +63,7 @@ public class LockActivity extends HarmoniaActivity {
         //Each item consists of app icon, app name, and time picker.
 
         LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        View v = inflater.inflate(R.layout.list_item, null);
+        View v = inflater.inflate(R.layout.lock_list_item, null);
         TextView text = v.findViewById(R.id.app_name);
         ImageView icon = v.findViewById(R.id.app_icon);
         TextView timer = v.findViewById(R.id.lock_timer_text);

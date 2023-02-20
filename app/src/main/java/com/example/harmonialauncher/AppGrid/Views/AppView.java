@@ -1,4 +1,4 @@
-package com.example.harmonialauncher.Views;
+package com.example.harmonialauncher.AppGrid.Views;
 
 import android.annotation.TargetApi;
 import android.content.Context;

@@ -6,7 +6,7 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 
-import com.example.harmonialauncher.Helpers.AppObject;
+import com.example.harmonialauncher.AppGrid.AppObject;
 import com.google.gson.Gson;
 
 import java.util.ArrayList;
@@ -203,7 +203,7 @@ public class ConfigManager {
 import android.content.Context;
 import android.util.Log;
 
-import com.example.harmonialauncher.Helpers.AppObject;
+import com.example.harmonialauncher.AppGrid.AppObject;
 import com.example.harmonialauncher.Adapters.HomeScreenGridAdapter;
 
 import java.io.File;

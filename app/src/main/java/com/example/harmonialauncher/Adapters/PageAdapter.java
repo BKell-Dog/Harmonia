@@ -8,7 +8,7 @@ import androidx.viewpager2.adapter.FragmentStateAdapter;
 import java.util.ArrayList;
 
 public abstract class PageAdapter extends FragmentStateAdapter {
-    private static final String TAG = "Page Adapter";
+    private static final String TAG = PageAdapter.class.getSimpleName();
 
     protected ArrayList<String> nameIndex = new ArrayList<String>();
     protected int pageCount;

@@ -1,4 +1,4 @@
-package com.example.harmonialauncher.Adapters;
+package com.example.harmonialauncher.AppGrid;
 
 import android.annotation.SuppressLint;
 import android.content.ClipData;
@@ -17,14 +17,11 @@ import android.widget.LinearLayout;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import com.example.harmonialauncher.Helpers.AppObject;
+import com.example.harmonialauncher.AppGrid.Views.AppView;
 import com.example.harmonialauncher.Helpers.SingleTapDetector;
-import com.example.harmonialauncher.Interfaces.AppHolder;
-import com.example.harmonialauncher.Listeners.AppOnDragListener;
 import com.example.harmonialauncher.R;
 import com.example.harmonialauncher.Utils.Util;
 import com.example.harmonialauncher.Utils.LockManager;
-import com.example.harmonialauncher.Views.AppView;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -39,7 +36,7 @@ public class AppGridAdapter extends ArrayAdapter<AppObject> implements AppHolder
     protected Context CONTEXT;
     protected int layout_id;
     protected int horizontalBuffer = 300, verticalBuffer = 300;
-    protected int pageHorizontalBuffer = 0, pageVerticalBuffer = 120;
+    protected final int pageHorizontalBuffer = 0, pageVerticalBuffer = 120;
     protected int elementHeight = -1, elementWidth = -1;
     private int dragInvisibleIndex = -1;
     private SingleTapDetector std;

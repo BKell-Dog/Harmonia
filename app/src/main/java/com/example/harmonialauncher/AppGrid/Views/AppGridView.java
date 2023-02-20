@@ -1,8 +1,7 @@
-package com.example.harmonialauncher.Views;
+package com.example.harmonialauncher.AppGrid.Views;
 
 import android.annotation.TargetApi;
 import android.content.Context;
-import android.graphics.Color;
 import android.graphics.Point;
 import android.graphics.Rect;
 import android.os.Build;
@@ -13,13 +12,19 @@ import android.view.View;
 import android.widget.GridView;
 import android.widget.ListAdapter;
 
-import com.example.harmonialauncher.Adapters.AppGridAdapter;
+import com.example.harmonialauncher.Adapters.AppListAdapter;
+import com.example.harmonialauncher.AppGrid.AppGridAdapter;
+import com.example.harmonialauncher.AppGrid.AppHolder;
 import com.example.harmonialauncher.Helpers.TimeHelper;
-import com.example.harmonialauncher.Interfaces.AppHolder;
 
 public class AppGridView extends GridView implements AppHolder {
     public static final String TAG = AppGridView.class.getSimpleName();
 
+    /**
+     * These variables designate the tolerances for the areas which the drag event must enter in
+     * order to perform a swap of cells. Once a drag shadow enters a cell, these boxes are calculated
+     * on the left and right of the cell, centered along Y and on the far left and far right.
+     */
     public final int BOX_TOLERANCE_X = 100, BOX_TOLERANCE_Y = 300;
     public static final long SWAP_TIMEOUT = 500;
     private long nextSwap = 0;
@@ -69,7 +74,7 @@ public class AppGridView extends GridView implements AppHolder {
 
                             if (leftBound.contains(loc.x, loc.y)) {
                                 //Swap Left
-                                int originalIndex = getChildByView(originalView);
+                                int originalIndex = getChildIndexByView(originalView);
                                 swap(originalIndex, i);
                                 nextSwap = TimeHelper.now() + SWAP_TIMEOUT;
                                 Log.d(TAG, "onDragEvent: " + originalView.getText());
@@ -79,7 +84,7 @@ public class AppGridView extends GridView implements AppHolder {
                                 return true;
                             } else if (rightBound.contains(loc.x, loc.y)) {
                                 //Swap Right
-                                int originalIndex = getChildByView(originalView);
+                                int originalIndex = getChildIndexByView(originalView);
                                 swap(originalIndex, i);
                                 nextSwap = TimeHelper.now() + SWAP_TIMEOUT;
                                 child.setVisibility(View.INVISIBLE);
@@ -95,7 +100,7 @@ public class AppGridView extends GridView implements AppHolder {
                 nextSwap = 0;
                 //Set original view to be visible
                 originalView.setVisibility(View.VISIBLE);
-                AppGridAdapter adapter = (AppGridAdapter)getAdapter();
+                AppGridAdapter adapter = getAdapter();
                 adapter.setDragInvisible(-1);
                 setAdapter(getAdapter());
 
@@ -107,7 +112,7 @@ public class AppGridView extends GridView implements AppHolder {
         }
     }
 
-    public int getChildByView(AppView view) {
+    public int getChildIndexByView(AppView view) {
         for (int i = 0; i < getChildCount(); i++) {
             AppView view2 = (AppView) getChildAt(i);
             if (view2.getText().equalsIgnoreCase(view.getText()))
@@ -116,6 +121,9 @@ public class AppGridView extends GridView implements AppHolder {
         return -1;
     }
 
+    public AppGridAdapter getAdapter()
+    {return (AppGridAdapter) super.getAdapter();}
+
     public void setAdapter(ListAdapter adapter) {
         if (adapter instanceof AppGridAdapter)
             super.setAdapter(adapter);
@@ -123,9 +131,26 @@ public class AppGridView extends GridView implements AppHolder {
 
     @Override
     public void swap(int a, int b) {
-        AppGridAdapter adapter = (AppGridAdapter) getAdapter();
-        adapter.swap(a, b);
-        adapter.setDragInvisible(b);
+        AppGridAdapter adapter = getAdapter();
+        if (Math.abs(a - b) < 2) {
+            adapter.swap(a, b);
+            adapter.setDragInvisible(b);
+        }
+        else
+        {
+            if (a > b)
+            {
+                for (int i = a; i > b; i--)
+                    adapter.swap(i, i - 1);
+                adapter.setDragInvisible(b);
+            }
+            else
+            {
+                for (int i = a; i < b; i++)
+                    adapter.swap(i, i + 1);
+                adapter.setDragInvisible(b);
+            }
+        }
         setAdapter(adapter);
         invalidateViews();
     }

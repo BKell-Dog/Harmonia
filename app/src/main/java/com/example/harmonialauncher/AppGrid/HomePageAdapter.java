@@ -1,11 +1,11 @@
-package com.example.harmonialauncher.Adapters;
+package com.example.harmonialauncher.AppGrid;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 
+import com.example.harmonialauncher.Adapters.PageAdapter;
 import com.example.harmonialauncher.Fragments.DrawerFragment;
-import com.example.harmonialauncher.Fragments.HomeScreenFragment;
 
 public class HomePageAdapter extends PageAdapter {
     private static final String TAG = HomePageAdapter.class.getSimpleName();

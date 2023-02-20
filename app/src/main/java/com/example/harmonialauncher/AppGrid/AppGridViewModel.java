@@ -1,4 +1,4 @@
-package com.example.harmonialauncher.ViewModels;
+package com.example.harmonialauncher.AppGrid;
 
 import android.app.Application;
 import android.content.Context;
@@ -8,7 +8,6 @@ import androidx.lifecycle.AndroidViewModel;
 
 import com.example.harmonialauncher.Database.AppEntity;
 import com.example.harmonialauncher.Database.AppRepository;
-import com.example.harmonialauncher.Helpers.AppObject;
 import com.example.harmonialauncher.Utils.LockManager;
 import com.example.harmonialauncher.Utils.Util;
 

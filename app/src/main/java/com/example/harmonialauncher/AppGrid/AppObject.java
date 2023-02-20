@@ -1,4 +1,4 @@
-package com.example.harmonialauncher.Helpers;
+package com.example.harmonialauncher.AppGrid;
 
 import android.graphics.drawable.Drawable;
 

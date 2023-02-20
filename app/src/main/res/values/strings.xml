@@ -33,4 +33,7 @@
     <!-- App Icon -->
     <string name="app_icon_image">App Icon Image</string>
     <string name="app_icon_text">App Name</string>
+
+    <!-- Splash Screen -->
+    <string name="splash_icon_text">Splash Icon</string>
 </resources>

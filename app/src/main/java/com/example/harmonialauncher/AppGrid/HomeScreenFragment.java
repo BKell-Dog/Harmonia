@@ -1,4 +1,4 @@
-package com.example.harmonialauncher.Fragments;
+package com.example.harmonialauncher.AppGrid;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -9,10 +9,8 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.lifecycle.ViewModelProvider;
 
-import com.example.harmonialauncher.Adapters.AppGridAdapter;
 import com.example.harmonialauncher.Listeners.LockStatusChangeListener;
 import com.example.harmonialauncher.R;
-import com.example.harmonialauncher.ViewModels.AppGridViewModel;
 
 /*
 This class will manage the GridView which displays the apps, its construction and popualtion, and will

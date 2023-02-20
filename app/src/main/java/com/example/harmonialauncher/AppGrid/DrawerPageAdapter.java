@@ -1,12 +1,11 @@
-package com.example.harmonialauncher.Adapters;
+package com.example.harmonialauncher.AppGrid;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 
-import com.example.harmonialauncher.Fragments.AppGridFragment;
+import com.example.harmonialauncher.Adapters.PageAdapter;
 import com.example.harmonialauncher.Utils.Util;
-import com.example.harmonialauncher.ViewModels.AppGridViewModel;
 
 public class DrawerPageAdapter extends PageAdapter {
     private static final String TAG = DrawerPageAdapter.class.getSimpleName();

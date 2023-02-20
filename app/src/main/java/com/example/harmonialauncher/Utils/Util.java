@@ -24,7 +24,7 @@ import androidx.core.content.res.ResourcesCompat;
 import androidx.fragment.app.Fragment;
 
 import com.example.harmonialauncher.Activities.LockActivity;
-import com.example.harmonialauncher.Helpers.AppObject;
+import com.example.harmonialauncher.AppGrid.AppObject;
 import com.example.harmonialauncher.R;
 
 import java.lang.reflect.InvocationTargetException;

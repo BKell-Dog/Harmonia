@@ -1,8 +1,7 @@
-package com.example.harmonialauncher.Fragments;
+package com.example.harmonialauncher.AppGrid;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.content.ClipData;
 import android.content.Context;
 import android.graphics.Point;
 import android.graphics.Rect;
@@ -13,21 +12,18 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.GridView;
 
 import androidx.annotation.NonNull;
 import androidx.core.view.GestureDetectorCompat;
 import androidx.lifecycle.ViewModelProvider;
 
-import com.example.harmonialauncher.Adapters.AppGridAdapter;
-import com.example.harmonialauncher.Helpers.AppObject;
+import com.example.harmonialauncher.AppGrid.Views.AppGridView;
+import com.example.harmonialauncher.Fragments.HarmoniaFragment;
 import com.example.harmonialauncher.Utils.HarmoniaGestureDetector;
 import com.example.harmonialauncher.Listeners.LockStatusChangeListener;
 import com.example.harmonialauncher.R;
 import com.example.harmonialauncher.Utils.Util;
 import com.example.harmonialauncher.Utils.LockManager;
-import com.example.harmonialauncher.ViewModels.AppGridViewModel;
-import com.example.harmonialauncher.Views.AppGridView;
 
 public class AppGridFragment extends HarmoniaFragment implements LockStatusChangeListener.LockStatusListener {
 
@@ -82,14 +78,6 @@ public class AppGridFragment extends HarmoniaFragment implements LockStatusChang
         gv.setAdapter(adapter);
         gv.setNumColumns(vm.NUM_COLS);
         setElementDimens(adapter, NUM_COLS, v);
-
-
-        gv.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View view, MotionEvent motionEvent) {
-                return gd.onTouchEvent(motionEvent);
-            }
-        });
 
         return v;
     }
