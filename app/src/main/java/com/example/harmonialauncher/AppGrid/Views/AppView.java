@@ -1,5 +1,6 @@
 package com.example.harmonialauncher.AppGrid.Views;
 
+import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.graphics.drawable.Drawable;
@@ -14,9 +15,10 @@ import android.widget.TextView;
 
 import androidx.annotation.Nullable;
 
+import com.example.harmonialauncher.AppGrid.AppObject;
 import com.example.harmonialauncher.R;
 
-public class AppView extends LinearLayout {  //extends CellElement or CellView
+public class AppView extends LinearLayout {  //in future: extends CellElement or CellView
     public AppView(Context context) {
         super(context);
         setupAttributes();
@@ -89,6 +91,11 @@ public class AppView extends LinearLayout {  //extends CellElement or CellView
         image.setImageDrawable(d);
     }
 
+    public void setImageViewDimens(int width, int height)
+    {
+        setIconLayoutParams(new LinearLayout.LayoutParams(width, height));
+    }
+
     public void setText(String t)
     {
         TextView text = getTextView();
@@ -113,6 +120,53 @@ public class AppView extends LinearLayout {  //extends CellElement or CellView
             }
         }
         return this;
+    }
+
+
+    public static class AppViewFactory {
+        @SuppressLint("UseCompatLoadingForDrawables")
+        public static AppView createAppView(AppObject a, Context context) {
+            AppView appView = new AppView(context);
+            appView.setText(a.getName());
+            if (a.getImage() == null)
+                appView.setImageDrawable(context.getResources().getDrawable(a.getImageId()));
+            else
+                appView.setImageDrawable(a.getImage());
+            return appView;
+        }
+
+        @SuppressLint("UseCompatLoadingForDrawables")
+        public static AppView createAppView(AppObject a, Context context, @Nullable AttributeSet attrs) {
+            AppView appView = new AppView(context, attrs);
+            appView.setText(a.getName());
+            if (a.getImage() == null)
+                appView.setImageDrawable(context.getResources().getDrawable(a.getImageId()));
+            else
+                appView.setImageDrawable(a.getImage());
+            return appView;
+        }
+
+        @SuppressLint("UseCompatLoadingForDrawables")
+        public static AppView createAppView(AppObject a, Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
+            AppView appView = new AppView(context, attrs, defStyleAttr);
+            appView.setText(a.getName());
+            if (a.getImage() == null)
+                appView.setImageDrawable(context.getResources().getDrawable(a.getImageId()));
+            else
+                appView.setImageDrawable(a.getImage());
+            return appView;
+        }
+
+        @TargetApi(Build.VERSION_CODES.LOLLIPOP)
+        public static AppView createAppView(AppObject a, Context context, @Nullable AttributeSet attrs, int defStyleAttr, int defStyleRes) {
+            AppView appView = new AppView(context, attrs, defStyleAttr, defStyleRes);
+            appView.setText(a.getName());
+            if (a.getImage() == null)
+                appView.setImageDrawable(context.getResources().getDrawable(a.getImageId()));
+            else
+                appView.setImageDrawable(a.getImage());
+            return appView;
+        }
     }
 
 

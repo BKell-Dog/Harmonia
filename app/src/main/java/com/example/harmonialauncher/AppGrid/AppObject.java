@@ -11,7 +11,6 @@ public class AppObject implements Lockable {
     private Drawable image = null;
     private Boolean isAppInDrawer;
     private int imageId;
-    private int height = -1, width = -1;
     private boolean locked = false;
 
     public AppObject(String packageName, String name, int imageId, Boolean isAppInDrawer) {
@@ -76,22 +75,6 @@ public class AppObject implements Lockable {
 
     public void setIsAppInDrawer(Boolean isAppInDrawer) {
         this.isAppInDrawer = isAppInDrawer;
-    }
-
-    public int getWidth() {
-        return width;
-    }
-
-    public void setWidth(int w) {
-        width = w;
-    }
-
-    public int getHeight() {
-        return height;
-    }
-
-    public void setHeight(int h) {
-        height = h;
     }
 
     @NonNull

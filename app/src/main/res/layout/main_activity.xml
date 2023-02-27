@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <!-- Wallpaper View -->
+    <include
+        android:layout_height="match_parent"
+        android:layout_width="match_parent"
+        layout="@layout/wallpaper"/>
+
+    <!-- App Pager -->
+    <include
+        android:id="@+id/main_app_pager"
+        android:layout_height="match_parent"
+        android:layout_width="match_parent"
+        layout="@layout/vertical_app_pager"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

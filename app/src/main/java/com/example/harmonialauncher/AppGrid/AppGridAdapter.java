@@ -31,13 +31,16 @@ public class AppGridAdapter extends ArrayAdapter<AppObject> implements AppHolder
     private final static String TAG = AppGridAdapter.class.getSimpleName();
     public final int INVISIBLE = 0, GREYSCALE = 1; //Variables for drawing locked apps
     private int lockMode = GREYSCALE; //Change this variable to change disappearance mode
-    protected final int COLS = 4, ROWS = 5;
+    public static final int COLS = 4, ROWS = 5;
     protected ArrayList<AppObject> apps;
     protected Context CONTEXT;
     protected int layout_id;
-    protected int horizontalBuffer = 300, verticalBuffer = 300;
+
+    //CHANGE THESE TO CHANGE ICON SIZE
+    protected int horizontalBuffer = 75, verticalBuffer = 75;
     protected final int pageHorizontalBuffer = 0, pageVerticalBuffer = 120;
     protected int elementHeight = -1, elementWidth = -1;
+    protected int gridWidth = 0, gridHeight = 0;
     private int dragInvisibleIndex = -1;
     private SingleTapDetector std;
 
@@ -62,7 +65,7 @@ public class AppGridAdapter extends ArrayAdapter<AppObject> implements AppHolder
         }
     }
 
-    public AppObject get(int position) {
+    public AppObject getItem(int position) {
         if (position >= 0 && position < apps.size())
             return apps.get(position);
         else
@@ -73,7 +76,7 @@ public class AppGridAdapter extends ArrayAdapter<AppObject> implements AppHolder
         return apps;
     }
 
-    public int getCount() {
+    public int getItemCount() {
         return apps.size();
     }
 
@@ -100,13 +103,6 @@ public class AppGridAdapter extends ArrayAdapter<AppObject> implements AppHolder
 
         AppView appView = gridItemView.findViewById(R.id.app_layout);
 
-        //Set element dimens is called so that in case the app list had been refreshed and all dimensions
-        // have been lost, we can reset them here. But it is only called if the apps dimensions are each
-        // equal to -1.
-        //Point p = getElementDimens();
-        //if (p.y == -1 || p.x == -1) //I commented these out because for some reason HomeScreen icons kept shrinking
-        setElementDimen(parent.getHeight(), parent.getWidth());
-
         appView.setText(app.getName());
         Drawable image = app.getImage();
         if (image == null) {
@@ -118,10 +114,10 @@ public class AppGridAdapter extends ArrayAdapter<AppObject> implements AppHolder
         appView.setImageDrawable(image);
 
         //Resize icon to fit within the GridView area
-        appView.setIconLayoutParams(new LinearLayout.LayoutParams(app.getWidth() - horizontalBuffer, app.getHeight() - verticalBuffer));
+        appView.setIconLayoutParams(new LinearLayout.LayoutParams(elementWidth - horizontalBuffer, elementHeight - verticalBuffer));
 
         //Resize the Grid Item to the app's previously defined height and width, which are set below
-        appView.setLayoutParams(new LinearLayout.LayoutParams(app.getWidth(), app.getHeight()));
+        appView.setLayoutParams(new LinearLayout.LayoutParams(elementWidth, elementHeight));
 
         //Make app invisible or greyscale if it is meant to be locked
         if (position == dragInvisibleIndex || app.isLocked() || LockManager.isLocked(app.getPackageName())) {
@@ -166,6 +162,14 @@ public class AppGridAdapter extends ArrayAdapter<AppObject> implements AppHolder
         return appView;
     }
 
+
+    public void setDimensions(int gridWidth, int gridHeight)
+    {
+        this.gridWidth = gridWidth;
+        this.gridHeight = gridHeight;
+        setElementDimens();
+    }
+
     public void setDragInvisible(int index)
     {
         dragInvisibleIndex = index;
@@ -175,22 +179,9 @@ public class AppGridAdapter extends ArrayAdapter<AppObject> implements AppHolder
      * This method resizes each GridView element size to fit the screen, and therefore, the gridView
      * won't scroll. This method must be called before Adapter.getView() to be effective.
      */
-    public Point setElementDimen(int screenHeight, int screenWidth) {
-        if (screenHeight <= 0 || screenWidth <= 0)
-            return new Point(0, 0);
-
-        elementHeight = (screenHeight - pageVerticalBuffer) / ROWS;
-        elementWidth = (screenWidth - pageHorizontalBuffer) / COLS;
-        for (AppObject app : apps) {
-            if (app != null) {
-                app.setWidth(elementWidth);
-                app.setHeight(elementHeight);
-            }
-        }
-        this.horizontalBuffer = (int) (elementWidth * 0.2);
-        this.verticalBuffer = (int) (elementHeight * 0.1);
-
-        return new Point(elementWidth, elementHeight);
+    public void setElementDimens() {
+        elementHeight = (gridHeight - pageVerticalBuffer) / ROWS;
+        elementWidth = (gridWidth - pageHorizontalBuffer) / COLS;
     }
 
     public void setLockMode(int lockMode) {

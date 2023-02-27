@@ -8,14 +8,18 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.Window;
+import android.view.WindowInsets;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.NumberPicker;
 import android.widget.RelativeLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 import androidx.appcompat.widget.LinearLayoutCompat;
+import androidx.core.view.WindowCompat;
+import androidx.core.view.WindowInsetsCompat;
 
 import com.example.harmonialauncher.AppGrid.AppObject;
 import com.example.harmonialauncher.Helpers.TimeHelper;
@@ -48,6 +52,25 @@ public class LockActivity extends HarmoniaActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.lock_activity);
         context = this;
+
+        //Set window params regarding SystemUI
+        WindowCompat.setDecorFitsSystemWindows(getWindow(), false);
+        WindowInsets insets = null;
+        int navigationBarHeight = 0, statusBarHeight = 0;
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.R) {
+            insets = getWindowManager().getCurrentWindowMetrics().getWindowInsets();
+            statusBarHeight = insets.getInsets(WindowInsetsCompat.Type.statusBars()).top; //in pixels
+            navigationBarHeight = insets.getInsets(WindowInsetsCompat.Type.navigationBars()).bottom; //in pixels
+        }
+        else {
+            navigationBarHeight = 150;
+            statusBarHeight = 120;
+        }
+        ScrollView scrollView = (ScrollView) findViewById(R.id.lock_activity_scroll_view);
+        scrollView.setPadding(0, statusBarHeight, 0, navigationBarHeight);
+
+        Log.d(TAG, "onCreate: " + navigationBarHeight + " " + statusBarHeight);
+
 
         //Populate LinearLayout with items
         LinearLayout ll = findViewById(R.id.lock_activity_linearlayout);

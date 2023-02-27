@@ -64,11 +64,6 @@ public class DrawerFragment extends HarmoniaFragment implements PageHolder {
         return v;
     }
 
-    public void onResume() {
-        super.onResume();
-        Log.d(TAG, "onResume: " + vm.getNumOfPages());
-    }
-
     public void incrementPage() {
         Log.d(TAG, "incrementPage: FLING DETECTED");
         vm.setCurrentPage(vm.getCurrentPage() + 1);

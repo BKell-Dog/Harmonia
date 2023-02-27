@@ -109,7 +109,7 @@ public class AppGridViewModel extends AndroidViewModel {
         public static AppObject toAppObject(Context context, AppEntity entity)
         {
             AppObject app = new AppObject(entity.packageName, entity.appName, entity.imageId, false);
-            app.setImage(Util.getDrawableById(context, entity.imageId));
+            app.setImage(Util.getDrawableByResource(context, entity.imageId));
             return app;
         }
     }

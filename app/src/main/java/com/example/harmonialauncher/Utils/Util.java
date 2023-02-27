@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
 import android.graphics.ColorMatrix;
 import android.graphics.ColorMatrixColorFilter;
 import android.graphics.Point;
@@ -13,6 +14,10 @@ import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.provider.Settings;
+import android.renderscript.Allocation;
+import android.renderscript.Element;
+import android.renderscript.RenderScript;
+import android.renderscript.ScriptIntrinsicBlur;
 import android.util.Log;
 import android.view.Display;
 import android.view.View;
@@ -41,6 +46,29 @@ public class Util {
             LAUNCHER_SETTINGS_APP_NAME = "Select Launcher";
     private static final String TAG = "Util";
     private static ArrayList<AppObject> apps = new ArrayList<AppObject>();
+
+
+    public static Bitmap blur(Context context, Bitmap image) {
+        final float BITMAP_SCALE = 0.4f;
+        final float BLUR_RADIUS = 9.5f;
+
+        int width = Math.round(image.getWidth() * BITMAP_SCALE);
+        int height = Math.round(image.getHeight() * BITMAP_SCALE);
+
+        Bitmap inputBitmap = Bitmap.createScaledBitmap(image, width, height, false);
+        Bitmap outputBitmap = Bitmap.createBitmap(inputBitmap);
+
+        RenderScript rs = RenderScript.create(context);
+        ScriptIntrinsicBlur theIntrinsic = ScriptIntrinsicBlur.create(rs, Element.U8_4(rs));
+        Allocation tmpIn = Allocation.createFromBitmap(rs, inputBitmap);
+        Allocation tmpOut = Allocation.createFromBitmap(rs, outputBitmap);
+        theIntrinsic.setRadius(BLUR_RADIUS);
+        theIntrinsic.setInput(tmpIn);
+        theIntrinsic.forEach(tmpOut);
+        tmpOut.copyTo(outputBitmap);
+
+        return outputBitmap;
+    }
 
 
     public static View findChildAt(@NonNull ViewGroup v, int x, int y)
@@ -311,7 +339,7 @@ public class Util {
         return d;
     }
 
-    public static Drawable getDrawableById(Context context, int resourceId)
+    public static Drawable getDrawableByResource(Context context, int resourceId)
     {
         return ResourcesCompat.getDrawable(context.getResources(), resourceId, null);
     }

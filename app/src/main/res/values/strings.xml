@@ -9,6 +9,7 @@
     <string name="contacts_icon_desc">Contacts Icon</string>
     <string name="settings_icon_desc">Settings Icon</string>
     <string name="file_sys_icon_desc">File Sys Icon</string>
+    <string name="wallpaper">Wallpaper</string>
 
     <!-- App APK names -->
     <string name="phone_apk">com.sec.android.app.phoneutil</string>
