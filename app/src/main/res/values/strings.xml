@@ -37,4 +37,32 @@
 
     <!-- Splash Screen -->
     <string name="splash_icon_text">Splash Icon</string>
+
+    <!-- Settings Screen -->
+    <string name="set_locked_app_style">Set Locked App Style</string>
+    <string name="set_locked_app_style_key">set_locked_app_style</string>
+    <string name="set_locked_app_style_summary">Choose whether locked apps appear as greyscale or invisible.</string>
+    <string-array name="pref_locked_app_style">
+        <item>Greyscale</item>
+        <item>Invisible</item>
+    </string-array>
+    <string-array name="pref_locked_app_style_values">
+        <item>0</item>
+        <item>1</item>
+    </string-array>
+
+    <string name="set_app_screen_style">Set Home Screen Style</string>
+    <string name="set_app_screen_style_key">set_app_screen_style</string>
+    <string name="set_app_screen_style_summary">Choose whether apps on the home screen appear as colored, greyscale, or black and white.</string>
+    <string-array name="pref_app_screen_style">
+        <item>Normal</item>
+        <item>Greyscale</item>
+        <item>Black and White</item>
+    </string-array>
+    <string-array name="pref_app_screen_style_values">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+    </string-array>
+
 </resources>

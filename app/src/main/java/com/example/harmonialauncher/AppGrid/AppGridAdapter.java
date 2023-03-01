@@ -29,7 +29,7 @@ import java.util.Collections;
 public class AppGridAdapter extends ArrayAdapter<AppObject> implements AppHolder {
 
     private final static String TAG = AppGridAdapter.class.getSimpleName();
-    public final int INVISIBLE = 0, GREYSCALE = 1; //Variables for drawing locked apps
+    public static final int INVISIBLE = 1, GREYSCALE = 0; //Variables for drawing locked apps
     private int lockMode = GREYSCALE; //Change this variable to change disappearance mode
     public static final int COLS = 4, ROWS = 5;
     protected ArrayList<AppObject> apps;
@@ -100,6 +100,8 @@ public class AppGridAdapter extends ArrayAdapter<AppObject> implements AppHolder
             gridItemView = inflater.inflate(R.layout.app, null);
         }
         AppObject app = apps.get(position);
+
+        lockMode = CONTEXT.getSharedPreferences("preferences", Context.MODE_PRIVATE).getInt("lock_style", GREYSCALE);
 
         AppView appView = gridItemView.findViewById(R.id.app_layout);
 

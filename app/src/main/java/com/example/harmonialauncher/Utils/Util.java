@@ -31,6 +31,7 @@ import androidx.fragment.app.Fragment;
 import com.example.harmonialauncher.Activities.LockActivity;
 import com.example.harmonialauncher.AppGrid.AppObject;
 import com.example.harmonialauncher.R;
+import com.example.harmonialauncher.Settings.SettingsActivity;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
@@ -43,33 +44,11 @@ public class Util {
             EXIT_PACKAGE_NAME = "Harmonia Exit App",
             EXIT_APP_NAME = "Exit Harmonia",
             LAUNCHER_SETTINGS_PACKAGE_NAME = "Settings Launcher Page",
-            LAUNCHER_SETTINGS_APP_NAME = "Select Launcher";
+            LAUNCHER_SETTINGS_APP_NAME = "Select Launcher",
+            SETTINGS_PACKAGE_NAME = "Settings Page",
+            SETTINGS_APP_NAME = "Harmonia Settings";
     private static final String TAG = "Util";
     private static ArrayList<AppObject> apps = new ArrayList<AppObject>();
-
-
-    public static Bitmap blur(Context context, Bitmap image) {
-        final float BITMAP_SCALE = 0.4f;
-        final float BLUR_RADIUS = 9.5f;
-
-        int width = Math.round(image.getWidth() * BITMAP_SCALE);
-        int height = Math.round(image.getHeight() * BITMAP_SCALE);
-
-        Bitmap inputBitmap = Bitmap.createScaledBitmap(image, width, height, false);
-        Bitmap outputBitmap = Bitmap.createBitmap(inputBitmap);
-
-        RenderScript rs = RenderScript.create(context);
-        ScriptIntrinsicBlur theIntrinsic = ScriptIntrinsicBlur.create(rs, Element.U8_4(rs));
-        Allocation tmpIn = Allocation.createFromBitmap(rs, inputBitmap);
-        Allocation tmpOut = Allocation.createFromBitmap(rs, outputBitmap);
-        theIntrinsic.setRadius(BLUR_RADIUS);
-        theIntrinsic.setInput(tmpIn);
-        theIntrinsic.forEach(tmpOut);
-        tmpOut.copyTo(outputBitmap);
-
-        return outputBitmap;
-    }
-
 
     public static View findChildAt(@NonNull ViewGroup v, int x, int y)
     {
@@ -167,11 +146,13 @@ public class Util {
         //Exit Intent, for Testing on Real Phones
         hApps.add(new AppObject(EXIT_PACKAGE_NAME, EXIT_APP_NAME, R.drawable.exit_icon, false));
 
+        hApps.add(new AppObject(SETTINGS_PACKAGE_NAME, SETTINGS_APP_NAME, R.drawable.settings_icon, false));
+
         return hApps;
     }
 
     public static boolean openApp(Context context, String appPackageName) {
-        if (context == null)
+        if (context == null || LockManager.isLocked(appPackageName))
             return false;
 
         if (appPackageName.equalsIgnoreCase(LOCK_PACKAGE_NAME)) {
@@ -182,6 +163,9 @@ public class Util {
         } else if (appPackageName.equalsIgnoreCase(EXIT_PACKAGE_NAME)) {
             ((Activity) context).finish();
             return true;
+        } else if(appPackageName.equalsIgnoreCase(SETTINGS_PACKAGE_NAME)) {
+            Intent intent = new Intent(context, SettingsActivity.class);
+            context.startActivity(intent);
         } else if (appPackageName.equalsIgnoreCase(LAUNCHER_SETTINGS_PACKAGE_NAME)) {
             final Intent intent;
             if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {

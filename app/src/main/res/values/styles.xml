@@ -25,4 +25,12 @@
         <item name="android:navigationBarColor">@color/lock_activity_background</item>
         <item name="android:statusBarColor">@android:color/transparent</item>
     </style>
+
+    <!-- Settings Activity Theme -->
+    <style name="SettingsActivityTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="android:windowShowWallpaper">false</item>
+        <item name="android:windowBackground">@color/settings_activity_background</item>
+        <item name="android:navigationBarColor">@color/settings_activity_background</item>
+        <item name="android:statusBarColor">@color/settings_activity_background</item>
+    </style>
 </resources>

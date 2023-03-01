@@ -39,6 +39,11 @@
             android:label="@string/lock_title"
             android:exported="true"
             android:theme="@style/LockActivityTheme"/>
+        <activity
+            android:name=".Settings.SettingsActivity"
+            android:label="Settings"
+            android:exported="true"
+            android:theme="@style/LockActivityTheme" />
     </application>
 
 

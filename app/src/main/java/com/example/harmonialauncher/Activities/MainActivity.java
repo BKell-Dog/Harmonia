@@ -1,30 +1,20 @@
 package com.example.harmonialauncher.Activities;
 
-import android.Manifest;
 import android.annotation.SuppressLint;
-import android.content.pm.PackageManager;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.RenderEffect;
-import android.graphics.Shader;
-import android.graphics.drawable.Drawable;
-import android.os.Build;
+import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.os.ParcelFileDescriptor;
-import android.util.Log;
 import android.view.View;
 import android.view.WindowInsets;
-import android.view.WindowManager;
-import android.widget.ImageView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.core.app.ActivityCompat;
 import androidx.core.splashscreen.SplashScreen;
 import androidx.core.view.WindowCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.preference.PreferenceManager;
 import androidx.viewpager2.widget.ViewPager2;
 
 import com.example.harmonialauncher.Adapters.PageAdapter;
@@ -35,7 +25,6 @@ import com.example.harmonialauncher.Helpers.FlingDetector;
 import com.example.harmonialauncher.Helpers.WallpaperManager;
 import com.example.harmonialauncher.Interfaces.PageHolder;
 import com.example.harmonialauncher.R;
-import com.example.harmonialauncher.Utils.Util;
 import com.example.harmonialauncher.ViewModels.MainActivityViewModel;
 import com.example.harmonialauncher.Views.FlingCatcher;
 
@@ -53,7 +42,7 @@ public class MainActivity extends HarmoniaActivity implements PageHolder {
 
     //Variables relating to the blur effect placed over the wallpaper when the viewpager switches between pages.
     private WallpaperView wallpaper;
-    private float blurRadius = 50;
+    private float blurRadius = 70;
 
     @SuppressLint({"MissingInflatedId"})
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,7 +67,6 @@ public class MainActivity extends HarmoniaActivity implements PageHolder {
             statusBarHeight = 120;
         }
 
-
         vm = new ViewModelProvider(this).get(MainActivityViewModel.class);
         vm.setCurrentPage(0);
 
@@ -90,6 +78,8 @@ public class MainActivity extends HarmoniaActivity implements PageHolder {
 
         wallpaper = (WallpaperView) findViewById(R.id.wallpaper);
         wallpaper.setImageDrawable(WallpaperManager.getWallpaper(this));
+        wallpaper.setBlurRadius(0);
+        wallpaper.setDimValue(new WallpaperView.DimValue(WallpaperView.DimValue.NO_DIM));
 
         vp.setAdapter(new MainPageAdapter(this));
 
@@ -97,11 +87,20 @@ public class MainActivity extends HarmoniaActivity implements PageHolder {
         vp.setUserInputEnabled(false);
         vp.setOrientation(ViewPager2.ORIENTATION_VERTICAL);
         vp.setCurrentItem(0);
-        vp.setCurrentItem(1);
+        incrementPage();
+        decrementPage();
         vp.setCurrentItem(vm.getCurrentPage());
         vp.setVisibility(View.VISIBLE);
 
         update();
+    }
+
+    public void onResume()
+    {
+        super.onResume();
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        int lockedAppStyle = prefs.getInt("set_locked_app_style_key", 98765432);
+        Toast.makeText(this, "" + lockedAppStyle, Toast.LENGTH_SHORT).show();
     }
 
     public void update() {
@@ -113,6 +112,7 @@ public class MainActivity extends HarmoniaActivity implements PageHolder {
         if (vp.getCurrentItem() == 0) {
             vm.setCurrentPage(1);
             wallpaper.setBlurRadius(blurRadius);
+            wallpaper.setDimValue(new WallpaperView.DimValue(WallpaperView.DimValue.NO_DIM));
             update();
         }
     }
@@ -121,6 +121,7 @@ public class MainActivity extends HarmoniaActivity implements PageHolder {
         if (vp.getCurrentItem() == 1) {
             vm.setCurrentPage(0);
             wallpaper.setBlurRadius(0);
+            wallpaper.setDimValue(new WallpaperView.DimValue(WallpaperView.DimValue.QUARTER_DIM));
             update();
         }
     }
