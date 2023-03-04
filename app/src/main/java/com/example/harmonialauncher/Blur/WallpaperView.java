@@ -1,10 +1,16 @@
 package com.example.harmonialauncher.Blur;
 
+import static com.example.harmonialauncher.Helpers.PreferenceData.STYLE_GREYSCALE;
+
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.BlendMode;
 import android.graphics.BlendModeColorFilter;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.ColorFilter;
+import android.graphics.ColorMatrix;
+import android.graphics.ColorMatrixColorFilter;
 import android.graphics.PorterDuff;
 import android.graphics.RenderEffect;
 import android.graphics.Shader;
@@ -15,25 +21,40 @@ import android.util.Log;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
+import androidx.preference.PreferenceManager;
 
-public class WallpaperView extends androidx.appcompat.widget.AppCompatImageView {
+import com.example.harmonialauncher.Helpers.PreferenceData;
+import com.example.harmonialauncher.R;
+import com.example.harmonialauncher.Utils.Util;
+
+public class WallpaperView extends androidx.appcompat.widget.AppCompatImageView implements SharedPreferences.OnSharedPreferenceChangeListener {
     private static final String TAG = WallpaperView.class.getSimpleName();
 
     private float blurRadius = 1;
-    private DimValue dimValue = new DimValue(0);
     private Shader.TileMode shaderMode = Shader.TileMode.MIRROR;
     private RenderEffect effect;
+    private boolean greyscale = false, dimmed = false;
+    private SharedPreferences prefs;
 
     public WallpaperView(Context context) {
         super(context);
+        prefs = PreferenceManager.getDefaultSharedPreferences(getContext());
+        greyscale = Integer.parseInt(prefs.getString(getResources().getString(R.string.set_app_screen_style_key), "")) == STYLE_GREYSCALE;
+        PreferenceManager.getDefaultSharedPreferences(context).registerOnSharedPreferenceChangeListener(this);
     }
 
     public WallpaperView(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
+        prefs = PreferenceManager.getDefaultSharedPreferences(getContext());
+        greyscale = Integer.parseInt(prefs.getString(getResources().getString(R.string.set_app_screen_style_key), "")) == STYLE_GREYSCALE;
+        PreferenceManager.getDefaultSharedPreferences(context).registerOnSharedPreferenceChangeListener(this);
     }
 
     public WallpaperView(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
+        prefs = PreferenceManager.getDefaultSharedPreferences(getContext());
+        greyscale = Integer.parseInt(prefs.getString(getResources().getString(R.string.set_app_screen_style_key), "")) == STYLE_GREYSCALE;
+        PreferenceManager.getDefaultSharedPreferences(context).registerOnSharedPreferenceChangeListener(this);
     }
 
     @Override
@@ -64,12 +85,33 @@ public class WallpaperView extends androidx.appcompat.widget.AppCompatImageView 
         if (background == null)
             return;
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q)
-            background.setColorFilter(new BlendModeColorFilter(dimValue.getColorValue(), BlendMode.DARKEN));
+        float[] defaultMatrix = new float[] {1, 0, 0, 0, 0,
+                0, 1, 0, 0, 0,
+                0, 0, 1, 0, 0,
+                0, 0, 0, 1, 0};
+        ColorMatrix matrix = new ColorMatrix(defaultMatrix);
+
+        //Handle wallpaper greyscale
+        if (greyscale)
+            matrix.setSaturation(0);
         else
-            background.setColorFilter(dimValue.getColorValue(), PorterDuff.Mode.DARKEN);
+            matrix.setSaturation(1);
+
+        //Handle wallpaper dim
+        if (dimmed) {
+            float rl = 0.213f, gl = 0.715f, bl = 0.072f;    //Red luminance, green luminance, and blue luminance
+            float l = 0.70f;                                //Luminance scale factor
+            float[] dimMatrix = new float[]{rl * l + gl + bl, gl * l - gl, bl * l - bl, 0, 0,
+                                            rl * l - rl, gl * l + rl + bl, bl * l - bl, 0, 0,
+                                            rl * l - rl, gl * l - gl, bl * l + rl + gl, 0, 0,
+                                            0, 0, 0, 1, 0};
+            matrix.setConcat(matrix, new ColorMatrix(dimMatrix));
+        }
+
+        background.setColorFilter(new ColorMatrixColorFilter(matrix));
         setImageDrawable(background);
 
+        //Handle wallpaper blur
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             float trueBlurRadius = (blurRadius > 1) ? blurRadius : 1;
             effect = RenderEffect.createBlurEffect(trueBlurRadius, trueBlurRadius, shaderMode);
@@ -84,31 +126,38 @@ public class WallpaperView extends androidx.appcompat.widget.AppCompatImageView 
         this.shaderMode = shaderMode;
     }
 
-    public DimValue getDimValue() {
-        return dimValue;
+    public boolean isDimmed() {
+        return dimmed;
     }
 
-    public void setDimValue(DimValue dim) {
-        this.dimValue = dim; //255 alpha = transparent
+    public void setDimmed(boolean dim) {
+        dimmed = dim;
+        updateEffect();
+        invalidate();
     }
 
-    public static class DimValue
-    {
-        int dimColorValue;
-        public static final int MAX_DIM = 255, NO_DIM = 0, HALF_DIM = 128, QUARTER_DIM = 64;
-        public DimValue(int dim)
+    @Override
+    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+        Log.d(TAG, "onSharedPreferenceChanged: PREFERENCE CHANGED");
+        if (key.equalsIgnoreCase(getResources().getString(R.string.set_app_screen_style_key)))
         {
-            if (dim >= 0 && dim <= 255) {
-                dimColorValue = Color.argb(dim, 0, 0, 0);
+            int style = Integer.parseInt(sharedPreferences.getString(key, PreferenceData.STYLE_NORMAL + ""));
+            if (style == PreferenceData.STYLE_NORMAL)
+                greyscale = false;
+            else if (style == STYLE_GREYSCALE) {
+                greyscale = true;
+                Log.d(TAG, "onSharedPreferenceChanged: GREYSCALE TRUE");
             }
-            else
-                throw new IndexOutOfBoundsException();
         }
+    }
 
-        public int getColorValue()
-        {return dimColorValue;}
-
-        public String toString()
-        {return "" + dimColorValue;}
+    public void printMatrix(float[] matrix)
+    {
+        StringBuilder s = new StringBuilder();
+        s.append("[");
+        for (int i = 0; i < matrix.length; i++)
+            s.append(matrix[i] + ", ");
+        s.append("]");
+        Log.d(TAG, "printMatrix: " + s.toString());
     }
 }

@@ -14,6 +14,7 @@ import androidx.core.view.WindowInsetsCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.preference.PreferenceFragmentCompat;
 import androidx.preference.PreferenceManager;
 import androidx.viewpager2.widget.ViewPager2;
 
@@ -34,7 +35,7 @@ This class will manage the fragment viewer which switches between the HomeScreen
 It will switch from home to settings once the Harmonia settings button is pressed, and switch from settings to
 home once the back button is pressed in the settings menu.
  */
-public class MainActivity extends HarmoniaActivity implements PageHolder {
+public class MainActivity extends HarmoniaActivity implements PageHolder, SharedPreferences.OnSharedPreferenceChangeListener {
     private static final String TAG = MainActivity.class.getSimpleName();
     private MainActivityViewModel vm;
     public ViewPager2 vp;
@@ -67,6 +68,8 @@ public class MainActivity extends HarmoniaActivity implements PageHolder {
             statusBarHeight = 120;
         }
 
+        PreferenceManager.getDefaultSharedPreferences(this).registerOnSharedPreferenceChangeListener(this);
+
         vm = new ViewModelProvider(this).get(MainActivityViewModel.class);
         vm.setCurrentPage(0);
 
@@ -79,7 +82,7 @@ public class MainActivity extends HarmoniaActivity implements PageHolder {
         wallpaper = (WallpaperView) findViewById(R.id.wallpaper);
         wallpaper.setImageDrawable(WallpaperManager.getWallpaper(this));
         wallpaper.setBlurRadius(0);
-        wallpaper.setDimValue(new WallpaperView.DimValue(WallpaperView.DimValue.NO_DIM));
+        wallpaper.setDimmed(false);
 
         vp.setAdapter(new MainPageAdapter(this));
 
@@ -95,14 +98,6 @@ public class MainActivity extends HarmoniaActivity implements PageHolder {
         update();
     }
 
-    public void onResume()
-    {
-        super.onResume();
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        int lockedAppStyle = prefs.getInt("set_locked_app_style_key", 98765432);
-        Toast.makeText(this, "" + lockedAppStyle, Toast.LENGTH_SHORT).show();
-    }
-
     public void update() {
         vp.setCurrentItem(vm.getCurrentPage());
         vp.invalidate();
@@ -112,7 +107,7 @@ public class MainActivity extends HarmoniaActivity implements PageHolder {
         if (vp.getCurrentItem() == 0) {
             vm.setCurrentPage(1);
             wallpaper.setBlurRadius(blurRadius);
-            wallpaper.setDimValue(new WallpaperView.DimValue(WallpaperView.DimValue.NO_DIM));
+            wallpaper.setDimmed(true);
             update();
         }
     }
@@ -121,8 +116,16 @@ public class MainActivity extends HarmoniaActivity implements PageHolder {
         if (vp.getCurrentItem() == 1) {
             vm.setCurrentPage(0);
             wallpaper.setBlurRadius(0);
-            wallpaper.setDimValue(new WallpaperView.DimValue(WallpaperView.DimValue.QUARTER_DIM));
+            wallpaper.setDimmed(false);
             update();
+        }
+    }
+
+    @Override
+    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+        if (key.equalsIgnoreCase(getResources().getString(R.string.set_app_screen_style_key)))
+        {
+            Toast.makeText(this, "PREFERENCE CHANGED", Toast.LENGTH_SHORT).show();
         }
     }
 

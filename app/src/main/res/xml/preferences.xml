@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
     <!--below line is to create preference category-->
-    <PreferenceCategory android:title="General">
+    <PreferenceCategory android:title="Layout">
 
         <!--in below line we are creating a list preference
             and we are adding default selected value in list for 3 rd index-->
@@ -18,7 +18,7 @@
             android:dialogTitle="@string/set_app_screen_style"
             android:entries="@array/pref_app_screen_style"
             android:entryValues="@array/pref_app_screen_style_values"
-            android:key="@string/set_locked_app_style_key"
+            android:key="@string/set_app_screen_style_key"
             android:summary="@string/set_app_screen_style_summary"
             android:title="@string/set_app_screen_style" />
 

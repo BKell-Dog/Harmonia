@@ -1,8 +1,15 @@
 package com.example.harmonialauncher.AppGrid;
 
+import static com.example.harmonialauncher.Helpers.PreferenceData.LOCK_MODE_GREYSCALE;
+import static com.example.harmonialauncher.Helpers.PreferenceData.LOCK_MODE_INVISIBLE;
+import static com.example.harmonialauncher.Helpers.PreferenceData.STYLE_GREYSCALE;
+import static com.example.harmonialauncher.Helpers.PreferenceData.STYLE_NORMAL;
+
+import android.accessibilityservice.AccessibilityService;
 import android.annotation.SuppressLint;
 import android.content.ClipData;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.Point;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
@@ -16,8 +23,11 @@ import android.widget.LinearLayout;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.content.res.ResourcesCompat;
+import androidx.preference.PreferenceManager;
 
 import com.example.harmonialauncher.AppGrid.Views.AppView;
+import com.example.harmonialauncher.Helpers.PreferenceData;
 import com.example.harmonialauncher.Helpers.SingleTapDetector;
 import com.example.harmonialauncher.R;
 import com.example.harmonialauncher.Utils.Util;
@@ -29,8 +39,7 @@ import java.util.Collections;
 public class AppGridAdapter extends ArrayAdapter<AppObject> implements AppHolder {
 
     private final static String TAG = AppGridAdapter.class.getSimpleName();
-    public static final int INVISIBLE = 1, GREYSCALE = 0; //Variables for drawing locked apps
-    private int lockMode = GREYSCALE; //Change this variable to change disappearance mode
+    private int lockMode = LOCK_MODE_GREYSCALE; //Change this variable to change disappearance mode
     public static final int COLS = 4, ROWS = 5;
     protected ArrayList<AppObject> apps;
     protected Context CONTEXT;
@@ -42,6 +51,7 @@ public class AppGridAdapter extends ArrayAdapter<AppObject> implements AppHolder
     protected int elementHeight = -1, elementWidth = -1;
     protected int gridWidth = 0, gridHeight = 0;
     private int dragInvisibleIndex = -1;
+    private int style;
     private SingleTapDetector std;
 
     public AppGridAdapter(@NonNull Context context, int resource, ArrayList<AppObject> appList) {
@@ -49,6 +59,12 @@ public class AppGridAdapter extends ArrayAdapter<AppObject> implements AppHolder
         CONTEXT = context;
         apps = appList;
         layout_id = resource;
+
+        //Get style and lock mode from preferences
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getContext());
+        String key = CONTEXT.getResources().getString(R.string.set_app_screen_style_key);
+        style = Integer.parseInt(prefs.getString(key, STYLE_NORMAL + ""));
+
         std = new SingleTapDetector(context);
     }
 
@@ -99,10 +115,8 @@ public class AppGridAdapter extends ArrayAdapter<AppObject> implements AppHolder
             LayoutInflater inflater = (LayoutInflater) CONTEXT.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             gridItemView = inflater.inflate(R.layout.app, null);
         }
+
         AppObject app = apps.get(position);
-
-        lockMode = CONTEXT.getSharedPreferences("preferences", Context.MODE_PRIVATE).getInt("lock_style", GREYSCALE);
-
         AppView appView = gridItemView.findViewById(R.id.app_layout);
 
         appView.setText(app.getName());
@@ -113,7 +127,6 @@ public class AppGridAdapter extends ArrayAdapter<AppObject> implements AppHolder
             else
                 image = CONTEXT.getResources().getDrawable(app.getImageId());
         }
-        appView.setImageDrawable(image);
 
         //Resize icon to fit within the GridView area
         appView.setIconLayoutParams(new LinearLayout.LayoutParams(elementWidth - horizontalBuffer, elementHeight - verticalBuffer));
@@ -121,12 +134,34 @@ public class AppGridAdapter extends ArrayAdapter<AppObject> implements AppHolder
         //Resize the Grid Item to the app's previously defined height and width, which are set below
         appView.setLayoutParams(new LinearLayout.LayoutParams(elementWidth, elementHeight));
 
-        //Make app invisible or greyscale if it is meant to be locked
-        if (position == dragInvisibleIndex || app.isLocked() || LockManager.isLocked(app.getPackageName())) {
-            if (lockMode == INVISIBLE || dragInvisibleIndex != -1)
-                appView.setVisibility(View.INVISIBLE);
-            else if (lockMode == GREYSCALE)
-                appView.setImageDrawable(Util.convertToGreyscale(app.getImage()));
+
+        if (style == PreferenceData.STYLE_GREYSCALE)
+            lockMode = PreferenceData.LOCK_MODE_INVISIBLE;
+        else
+            lockMode = LOCK_MODE_GREYSCALE;
+
+
+        if (style == STYLE_NORMAL)
+        {
+            appView.setImageDrawable(image);
+
+            //Make app invisible or greyscale if it is meant to be locked
+            if (position == dragInvisibleIndex || app.isLocked() || LockManager.isLocked(app.getPackageName())) {
+                if (lockMode == LOCK_MODE_INVISIBLE || dragInvisibleIndex != -1)
+                    appView.setVisibility(View.INVISIBLE);
+                else if (lockMode == LOCK_MODE_GREYSCALE)
+                    appView.setImageDrawable(Util.convertToGreyscale(image));
+            }
+        }
+        else if (style == STYLE_GREYSCALE)
+        {
+            appView.setImageDrawable(Util.convertToGreyscale(image));
+
+            //Make app invisible or greyscale if it is meant to be locked
+            if (position == dragInvisibleIndex || app.isLocked() || LockManager.isLocked(app.getPackageName())) {
+                if (lockMode == LOCK_MODE_INVISIBLE)
+                    appView.setImageDrawable(ResourcesCompat.getDrawable(getContext().getResources(), R.drawable.lock_icon, null));
+            }
         }
 
         appView.setOnTouchListener(new View.OnTouchListener() {
@@ -187,7 +222,7 @@ public class AppGridAdapter extends ArrayAdapter<AppObject> implements AppHolder
     }
 
     public void setLockMode(int lockMode) {
-        if (lockMode == INVISIBLE || lockMode == GREYSCALE)
+        if (lockMode == PreferenceData.LOCK_MODE_INVISIBLE || lockMode == PreferenceData.LOCK_MODE_INVISIBLE)
             this.lockMode = lockMode;
         else
             Log.d(TAG, "Mode out of bounds!");
@@ -197,6 +232,14 @@ public class AppGridAdapter extends ArrayAdapter<AppObject> implements AppHolder
         if (a >= 0 && b >= 0 && a < apps.size() && b < apps.size()) {
             Collections.swap(apps, a, b);
         }
+    }
+
+    public void updatePreferences()
+    {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getContext());
+        String key = CONTEXT.getResources().getString(R.string.set_app_screen_style_key);
+        style = Integer.parseInt(prefs.getString(key, STYLE_NORMAL + ""));
+        Log.d(TAG, "updatePreferences: " + style);
     }
 
     @NonNull

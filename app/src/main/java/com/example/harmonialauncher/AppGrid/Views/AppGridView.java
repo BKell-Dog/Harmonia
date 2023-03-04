@@ -3,6 +3,7 @@ package com.example.harmonialauncher.AppGrid.Views;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.Point;
 import android.graphics.Rect;
 import android.os.Build;
@@ -14,13 +15,16 @@ import android.view.ViewGroup;
 import android.widget.GridView;
 import android.widget.ListAdapter;
 
+import androidx.preference.PreferenceManager;
+
 import com.example.harmonialauncher.Adapters.AppListAdapter;
 import com.example.harmonialauncher.AppGrid.AppGridAdapter;
 import com.example.harmonialauncher.AppGrid.AppHolder;
 import com.example.harmonialauncher.Helpers.TimeHelper;
+import com.example.harmonialauncher.R;
 import com.example.harmonialauncher.Utils.Util;
 
-public class AppGridView extends GridView implements AppHolder {
+public class AppGridView extends GridView implements AppHolder, SharedPreferences.OnSharedPreferenceChangeListener {
     public static final String TAG = AppGridView.class.getSimpleName();
 
     /**
@@ -34,14 +38,17 @@ public class AppGridView extends GridView implements AppHolder {
 
     public AppGridView(Context context) {
         super(context);
+        PreferenceManager.getDefaultSharedPreferences(context).registerOnSharedPreferenceChangeListener(this);
     }
 
     public AppGridView(Context context, AttributeSet attrs) {
         super(context, attrs);
+        PreferenceManager.getDefaultSharedPreferences(context).registerOnSharedPreferenceChangeListener(this);
     }
 
     public AppGridView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
+        PreferenceManager.getDefaultSharedPreferences(context).registerOnSharedPreferenceChangeListener(this);
     }
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
@@ -159,5 +166,14 @@ public class AppGridView extends GridView implements AppHolder {
         }
         setAdapter(adapter);
         invalidateViews();
+    }
+
+    @Override
+    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+        if (key.equalsIgnoreCase(getContext().getResources().getString(R.string.set_app_screen_style_key)))
+        {
+            for (int i = 0; i < getChildCount(); i++)
+                getChildAt(i).invalidate();
+        }
     }
 }

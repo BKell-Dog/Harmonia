@@ -111,7 +111,7 @@ public class Util {
                 removeApps.add(app);
         apps.removeAll(removeApps);
 
-        apps.addAll(loadHarmoniaApps());
+        apps.addAll(loadHarmoniaApps(c));
 
         return apps;
     }
@@ -134,25 +134,25 @@ public class Util {
      *
      * @return ArrayList<AppObject>
      */
-    private static ArrayList<AppObject> loadHarmoniaApps() {
+    private static ArrayList<AppObject> loadHarmoniaApps(@NonNull Context c) {
         ArrayList<AppObject> hApps = new ArrayList<AppObject>();
 
         //Lock Activity
-        hApps.add(new AppObject(LOCK_PACKAGE_NAME, LOCK_APP_NAME, R.drawable.lock_icon, false));
+        hApps.add(new AppObject(LOCK_PACKAGE_NAME, LOCK_APP_NAME, R.drawable.lock_icon, ResourcesCompat.getDrawable(c.getResources(), R.drawable.lock_icon, null), false));
 
         //App icon which opens the settings page for changing default launcher
-        hApps.add(new AppObject(LAUNCHER_SETTINGS_PACKAGE_NAME, LAUNCHER_SETTINGS_APP_NAME, R.drawable.launcher_icon, false));
+        hApps.add(new AppObject(LAUNCHER_SETTINGS_PACKAGE_NAME, LAUNCHER_SETTINGS_APP_NAME, R.drawable.launcher_icon, ResourcesCompat.getDrawable(c.getResources(), R.drawable.launcher_icon, null), false));
 
         //Exit Intent, for Testing on Real Phones
-        hApps.add(new AppObject(EXIT_PACKAGE_NAME, EXIT_APP_NAME, R.drawable.exit_icon, false));
+        hApps.add(new AppObject(EXIT_PACKAGE_NAME, EXIT_APP_NAME, R.drawable.exit_icon, ResourcesCompat.getDrawable(c.getResources(), R.drawable.exit_icon, null), false));
 
-        hApps.add(new AppObject(SETTINGS_PACKAGE_NAME, SETTINGS_APP_NAME, R.drawable.settings_icon, false));
+        hApps.add(new AppObject(SETTINGS_PACKAGE_NAME, SETTINGS_APP_NAME, R.drawable.settings_icon, ResourcesCompat.getDrawable(c.getResources(), R.drawable.settings_icon, null), false));
 
         return hApps;
     }
 
     public static boolean openApp(Context context, String appPackageName) {
-        if (context == null || LockManager.isLocked(appPackageName))
+        if (context == null)
             return false;
 
         if (appPackageName.equalsIgnoreCase(LOCK_PACKAGE_NAME)) {
@@ -180,7 +180,8 @@ public class Util {
             return false;
         }
 
-        if (LockManager.isLocked(Util.findAppByPackageName(appPackageName, context))) ;
+        if (LockManager.isLocked(appPackageName))
+            return false;
 
         //Form intent from package name
         Intent intent = context.getPackageManager().getLaunchIntentForPackage(appPackageName);
@@ -312,7 +313,7 @@ public class Util {
         return new Rect(viewLoc.x, viewLoc.y, viewBound.x, viewBound.y);
     }
 
-    public static Drawable convertToGreyscale(Drawable d) {
+    public static Drawable convertToGreyscale(@NonNull Drawable d) {
         ColorMatrix matrix = new ColorMatrix();
         matrix.setSaturation(0);
 
@@ -320,6 +321,12 @@ public class Util {
 
         d.setColorFilter(filter);
 
+        return d;
+    }
+
+    public static Drawable convertToColor(@NonNull Drawable d)
+    {
+        d.setColorFilter(null);
         return d;
     }
 

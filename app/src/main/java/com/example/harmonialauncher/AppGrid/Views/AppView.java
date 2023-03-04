@@ -3,6 +3,8 @@ package com.example.harmonialauncher.AppGrid.Views;
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.content.Context;
+import android.content.SharedPreferences;
+import android.graphics.Canvas;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.util.AttributeSet;
@@ -14,9 +16,12 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.Nullable;
+import androidx.preference.PreferenceManager;
 
 import com.example.harmonialauncher.AppGrid.AppObject;
+import com.example.harmonialauncher.Helpers.PreferenceData;
 import com.example.harmonialauncher.R;
+import com.example.harmonialauncher.Utils.Util;
 
 public class AppView extends LinearLayout {  //in future: extends CellElement or CellView
     public AppView(Context context) {
@@ -49,6 +54,13 @@ public class AppView extends LinearLayout {  //in future: extends CellElement or
         setOrientation(LinearLayout.VERTICAL);
         setPadding(10, 10, 10, 10);
         setWeightSum(100f);
+    }
+
+    public void onDraw(Canvas canvas)
+    {
+        updateImageStyle();
+
+        super.onDraw(canvas);
     }
 
     public String getAppName()
@@ -120,6 +132,16 @@ public class AppView extends LinearLayout {  //in future: extends CellElement or
             }
         }
         return this;
+    }
+
+    public void updateImageStyle()
+    {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getContext());
+        int style = Integer.parseInt(prefs.getString(getResources().getString(R.string.set_app_screen_style_key), PreferenceData.STYLE_NORMAL + ""));
+        if (style == PreferenceData.STYLE_NORMAL)
+            setImageDrawable(Util.convertToColor(getImageDrawable()));
+        else
+            setImageDrawable(Util.convertToGreyscale(getImageDrawable()));
     }
 
 
