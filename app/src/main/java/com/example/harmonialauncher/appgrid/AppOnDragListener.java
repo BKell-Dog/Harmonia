@@ -1,4 +1,4 @@
-package com.example.harmonialauncher.AppGrid;
+package com.example.harmonialauncher.appgrid;
 
 import android.graphics.Rect;
 import android.util.Log;
@@ -6,7 +6,7 @@ import android.view.DragEvent;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.example.harmonialauncher.AppGrid.Views.AppView;
+import com.example.harmonialauncher.appgrid.Views.AppView;
 
 public class AppOnDragListener implements View.OnDragListener {
     private static final String TAG = AppOnDragListener.class.getSimpleName();

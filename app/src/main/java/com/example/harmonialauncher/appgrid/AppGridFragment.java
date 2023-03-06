@@ -1,11 +1,9 @@
-package com.example.harmonialauncher.AppGrid;
+package com.example.harmonialauncher.appgrid;
 
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.content.Context;
 import android.graphics.Point;
 import android.graphics.Rect;
-import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -17,7 +15,7 @@ import androidx.annotation.NonNull;
 import androidx.core.view.GestureDetectorCompat;
 import androidx.lifecycle.ViewModelProvider;
 
-import com.example.harmonialauncher.AppGrid.Views.AppGridView;
+import com.example.harmonialauncher.appgrid.Views.AppGridView;
 import com.example.harmonialauncher.Fragments.HarmoniaFragment;
 import com.example.harmonialauncher.Utils.HarmoniaGestureDetector;
 import com.example.harmonialauncher.Listeners.LockStatusChangeListener;

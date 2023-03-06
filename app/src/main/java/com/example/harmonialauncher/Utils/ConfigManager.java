@@ -6,7 +6,7 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 
-import com.example.harmonialauncher.AppGrid.AppObject;
+import com.example.harmonialauncher.appgrid.AppObject;
 import com.google.gson.Gson;
 
 import java.util.ArrayList;

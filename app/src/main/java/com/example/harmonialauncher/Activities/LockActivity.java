@@ -21,7 +21,7 @@ import androidx.appcompat.widget.LinearLayoutCompat;
 import androidx.core.view.WindowCompat;
 import androidx.core.view.WindowInsetsCompat;
 
-import com.example.harmonialauncher.AppGrid.AppObject;
+import com.example.harmonialauncher.appgrid.AppObject;
 import com.example.harmonialauncher.Helpers.TimeHelper;
 import com.example.harmonialauncher.Listeners.LockStatusChangeListener;
 import com.example.harmonialauncher.R;

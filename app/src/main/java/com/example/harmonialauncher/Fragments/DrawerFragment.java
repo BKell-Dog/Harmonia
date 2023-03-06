@@ -12,11 +12,11 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.viewpager2.widget.ViewPager2;
 
-import com.example.harmonialauncher.AppGrid.DrawerPageAdapter;
+import com.example.harmonialauncher.appgrid.DrawerPageAdapter;
 import com.example.harmonialauncher.Helpers.FlingDetector;
 import com.example.harmonialauncher.Interfaces.PageHolder;
 import com.example.harmonialauncher.R;
-import com.example.harmonialauncher.AppGrid.AppGridViewModel;
+import com.example.harmonialauncher.appgrid.AppGridViewModel;
 import com.example.harmonialauncher.ViewModels.DrawerViewModel;
 import com.example.harmonialauncher.Views.FlingCatcher;
 

@@ -5,7 +5,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 
-import com.example.harmonialauncher.AppGrid.AppObject;
+import com.example.harmonialauncher.appgrid.AppObject;
 
 import java.util.ArrayList;
 import java.util.List;

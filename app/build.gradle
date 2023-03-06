@@ -35,10 +35,9 @@ dependencies {
     implementation 'androidx.cardview:cardview:1.0.0'
     implementation 'androidx.core:core-splashscreen:1.0.0-beta01'
     implementation 'androidx.preference:preference:1.2.0'
+
     //noinspection GradleDependency
     testImplementation 'junit:junit:4.12'
-    androidTestImplementation 'androidx.test.e' +
-            'junit:1.1.5'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
     implementation 'com.google.code.gson:gson:2.9.0'
 
@@ -63,4 +62,6 @@ dependencies {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
     androidTestImplementation "androidx.test.ext:junit:1.1.5"
+    //implementation("ch.acra:acra-core:$acraVersion")
+    //implementation("ch.acra:acra-mail:$acraVersion")
 }

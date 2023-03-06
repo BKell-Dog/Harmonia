@@ -1,4 +1,4 @@
-package com.example.harmonialauncher.AppGrid.Views;
+package com.example.harmonialauncher.appgrid.Views;
 
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
@@ -18,7 +18,7 @@ import android.widget.TextView;
 import androidx.annotation.Nullable;
 import androidx.preference.PreferenceManager;
 
-import com.example.harmonialauncher.AppGrid.AppObject;
+import com.example.harmonialauncher.appgrid.AppObject;
 import com.example.harmonialauncher.Helpers.PreferenceData;
 import com.example.harmonialauncher.R;
 import com.example.harmonialauncher.Utils.Util;

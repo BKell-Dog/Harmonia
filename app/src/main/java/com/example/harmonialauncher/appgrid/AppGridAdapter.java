@@ -1,11 +1,10 @@
-package com.example.harmonialauncher.AppGrid;
+package com.example.harmonialauncher.appgrid;
 
 import static com.example.harmonialauncher.Helpers.PreferenceData.LOCK_MODE_GREYSCALE;
 import static com.example.harmonialauncher.Helpers.PreferenceData.LOCK_MODE_INVISIBLE;
 import static com.example.harmonialauncher.Helpers.PreferenceData.STYLE_GREYSCALE;
 import static com.example.harmonialauncher.Helpers.PreferenceData.STYLE_NORMAL;
 
-import android.accessibilityservice.AccessibilityService;
 import android.annotation.SuppressLint;
 import android.content.ClipData;
 import android.content.Context;
@@ -26,7 +25,7 @@ import androidx.annotation.Nullable;
 import androidx.core.content.res.ResourcesCompat;
 import androidx.preference.PreferenceManager;
 
-import com.example.harmonialauncher.AppGrid.Views.AppView;
+import com.example.harmonialauncher.appgrid.Views.AppView;
 import com.example.harmonialauncher.Helpers.PreferenceData;
 import com.example.harmonialauncher.Helpers.SingleTapDetector;
 import com.example.harmonialauncher.R;
@@ -36,7 +35,7 @@ import com.example.harmonialauncher.Utils.LockManager;
 import java.util.ArrayList;
 import java.util.Collections;
 
-public class AppGridAdapter extends ArrayAdapter<AppObject> implements AppHolder {
+public class AppGridAdapter extends ArrayAdapter<AppObject> implements AppHolder, SharedPreferences.OnSharedPreferenceChangeListener {
 
     private final static String TAG = AppGridAdapter.class.getSimpleName();
     private int lockMode = LOCK_MODE_GREYSCALE; //Change this variable to change disappearance mode
@@ -60,12 +59,10 @@ public class AppGridAdapter extends ArrayAdapter<AppObject> implements AppHolder
         apps = appList;
         layout_id = resource;
 
-        //Get style and lock mode from preferences
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getContext());
-        String key = CONTEXT.getResources().getString(R.string.set_app_screen_style_key);
-        style = Integer.parseInt(prefs.getString(key, STYLE_NORMAL + ""));
-
         std = new SingleTapDetector(context);
+
+        PreferenceManager.getDefaultSharedPreferences(context).registerOnSharedPreferenceChangeListener(this);
+        initializePreferences();
     }
 
     public void add(AppObject app) {
@@ -134,13 +131,6 @@ public class AppGridAdapter extends ArrayAdapter<AppObject> implements AppHolder
         //Resize the Grid Item to the app's previously defined height and width, which are set below
         appView.setLayoutParams(new LinearLayout.LayoutParams(elementWidth, elementHeight));
 
-
-        if (style == PreferenceData.STYLE_GREYSCALE)
-            lockMode = PreferenceData.LOCK_MODE_INVISIBLE;
-        else
-            lockMode = LOCK_MODE_GREYSCALE;
-
-
         if (style == STYLE_NORMAL)
         {
             appView.setImageDrawable(image);
@@ -155,12 +145,12 @@ public class AppGridAdapter extends ArrayAdapter<AppObject> implements AppHolder
         }
         else if (style == STYLE_GREYSCALE)
         {
+            lockMode = LOCK_MODE_INVISIBLE;
             appView.setImageDrawable(Util.convertToGreyscale(image));
 
             //Make app invisible or greyscale if it is meant to be locked
             if (position == dragInvisibleIndex || app.isLocked() || LockManager.isLocked(app.getPackageName())) {
-                if (lockMode == LOCK_MODE_INVISIBLE)
-                    appView.setImageDrawable(ResourcesCompat.getDrawable(getContext().getResources(), R.drawable.lock_icon, null));
+                appView.setImageDrawable(ResourcesCompat.getDrawable(getContext().getResources(), R.drawable.lock_icon, null));
             }
         }
 
@@ -168,7 +158,7 @@ public class AppGridAdapter extends ArrayAdapter<AppObject> implements AppHolder
             @Override
             public boolean onTouch(View view, MotionEvent event) {
                 if (std.onTouch(null, event)) {
-                    // Isolate app package name
+                    //Isolate app package name
                     String appPackageName = Util.findAppByName(appView.getText(), CONTEXT).getPackageName();
 
                     //Start app
@@ -234,12 +224,32 @@ public class AppGridAdapter extends ArrayAdapter<AppObject> implements AppHolder
         }
     }
 
-    public void updatePreferences()
+    /**
+     * This method fetched data from stored preferences upon first instantiation of this class,
+     * which assures the data used at all times is in line with previous preferences.
+     * ATTENTION: Whenever a new and relevant preference is created, it must be added below like the
+     * others.
+     */
+    public void initializePreferences()
     {
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getContext());
-        String key = CONTEXT.getResources().getString(R.string.set_app_screen_style_key);
-        style = Integer.parseInt(prefs.getString(key, STYLE_NORMAL + ""));
-        Log.d(TAG, "updatePreferences: " + style);
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(CONTEXT);
+        onSharedPreferenceChanged(prefs, CONTEXT.getResources().getString(R.string.set_app_screen_style_key));
+        onSharedPreferenceChanged(prefs, CONTEXT.getResources().getString(R.string.set_locked_app_style_key));
+    }
+
+    @Override
+    public void onSharedPreferenceChanged(SharedPreferences prefs, String key) {
+        if (key.equalsIgnoreCase(CONTEXT.getResources().getString(R.string.set_app_screen_style_key))) {
+            style = Integer.parseInt(prefs.getString(key, STYLE_NORMAL + ""));
+
+            //When the total app theme is greyscale, we must not allow locked apps to be drawn in greyscale.
+            //Therefore, we set lock mode to INVISIBLE in preferences.
+            //if (style == STYLE_GREYSCALE)
+            //    prefs.edit().putString(CONTEXT.getResources().getString(R.string.set_locked_app_style_key), LOCK_MODE_INVISIBLE + "").apply();
+        }
+
+        if (key.equalsIgnoreCase(CONTEXT.getResources().getString(R.string.set_locked_app_style_key)))
+            lockMode = Integer.parseInt(prefs.getString(key, LOCK_MODE_GREYSCALE + ""));
     }
 
     @NonNull

@@ -35,4 +35,5 @@ ext {
     junitVersion = '4.13.2'
     espressoVersion = '3.4.0'
     androidxJunitVersion = '1.1.2'
+    acraVersion = '5.9.7'
 }

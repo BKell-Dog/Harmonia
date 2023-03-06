@@ -1,5 +1,7 @@
 <resources>
+    <!-- General -->
     <string name="app_name">HarmoniaLauncher</string>
+
     <string name="lock_activity_name">Lock Activity</string>
     <string name="phone_icon_desc">Phone Icon</string>
     <string name="text_icon_desc">Text Icon</string>
@@ -35,6 +37,9 @@
     <string name="app_icon_image">App Icon Image</string>
     <string name="app_icon_text">App Name</string>
 
+    <!-- App List -->
+    <string name="app_list_item_default">App Item</string>
+
     <!-- Splash Screen -->
     <string name="splash_icon_text">Splash Icon</string>
 
@@ -63,6 +68,18 @@
         <item>0</item>
         <item>1</item>
         <item>2</item>
+    </string-array>
+
+    <string name="set_screen_layout_key">set_screen_layout_key</string>
+    <string name="set_screen_layout">Set Screen Layout</string>
+    <string name="set_screen_layout_summary">Choose whether the home screen shows as an app grid or an app list.</string>
+    <string-array name="pref_screen_layout">
+        <item>App Grid</item>
+        <item>App List</item>
+    </string-array>
+    <string-array name="pref_screen_layout_values">
+        <item>0</item>
+        <item>1</item>
     </string-array>
 
 </resources>

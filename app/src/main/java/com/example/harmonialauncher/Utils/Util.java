@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
-import android.graphics.Bitmap;
 import android.graphics.ColorMatrix;
 import android.graphics.ColorMatrixColorFilter;
 import android.graphics.Point;
@@ -14,10 +13,6 @@ import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.provider.Settings;
-import android.renderscript.Allocation;
-import android.renderscript.Element;
-import android.renderscript.RenderScript;
-import android.renderscript.ScriptIntrinsicBlur;
 import android.util.Log;
 import android.view.Display;
 import android.view.View;
@@ -29,7 +24,7 @@ import androidx.core.content.res.ResourcesCompat;
 import androidx.fragment.app.Fragment;
 
 import com.example.harmonialauncher.Activities.LockActivity;
-import com.example.harmonialauncher.AppGrid.AppObject;
+import com.example.harmonialauncher.appgrid.AppObject;
 import com.example.harmonialauncher.R;
 import com.example.harmonialauncher.Settings.SettingsActivity;
 

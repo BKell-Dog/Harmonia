@@ -1,7 +1,6 @@
-package com.example.harmonialauncher.AppGrid.Views;
+package com.example.harmonialauncher.appgrid.Views;
 
 import android.annotation.TargetApi;
-import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Point;
@@ -11,18 +10,15 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.DragEvent;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.GridView;
 import android.widget.ListAdapter;
 
 import androidx.preference.PreferenceManager;
 
-import com.example.harmonialauncher.Adapters.AppListAdapter;
-import com.example.harmonialauncher.AppGrid.AppGridAdapter;
-import com.example.harmonialauncher.AppGrid.AppHolder;
+import com.example.harmonialauncher.appgrid.AppGridAdapter;
+import com.example.harmonialauncher.appgrid.AppHolder;
 import com.example.harmonialauncher.Helpers.TimeHelper;
 import com.example.harmonialauncher.R;
-import com.example.harmonialauncher.Utils.Util;
 
 public class AppGridView extends GridView implements AppHolder, SharedPreferences.OnSharedPreferenceChangeListener {
     public static final String TAG = AppGridView.class.getSimpleName();
@@ -54,6 +50,7 @@ public class AppGridView extends GridView implements AppHolder, SharedPreference
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     public AppGridView(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         super(context, attrs, defStyleAttr, defStyleRes);
+        PreferenceManager.getDefaultSharedPreferences(context).registerOnSharedPreferenceChangeListener(this);
     }
 
     @Override

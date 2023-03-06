@@ -1,4 +1,4 @@
-package com.example.harmonialauncher.AppGrid;
+package com.example.harmonialauncher.appgrid;
 
 import android.app.Application;
 import android.content.Context;

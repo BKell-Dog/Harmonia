@@ -1,31 +1,25 @@
-package com.example.harmonialauncher.Blur;
+package com.example.harmonialauncher.blur;
 
 import static com.example.harmonialauncher.Helpers.PreferenceData.STYLE_GREYSCALE;
+import static com.example.harmonialauncher.Helpers.PreferenceData.STYLE_NORMAL;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.graphics.BlendMode;
-import android.graphics.BlendModeColorFilter;
 import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.ColorFilter;
 import android.graphics.ColorMatrix;
 import android.graphics.ColorMatrixColorFilter;
-import android.graphics.PorterDuff;
 import android.graphics.RenderEffect;
 import android.graphics.Shader;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.util.AttributeSet;
 import android.util.Log;
-import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.preference.PreferenceManager;
 
 import com.example.harmonialauncher.Helpers.PreferenceData;
 import com.example.harmonialauncher.R;
-import com.example.harmonialauncher.Utils.Util;
 
 public class WallpaperView extends androidx.appcompat.widget.AppCompatImageView implements SharedPreferences.OnSharedPreferenceChangeListener {
     private static final String TAG = WallpaperView.class.getSimpleName();
@@ -33,33 +27,33 @@ public class WallpaperView extends androidx.appcompat.widget.AppCompatImageView 
     private float blurRadius = 1;
     private Shader.TileMode shaderMode = Shader.TileMode.MIRROR;
     private RenderEffect effect;
-    private boolean greyscale = false, dimmed = false;
+    private boolean greyscale, dimmed = false;
     private SharedPreferences prefs;
 
     public WallpaperView(Context context) {
         super(context);
         prefs = PreferenceManager.getDefaultSharedPreferences(getContext());
-        greyscale = Integer.parseInt(prefs.getString(getResources().getString(R.string.set_app_screen_style_key), "")) == STYLE_GREYSCALE;
+        greyscale = (Integer.parseInt(prefs.getString(getResources().getString(R.string.set_app_screen_style_key), STYLE_NORMAL + "")) == STYLE_GREYSCALE);
         PreferenceManager.getDefaultSharedPreferences(context).registerOnSharedPreferenceChangeListener(this);
     }
 
     public WallpaperView(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
         prefs = PreferenceManager.getDefaultSharedPreferences(getContext());
-        greyscale = Integer.parseInt(prefs.getString(getResources().getString(R.string.set_app_screen_style_key), "")) == STYLE_GREYSCALE;
-        PreferenceManager.getDefaultSharedPreferences(context).registerOnSharedPreferenceChangeListener(this);
+        greyscale = (Integer.parseInt(prefs.getString(getResources().getString(R.string.set_app_screen_style_key), STYLE_NORMAL + "")) == STYLE_GREYSCALE);
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        prefs.registerOnSharedPreferenceChangeListener(this);
     }
 
     public WallpaperView(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         prefs = PreferenceManager.getDefaultSharedPreferences(getContext());
-        greyscale = Integer.parseInt(prefs.getString(getResources().getString(R.string.set_app_screen_style_key), "")) == STYLE_GREYSCALE;
+        greyscale = (Integer.parseInt(prefs.getString(getResources().getString(R.string.set_app_screen_style_key), STYLE_NORMAL + "")) == STYLE_GREYSCALE);
         PreferenceManager.getDefaultSharedPreferences(context).registerOnSharedPreferenceChangeListener(this);
     }
 
     @Override
-    public void onDraw(Canvas canvas)
-    {
+    public void onDraw(Canvas canvas) {
         if (effect == null) {
             updateEffect();
         }
@@ -79,16 +73,16 @@ public class WallpaperView extends androidx.appcompat.widget.AppCompatImageView 
         invalidate();
     }
 
-    private void updateEffect()
-    {
+    private void updateEffect() {
         Drawable background = getDrawable();
         if (background == null)
             return;
 
-        float[] defaultMatrix = new float[] {1, 0, 0, 0, 0,
+        float[] defaultMatrix = new float[]{1, 0, 0, 0, 0,
                 0, 1, 0, 0, 0,
                 0, 0, 1, 0, 0,
                 0, 0, 0, 1, 0};
+
         ColorMatrix matrix = new ColorMatrix(defaultMatrix);
 
         //Handle wallpaper greyscale
@@ -98,13 +92,13 @@ public class WallpaperView extends androidx.appcompat.widget.AppCompatImageView 
             matrix.setSaturation(1);
 
         //Handle wallpaper dim
+        float rl = 0.213f, gl = 0.715f, bl = 0.072f;    //Red luminance, green luminance, and blue luminance
+        float l = 0.70f;                                   //Luminance scale factor
         if (dimmed) {
-            float rl = 0.213f, gl = 0.715f, bl = 0.072f;    //Red luminance, green luminance, and blue luminance
-            float l = 0.70f;                                //Luminance scale factor
             float[] dimMatrix = new float[]{rl * l + gl + bl, gl * l - gl, bl * l - bl, 0, 0,
-                                            rl * l - rl, gl * l + rl + bl, bl * l - bl, 0, 0,
-                                            rl * l - rl, gl * l - gl, bl * l + rl + gl, 0, 0,
-                                            0, 0, 0, 1, 0};
+                    rl * l - rl, gl * l + rl + bl, bl * l - bl, 0, 0,
+                    rl * l - rl, gl * l - gl, bl * l + rl + gl, 0, 0,
+                    0, 0, 0, 1, 0};
             matrix.setConcat(matrix, new ColorMatrix(dimMatrix));
         }
 
@@ -138,25 +132,20 @@ public class WallpaperView extends androidx.appcompat.widget.AppCompatImageView 
 
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-        Log.d(TAG, "onSharedPreferenceChanged: PREFERENCE CHANGED");
-        if (key.equalsIgnoreCase(getResources().getString(R.string.set_app_screen_style_key)))
-        {
+        if (key.equalsIgnoreCase(getResources().getString(R.string.set_app_screen_style_key))) {
             int style = Integer.parseInt(sharedPreferences.getString(key, PreferenceData.STYLE_NORMAL + ""));
             if (style == PreferenceData.STYLE_NORMAL)
                 greyscale = false;
-            else if (style == STYLE_GREYSCALE) {
+            else if (style == STYLE_GREYSCALE)
                 greyscale = true;
-                Log.d(TAG, "onSharedPreferenceChanged: GREYSCALE TRUE");
-            }
         }
     }
 
-    public void printMatrix(float[] matrix)
-    {
+    public void printMatrix(float[] matrix) {
         StringBuilder s = new StringBuilder();
         s.append("[");
-        for (int i = 0; i < matrix.length; i++)
-            s.append(matrix[i] + ", ");
+        for (float v : matrix)
+            s.append(v).append(", ");
         s.append("]");
         Log.d(TAG, "printMatrix: " + s.toString());
     }

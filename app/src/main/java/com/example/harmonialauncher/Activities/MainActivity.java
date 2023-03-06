@@ -14,13 +14,12 @@ import androidx.core.view.WindowInsetsCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.preference.PreferenceFragmentCompat;
 import androidx.preference.PreferenceManager;
 import androidx.viewpager2.widget.ViewPager2;
 
 import com.example.harmonialauncher.Adapters.PageAdapter;
-import com.example.harmonialauncher.AppGrid.HomeScreenFragment;
-import com.example.harmonialauncher.Blur.WallpaperView;
+import com.example.harmonialauncher.appgrid.HomeScreenFragment;
+import com.example.harmonialauncher.blur.WallpaperView;
 import com.example.harmonialauncher.Fragments.DrawerFragment;
 import com.example.harmonialauncher.Helpers.FlingDetector;
 import com.example.harmonialauncher.Helpers.WallpaperManager;
@@ -45,11 +44,18 @@ public class MainActivity extends HarmoniaActivity implements PageHolder, Shared
     private WallpaperView wallpaper;
     private float blurRadius = 70;
 
+    /*@ReportsCrashes(formKey = "", // will not be used
+            mailTo = "bkelldog59@gmail.com",
+            mode = ReportingInteractionMode.SILENT,
+            resToastText = R.string.crash_toast_text)
+*/
+
     @SuppressLint({"MissingInflatedId"})
     protected void onCreate(Bundle savedInstanceState) {
         //Initialize splash screen to show before activity begins calculations, and to disappear once
         // activity completes pre-loading.
         SplashScreen.installSplashScreen(this);
+
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main_activity);
@@ -62,8 +68,7 @@ public class MainActivity extends HarmoniaActivity implements PageHolder, Shared
             insets = getWindowManager().getCurrentWindowMetrics().getWindowInsets();
             statusBarHeight = insets.getInsets(WindowInsetsCompat.Type.statusBars()).top; //in pixels
             navigationBarHeight = insets.getInsets(WindowInsetsCompat.Type.navigationBars()).bottom; //in pixels
-        }
-        else {
+        } else {
             navigationBarHeight = 150;
             statusBarHeight = 120;
         }
@@ -123,8 +128,7 @@ public class MainActivity extends HarmoniaActivity implements PageHolder, Shared
 
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-        if (key.equalsIgnoreCase(getResources().getString(R.string.set_app_screen_style_key)))
-        {
+        if (key.equalsIgnoreCase(getResources().getString(R.string.set_app_screen_style_key))) {
             Toast.makeText(this, "PREFERENCE CHANGED", Toast.LENGTH_SHORT).show();
         }
     }
