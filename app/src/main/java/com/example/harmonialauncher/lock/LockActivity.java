@@ -1,4 +1,4 @@
-package com.example.harmonialauncher.Activities;
+package com.example.harmonialauncher.lock;
 
 import android.app.Dialog;
 import android.content.Context;
@@ -21,6 +21,7 @@ import androidx.appcompat.widget.LinearLayoutCompat;
 import androidx.core.view.WindowCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.example.harmonialauncher.Activities.HarmoniaActivity;
 import com.example.harmonialauncher.appgrid.AppObject;
 import com.example.harmonialauncher.Helpers.TimeHelper;
 import com.example.harmonialauncher.Listeners.LockStatusChangeListener;
@@ -90,7 +91,6 @@ public class LockActivity extends HarmoniaActivity {
         TextView text = v.findViewById(R.id.app_name);
         ImageView icon = v.findViewById(R.id.app_icon);
         TextView timer = v.findViewById(R.id.lock_timer_text);
-        Button button = v.findViewById(R.id.edit_button);
 
         text.setText(a.getName());
         if (a.getImage() != null)
@@ -106,11 +106,9 @@ public class LockActivity extends HarmoniaActivity {
         else
             timer.setText("00:00");
 
-        button.setOnClickListener(new View.OnClickListener() {
+        v.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
-                final Button b = (Button) view;
 
                 // Create NumberPicker popup
                 final Dialog d = new Dialog(context);

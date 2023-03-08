@@ -1,9 +1,9 @@
 package com.example.harmonialauncher.appgrid;
 
-import static com.example.harmonialauncher.Helpers.PreferenceData.LOCK_MODE_GREYSCALE;
-import static com.example.harmonialauncher.Helpers.PreferenceData.LOCK_MODE_INVISIBLE;
-import static com.example.harmonialauncher.Helpers.PreferenceData.STYLE_GREYSCALE;
-import static com.example.harmonialauncher.Helpers.PreferenceData.STYLE_NORMAL;
+import static com.example.harmonialauncher.preferences.PreferenceData.LOCK_MODE_GREYSCALE;
+import static com.example.harmonialauncher.preferences.PreferenceData.LOCK_MODE_INVISIBLE;
+import static com.example.harmonialauncher.preferences.PreferenceData.STYLE_GREYSCALE;
+import static com.example.harmonialauncher.preferences.PreferenceData.STYLE_NORMAL;
 
 import android.annotation.SuppressLint;
 import android.content.ClipData;
@@ -26,7 +26,7 @@ import androidx.core.content.res.ResourcesCompat;
 import androidx.preference.PreferenceManager;
 
 import com.example.harmonialauncher.appgrid.Views.AppView;
-import com.example.harmonialauncher.Helpers.PreferenceData;
+import com.example.harmonialauncher.preferences.PreferenceData;
 import com.example.harmonialauncher.Helpers.SingleTapDetector;
 import com.example.harmonialauncher.R;
 import com.example.harmonialauncher.Utils.Util;

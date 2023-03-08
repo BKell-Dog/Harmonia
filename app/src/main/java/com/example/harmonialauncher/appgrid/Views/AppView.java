@@ -19,7 +19,7 @@ import androidx.annotation.Nullable;
 import androidx.preference.PreferenceManager;
 
 import com.example.harmonialauncher.appgrid.AppObject;
-import com.example.harmonialauncher.Helpers.PreferenceData;
+import com.example.harmonialauncher.preferences.PreferenceData;
 import com.example.harmonialauncher.R;
 import com.example.harmonialauncher.Utils.Util;
 

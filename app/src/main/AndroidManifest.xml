@@ -17,12 +17,8 @@
         android:supportsRtl="true" >
 
         <activity
-            android:name=".Activities.MainActivity"
-            android:excludeFromRecents="true"
-            android:launchMode="singleTask"
-            android:screenOrientation="nosensor"
-            android:exported="true"
-            android:theme="@style/SplashTheme">
+            android:name=".launcher.Launcher"
+            android:exported="true">
             <intent-filter>
                 <!--<action android:name="android.intent.action.MAIN" /> -->
                 <action android:name="android.intent.action.MAIN" />
@@ -33,8 +29,17 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
+
         <activity
-            android:name=".Activities.LockActivity"
+            android:name=".Activities.MainActivity"
+            android:excludeFromRecents="true"
+            android:launchMode="singleTask"
+            android:screenOrientation="nosensor"
+            android:exported="true"
+            android:theme="@style/SplashTheme">
+        </activity>
+        <activity
+            android:name=".lock.LockActivity"
             android:label="@string/lock_title"
             android:exported="true"
             android:theme="@style/LockActivityTheme"/>
@@ -43,6 +48,11 @@
             android:label="Settings"
             android:exported="true"
             android:theme="@style/LockActivityTheme" />
+        <activity
+            android:name=".applist.AppListActivity"
+            android:label="App List"
+            android:exported="true"
+            android:theme="@style/AppTheme" />
     </application>
 
 

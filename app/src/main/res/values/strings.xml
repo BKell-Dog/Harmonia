@@ -39,6 +39,7 @@
 
     <!-- App List -->
     <string name="app_list_item_default">App Item</string>
+    <string name="app_list_content">App List</string>
 
     <!-- Splash Screen -->
     <string name="splash_icon_text">Splash Icon</string>
@@ -52,8 +53,8 @@
         <item>Invisible</item>
     </string-array>
     <string-array name="pref_locked_app_style_values">
-        <item>0</item>
-        <item>1</item>
+        <item>3</item>
+        <item>4</item>
     </string-array>
 
     <string name="set_app_screen_style">Set Home Screen Style</string>
@@ -78,8 +79,8 @@
         <item>App List</item>
     </string-array>
     <string-array name="pref_screen_layout_values">
-        <item>0</item>
-        <item>1</item>
+        <item>5</item>
+        <item>6</item>
     </string-array>
 
 </resources>

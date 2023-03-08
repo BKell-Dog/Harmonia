@@ -1,6 +1,7 @@
 package com.example.harmonialauncher.Activities;
 
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
@@ -18,7 +19,9 @@ import androidx.preference.PreferenceManager;
 import androidx.viewpager2.widget.ViewPager2;
 
 import com.example.harmonialauncher.Adapters.PageAdapter;
+import com.example.harmonialauncher.preferences.PreferenceData;
 import com.example.harmonialauncher.appgrid.HomeScreenFragment;
+import com.example.harmonialauncher.applist.AppListActivity;
 import com.example.harmonialauncher.blur.WallpaperView;
 import com.example.harmonialauncher.Fragments.DrawerFragment;
 import com.example.harmonialauncher.Helpers.FlingDetector;
@@ -55,7 +58,6 @@ public class MainActivity extends HarmoniaActivity implements PageHolder, Shared
         //Initialize splash screen to show before activity begins calculations, and to disappear once
         // activity completes pre-loading.
         SplashScreen.installSplashScreen(this);
-
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main_activity);
@@ -128,8 +130,10 @@ public class MainActivity extends HarmoniaActivity implements PageHolder, Shared
 
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-        if (key.equalsIgnoreCase(getResources().getString(R.string.set_app_screen_style_key))) {
-            Toast.makeText(this, "PREFERENCE CHANGED", Toast.LENGTH_SHORT).show();
+        if (key.equalsIgnoreCase(getResources().getString(R.string.set_screen_layout_key)))
+        {
+            if (Integer.parseInt(sharedPreferences.getString(key, "-1")) == PreferenceData.LAYOUT_LIST)
+                startActivity(new Intent(this, AppListActivity.class));
         }
     }
 

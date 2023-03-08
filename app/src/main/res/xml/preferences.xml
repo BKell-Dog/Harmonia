@@ -29,7 +29,7 @@
             android:entryValues="@array/pref_locked_app_style_values"
             android:summary="@string/set_locked_app_style_summary"
             android:title="@string/set_locked_app_style"
-            android:defaultValue="0" />
+            android:defaultValue="3" />
 
         <ListPreference
             android:key="@string/set_screen_layout_key"
@@ -38,7 +38,7 @@
             android:entryValues="@array/pref_screen_layout_values"
             android:summary="@string/set_screen_layout_summary"
             android:title="@string/set_screen_layout"
-            android:defaultValue="0" />
+            android:defaultValue="5" />
 
         <!--on below line we are creating a switch preference
             default value is use to set switch on or off

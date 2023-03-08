@@ -23,7 +23,7 @@ import androidx.annotation.NonNull;
 import androidx.core.content.res.ResourcesCompat;
 import androidx.fragment.app.Fragment;
 
-import com.example.harmonialauncher.Activities.LockActivity;
+import com.example.harmonialauncher.lock.LockActivity;
 import com.example.harmonialauncher.appgrid.AppObject;
 import com.example.harmonialauncher.R;
 import com.example.harmonialauncher.Settings.SettingsActivity;

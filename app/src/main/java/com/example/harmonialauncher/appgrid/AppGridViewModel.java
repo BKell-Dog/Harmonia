@@ -52,8 +52,11 @@ public class AppGridViewModel extends AndroidViewModel {
             return drawerApps;
         }
         else
-            return null;
+            return drawerScreenApps;
     }
+
+    public ArrayList<AppObject> getAppList()
+    {return getAppList("", 0);}
 
     public int getNumOfPages()
     {

@@ -1,7 +1,7 @@
 package com.example.harmonialauncher.blur;
 
-import static com.example.harmonialauncher.Helpers.PreferenceData.STYLE_GREYSCALE;
-import static com.example.harmonialauncher.Helpers.PreferenceData.STYLE_NORMAL;
+import static com.example.harmonialauncher.preferences.PreferenceData.STYLE_GREYSCALE;
+import static com.example.harmonialauncher.preferences.PreferenceData.STYLE_NORMAL;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -18,7 +18,7 @@ import android.util.Log;
 import androidx.annotation.Nullable;
 import androidx.preference.PreferenceManager;
 
-import com.example.harmonialauncher.Helpers.PreferenceData;
+import com.example.harmonialauncher.preferences.PreferenceData;
 import com.example.harmonialauncher.R;
 
 public class WallpaperView extends androidx.appcompat.widget.AppCompatImageView implements SharedPreferences.OnSharedPreferenceChangeListener {
