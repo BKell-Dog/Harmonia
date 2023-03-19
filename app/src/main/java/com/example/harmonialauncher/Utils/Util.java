@@ -27,6 +27,7 @@ import com.example.harmonialauncher.lock.LockActivity;
 import com.example.harmonialauncher.appgrid.AppObject;
 import com.example.harmonialauncher.R;
 import com.example.harmonialauncher.Settings.SettingsActivity;
+import com.example.harmonialauncher.lock.LockManager;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;

@@ -10,7 +10,7 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.lifecycle.ViewModelProvider;
 
-import com.example.harmonialauncher.Listeners.LockStatusChangeListener;
+import com.example.harmonialauncher.lock.LockStatusChangeListener;
 import com.example.harmonialauncher.R;
 
 // Purpose of this class: retrieve app data for all installed apps, and display app name as well as

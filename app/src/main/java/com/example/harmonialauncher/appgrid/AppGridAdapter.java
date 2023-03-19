@@ -30,7 +30,7 @@ import com.example.harmonialauncher.preferences.PreferenceData;
 import com.example.harmonialauncher.Helpers.SingleTapDetector;
 import com.example.harmonialauncher.R;
 import com.example.harmonialauncher.Utils.Util;
-import com.example.harmonialauncher.Utils.LockManager;
+import com.example.harmonialauncher.lock.LockManager;
 
 import java.util.ArrayList;
 import java.util.Collections;

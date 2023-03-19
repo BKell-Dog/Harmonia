@@ -40,6 +40,7 @@
     <!-- App List -->
     <string name="app_list_item_default">App Item</string>
     <string name="app_list_content">App List</string>
+    <string name="time_left_timer_text">Locked Time Countdown</string>
 
     <!-- Splash Screen -->
     <string name="splash_icon_text">Splash Icon</string>

@@ -8,7 +8,7 @@ import androidx.lifecycle.AndroidViewModel;
 
 import com.example.harmonialauncher.Database.AppEntity;
 import com.example.harmonialauncher.Database.AppRepository;
-import com.example.harmonialauncher.Utils.LockManager;
+import com.example.harmonialauncher.lock.LockManager;
 import com.example.harmonialauncher.Utils.Util;
 
 import java.util.ArrayList;

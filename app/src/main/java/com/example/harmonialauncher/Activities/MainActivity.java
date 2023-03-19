@@ -3,6 +3,7 @@ package com.example.harmonialauncher.Activities;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.icu.text.IDNA;
 import android.os.Bundle;
 import android.view.View;
 import android.view.WindowInsets;
@@ -19,6 +20,7 @@ import androidx.preference.PreferenceManager;
 import androidx.viewpager2.widget.ViewPager2;
 
 import com.example.harmonialauncher.Adapters.PageAdapter;
+import com.example.harmonialauncher.error.ErrorMessageDialog;
 import com.example.harmonialauncher.preferences.PreferenceData;
 import com.example.harmonialauncher.appgrid.HomeScreenFragment;
 import com.example.harmonialauncher.applist.AppListActivity;
@@ -55,54 +57,59 @@ public class MainActivity extends HarmoniaActivity implements PageHolder, Shared
 
     @SuppressLint({"MissingInflatedId"})
     protected void onCreate(Bundle savedInstanceState) {
-        //Initialize splash screen to show before activity begins calculations, and to disappear once
-        // activity completes pre-loading.
-        SplashScreen.installSplashScreen(this);
+        try {
+            //Initialize splash screen to show before activity begins calculations, and to disappear once
+            // activity completes pre-loading.
+            SplashScreen.installSplashScreen(this);
 
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.main_activity);
+            super.onCreate(savedInstanceState);
+            setContentView(R.layout.main_activity);
 
-        //Set window to show behind status bar (on top) and navigation bar (on bottom w/ three buttons)
-        WindowCompat.setDecorFitsSystemWindows(getWindow(), false);
-        WindowInsets insets = null;
-        int navigationBarHeight = 0, statusBarHeight = 0;
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.R) {
-            insets = getWindowManager().getCurrentWindowMetrics().getWindowInsets();
-            statusBarHeight = insets.getInsets(WindowInsetsCompat.Type.statusBars()).top; //in pixels
-            navigationBarHeight = insets.getInsets(WindowInsetsCompat.Type.navigationBars()).bottom; //in pixels
-        } else {
-            navigationBarHeight = 150;
-            statusBarHeight = 120;
+            //Set window to show behind status bar (on top) and navigation bar (on bottom w/ three buttons)
+            WindowCompat.setDecorFitsSystemWindows(getWindow(), false);
+            WindowInsets insets = null;
+            int navigationBarHeight = 0, statusBarHeight = 0;
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.R) {
+                insets = getWindowManager().getCurrentWindowMetrics().getWindowInsets();
+                statusBarHeight = insets.getInsets(WindowInsetsCompat.Type.statusBars()).top; //in pixels
+                navigationBarHeight = insets.getInsets(WindowInsetsCompat.Type.navigationBars()).bottom; //in pixels
+            } else {
+                navigationBarHeight = 150;
+                statusBarHeight = 120;
+            }
+
+            PreferenceManager.getDefaultSharedPreferences(this).registerOnSharedPreferenceChangeListener(this);
+
+            vm = new ViewModelProvider(this).get(MainActivityViewModel.class);
+            vm.setCurrentPage(0);
+
+            vp = findViewById(R.id.ViewPager);
+            vp.setPadding(0, statusBarHeight, 0, navigationBarHeight);
+            fc = findViewById(R.id.fling_detector);
+            fc.setCallback(this);
+            fc.setMode(FlingDetector.VERTICAL);
+
+            wallpaper = (WallpaperView) findViewById(R.id.wallpaper);
+            wallpaper.setImageDrawable(WallpaperManager.getWallpaper(this));
+            wallpaper.setBlurRadius(0);
+            wallpaper.setDimmed(false);
+
+            vp.setAdapter(new MainPageAdapter(this));
+
+            //Set page adapter to scroll vertically between home screen and drawer
+            vp.setUserInputEnabled(false);
+            vp.setOrientation(ViewPager2.ORIENTATION_VERTICAL);
+            vp.setCurrentItem(0);
+            incrementPage();
+            decrementPage();
+            vp.setCurrentItem(vm.getCurrentPage());
+            vp.setVisibility(View.VISIBLE);
+
+            update();
         }
-
-        PreferenceManager.getDefaultSharedPreferences(this).registerOnSharedPreferenceChangeListener(this);
-
-        vm = new ViewModelProvider(this).get(MainActivityViewModel.class);
-        vm.setCurrentPage(0);
-
-        vp = findViewById(R.id.ViewPager);
-        vp.setPadding(0, statusBarHeight, 0, navigationBarHeight);
-        fc = findViewById(R.id.fling_detector);
-        fc.setCallback(this);
-        fc.setMode(FlingDetector.VERTICAL);
-
-        wallpaper = (WallpaperView) findViewById(R.id.wallpaper);
-        wallpaper.setImageDrawable(WallpaperManager.getWallpaper(this));
-        wallpaper.setBlurRadius(0);
-        wallpaper.setDimmed(false);
-
-        vp.setAdapter(new MainPageAdapter(this));
-
-        //Set page adapter to scroll vertically between home screen and drawer
-        vp.setUserInputEnabled(false);
-        vp.setOrientation(ViewPager2.ORIENTATION_VERTICAL);
-        vp.setCurrentItem(0);
-        incrementPage();
-        decrementPage();
-        vp.setCurrentItem(vm.getCurrentPage());
-        vp.setVisibility(View.VISIBLE);
-
-        update();
+        catch (Exception e) {
+            ErrorMessageDialog.showDialog(this, e);
+        }
     }
 
     public void update() {

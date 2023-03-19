@@ -1,4 +1,4 @@
-package com.example.harmonialauncher.Utils;
+package com.example.harmonialauncher.lock;
 
 import android.content.Intent;
 import android.util.Log;
@@ -7,7 +7,6 @@ import androidx.annotation.NonNull;
 
 import com.example.harmonialauncher.appgrid.AppObject;
 import com.example.harmonialauncher.Helpers.TimeHelper;
-import com.example.harmonialauncher.Interfaces.Lockable;
 
 import java.util.ArrayList;
 import java.util.HashMap;

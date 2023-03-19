@@ -24,10 +24,8 @@ import androidx.core.view.WindowInsetsCompat;
 import com.example.harmonialauncher.Activities.HarmoniaActivity;
 import com.example.harmonialauncher.appgrid.AppObject;
 import com.example.harmonialauncher.Helpers.TimeHelper;
-import com.example.harmonialauncher.Listeners.LockStatusChangeListener;
 import com.example.harmonialauncher.R;
 import com.example.harmonialauncher.Utils.Util;
-import com.example.harmonialauncher.Utils.LockManager;
 
 import java.util.ArrayList;
 
@@ -62,8 +60,7 @@ public class LockActivity extends HarmoniaActivity {
             insets = getWindowManager().getCurrentWindowMetrics().getWindowInsets();
             statusBarHeight = insets.getInsets(WindowInsetsCompat.Type.statusBars()).top; //in pixels
             navigationBarHeight = insets.getInsets(WindowInsetsCompat.Type.navigationBars()).bottom; //in pixels
-        }
-        else {
+        } else {
             navigationBarHeight = 150;
             statusBarHeight = 120;
         }
@@ -82,8 +79,7 @@ public class LockActivity extends HarmoniaActivity {
         }
     }
 
-    public View createListItem(AppObject a)
-    {
+    public View createListItem(AppObject a) {
         //Each item consists of app icon, app name, and time picker.
 
         LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -133,7 +129,15 @@ public class LockActivity extends HarmoniaActivity {
                 minutes.setWrapSelectorWheel(false);
 
                 //Find app object associated with button press
-                LinearLayoutCompat parent = (LinearLayoutCompat) view.getParent().getParent();
+                LinearLayoutCompat parent;
+                if (view instanceof RelativeLayout) {
+                    parent = (LinearLayoutCompat) view.getParent();
+                } else if (view instanceof LinearLayoutCompat) {
+                    parent = (LinearLayoutCompat) view;
+                } else {
+                    parent = (LinearLayoutCompat) view.getParent().getParent();
+                }
+
                 String appName = null;
                 for (int i = 0; i < parent.getChildCount(); i++) {
                     if (parent.getChildAt(i).getId() == R.id.app_name_layout) {
@@ -154,6 +158,7 @@ public class LockActivity extends HarmoniaActivity {
                         TimeHelper time = new TimeHelper(hour, minute, TimeHelper.INPUT_RELATIVE);
                         LockManager.lock(app.getPackageName(), time);
                         LockManager.lock(app, time);
+                        LockStatusChangeListener.onStatusChanged();
 
                         timer.setText(time.getTimeFormatted(TimeHelper.HHMM));
                         Log.d(TAG, "LOCKED APP: " + app + " for time: " + time.getTimeRemaining());

@@ -9,7 +9,7 @@ import android.widget.PopupWindow;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import com.example.harmonialauncher.Interfaces.Lockable;
+import com.example.harmonialauncher.lock.Lockable;
 import com.example.harmonialauncher.R;
 import com.example.harmonialauncher.Utils.Util;
 

@@ -4,7 +4,7 @@ import android.graphics.drawable.Drawable;
 
 import androidx.annotation.NonNull;
 
-import com.example.harmonialauncher.Interfaces.Lockable;
+import com.example.harmonialauncher.lock.Lockable;
 
 public class AppObject implements Lockable {
     private String name, packageName;

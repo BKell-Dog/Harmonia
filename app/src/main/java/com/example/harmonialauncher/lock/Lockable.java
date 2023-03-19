@@ -1,4 +1,4 @@
-package com.example.harmonialauncher.Interfaces;
+package com.example.harmonialauncher.lock;
 
 public interface Lockable {
     void lock();

@@ -18,15 +18,11 @@
 
         <activity
             android:name=".launcher.Launcher"
-            android:exported="true">
+            android:exported="true"
+            android:theme="@style/AppTheme">
             <intent-filter>
-                <!--<action android:name="android.intent.action.MAIN" /> -->
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
-
-                <!-- The following two lines are key to set homescreen -->
-                <category android:name="android.intent.category.HOME" />
-                <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
 
@@ -37,6 +33,11 @@
             android:screenOrientation="nosensor"
             android:exported="true"
             android:theme="@style/SplashTheme">
+            <intent-filter>
+                <!-- The following two lines are key to set homescreen -->
+                <category android:name="android.intent.category.HOME" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
         </activity>
         <activity
             android:name=".lock.LockActivity"
