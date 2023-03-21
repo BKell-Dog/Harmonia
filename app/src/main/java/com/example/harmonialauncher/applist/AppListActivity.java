@@ -27,6 +27,7 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.core.splashscreen.SplashScreen;
 import androidx.core.view.WindowCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.lifecycle.ViewModelProvider;
@@ -49,10 +50,11 @@ import com.example.harmonialauncher.preferences.PreferenceData;
 
 import java.util.ArrayList;
 
-public class AppListActivity extends HarmoniaActivity implements FlingListener,
-                                                                LockStatusChangeListener.LockStatusListener,
-                                                                SharedPreferences.OnSharedPreferenceChangeListener,
-                                                                PopupMenu.OnMenuItemClickListener {
+public class AppListActivity extends HarmoniaActivity
+                            implements FlingListener,
+                            LockStatusChangeListener.LockStatusListener,
+                            SharedPreferences.OnSharedPreferenceChangeListener,
+                            PopupMenu.OnMenuItemClickListener {
     private static final String TAG = AppListActivity.class.getSimpleName();
 
     private AppListActivity CONTEXT;
@@ -65,6 +67,10 @@ public class AppListActivity extends HarmoniaActivity implements FlingListener,
 
     @SuppressLint({"SetTextI18n", "ClickableViewAccessibility"})
     protected void onCreate(Bundle savedInstanceState) {
+        //Initialize splash screen to show before activity begins calculations, and to disappear once
+        // activity completes pre-loading.
+        SplashScreen.installSplashScreen(this);
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.app_list_view);
 
@@ -254,8 +260,10 @@ public class AppListActivity extends HarmoniaActivity implements FlingListener,
     }
 
     @Override
-    public void flingRight() {}
+    public void flingRight() {
+    }
 
     @Override
-    public void flingLeft() {}
+    public void flingLeft() {
+    }
 }
