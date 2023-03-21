@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <group
+        android:checkableBehavior="single">
+        <item
+            android:id="@+id/option1"
+            android:title="@string/option1"
+            android:titleCondensed="@string/option1"
+            android:visible="true"
+            android:alphabeticShortcut="a"
+            android:checkable="true"
+            android:enabled="true" />
+        <item
+            android:id="@+id/option2"
+            android:title="@string/option2"
+            android:titleCondensed="@string/option2"
+            android:visible="true"
+            android:alphabeticShortcut="b"
+            android:checkable="true"
+            android:enabled="true" />
+        <item
+            android:id="@+id/option3"
+            android:title="@string/option3"
+            android:titleCondensed="@string/option3"
+            android:visible="true"
+            android:alphabeticShortcut="c"
+            android:checkable="true"
+            android:enabled="true" />
+        <item
+            android:id="@+id/option4"
+            android:title="@string/option4"
+            android:titleCondensed="@string/option4"
+            android:visible="true"
+            android:alphabeticShortcut="d"
+            android:checkable="true"
+            android:enabled="true" />
+        <item
+            android:id="@+id/option5"
+            android:title="@string/option5"
+            android:titleCondensed="@string/option5"
+            android:visible="true"
+            android:alphabeticShortcut="e"
+            android:checkable="true"
+            android:enabled="true" />
+    </group>
+</menu>

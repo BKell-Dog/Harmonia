@@ -1,4 +1,4 @@
-package com.example.harmonialauncher.Helpers;
+package com.example.harmonialauncher.gesture;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -10,7 +10,7 @@ import android.view.ViewConfiguration;
 import androidx.annotation.Nullable;
 
 public class FlingDetector implements View.OnTouchListener {
-    private static final String TAG = "Vertical Fling Detector";
+    private static final String TAG = FlingDetector.class.getSimpleName();
     private static final float CUSTOM_SLOP_MULTIPLIER = 2.2f;
     private static final int SEC_IN_MILLIS = 1000;
     public static final int HORIZONTAL = 0, VERTICAL = 1;

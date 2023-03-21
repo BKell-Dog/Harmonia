@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/app_list_view"
@@ -14,21 +13,89 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
-    <ScrollView
-        android:id="@+id/app_list_scroll_view"
+    <com.example.harmonialauncher.gesture.FlingCatcher
+        android:id="@+id/app_list_fling_catcher"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:contentDescription="@string/app_list_content"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        android:layout_height="match_parent">
 
-        <LinearLayout
-            android:id="@+id/app_list_linear_layout"
+        <ScrollView android:id="@+id/app_list_scroll_view"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical" />
-    </ScrollView>
+            android:layout_height="match_parent"
+            android:contentDescription="@string/app_list_content"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <LinearLayout
+                android:id="@+id/app_list_linear_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical" >
+
+            </LinearLayout>
+        </ScrollView>
+
+        <ImageView
+            android:id="@+id/filter_button"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:layout_gravity="end"
+            android:layout_marginTop="15dp"
+            android:layout_marginEnd="15dp"
+            android:adjustViewBounds="true"
+            android:contentDescription="@string/filter_icon"
+            android:scaleType="fitCenter"
+            android:src="@drawable/filter_icon"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ScrollView
+            android:id="@+id/app_list_filter"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:contentDescription="@string/app_list_filter_content"
+            android:visibility="gone"
+            tools:layout_editor_absoluteX="306dp">
+
+            <LinearLayout
+                android:id="@+id/app_list_filter_linear_layout"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+
+                <RadioGroup
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginTop="15dp">
+
+                    <RadioButton
+                        android:id="@+id/option1"
+                        android:layout_width="105dp"
+                        android:layout_height="48dp"
+                        android:text="@string/option1" />
+
+                    <RadioButton
+                        android:id="@+id/option2"
+                        android:layout_width="105dp"
+                        android:layout_height="48dp"
+                        android:text="@string/option2" />
+
+                    <RadioButton
+                        android:id="@+id/option3"
+                        android:layout_width="105dp"
+                        android:layout_height="48dp"
+                        android:text="@string/option3" />
+
+                    <RadioButton
+                        android:id="@+id/option4"
+                        android:layout_width="105dp"
+                        android:layout_height="48dp"
+                        android:text="@string/option4" />
+                </RadioGroup>
+            </LinearLayout>
+        </ScrollView>
+
+    </com.example.harmonialauncher.gesture.FlingCatcher>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

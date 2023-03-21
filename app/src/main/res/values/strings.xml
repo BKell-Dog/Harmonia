@@ -40,7 +40,15 @@
     <!-- App List -->
     <string name="app_list_item_default">App Item</string>
     <string name="app_list_content">App List</string>
+    <string name="app_list_filter_content">App List Settings</string>
     <string name="time_left_timer_text">Locked Time Countdown</string>
+    <!-- App List Filter -->
+    <string name="option1">Custom</string>
+    <string name="option2">A-Z</string>
+    <string name="option3">Z-A</string>
+    <string name="option4">New-Old</string>
+    <string name="option5">Old-New</string>
+    <string name="filter_icon">Filter Icon</string>
 
     <!-- Splash Screen -->
     <string name="splash_icon_text">Splash Icon</string>

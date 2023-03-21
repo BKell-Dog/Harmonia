@@ -4,7 +4,7 @@ import android.view.MotionEvent;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.example.harmonialauncher.Interfaces.Gesturable;
+import com.example.harmonialauncher.gesture.Gesturable;
 import com.example.harmonialauncher.lock.Lockable;
 
 public abstract class HarmoniaActivity extends AppCompatActivity implements Lockable, Gesturable {

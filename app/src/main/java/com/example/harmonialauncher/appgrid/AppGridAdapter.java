@@ -27,7 +27,7 @@ import androidx.preference.PreferenceManager;
 
 import com.example.harmonialauncher.appgrid.Views.AppView;
 import com.example.harmonialauncher.preferences.PreferenceData;
-import com.example.harmonialauncher.Helpers.SingleTapDetector;
+import com.example.harmonialauncher.gesture.SingleTapDetector;
 import com.example.harmonialauncher.R;
 import com.example.harmonialauncher.Utils.Util;
 import com.example.harmonialauncher.lock.LockManager;

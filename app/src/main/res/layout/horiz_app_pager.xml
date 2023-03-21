@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <com.example.harmonialauncher.Views.FlingCatcher
+    <com.example.harmonialauncher.gesture.FlingCatcher
         android:id="@+id/fling_detector"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -23,6 +23,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    </com.example.harmonialauncher.Views.FlingCatcher>
+    </com.example.harmonialauncher.gesture.FlingCatcher>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

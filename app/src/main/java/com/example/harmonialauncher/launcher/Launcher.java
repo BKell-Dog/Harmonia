@@ -4,6 +4,7 @@ import android.app.Dialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Window;
 import android.widget.TextView;
 
@@ -17,6 +18,7 @@ import com.example.harmonialauncher.error.ErrorMessageDialog;
 import com.example.harmonialauncher.preferences.PreferenceData;
 
 public class Launcher extends HarmoniaActivity {
+    private static final String TAG = Launcher.class.getSimpleName();
 
     @Override
     public void onCreate(Bundle savedinstanceState)
@@ -31,19 +33,30 @@ public class Launcher extends HarmoniaActivity {
 
             if (layout == PreferenceData.LAYOUT_GRID)
             {
+                Log.i(TAG, "Attempting to start App Grid Activity");
                 Intent intent = new Intent(this, MainActivity.class);
                 startActivity(intent);
                 this.finish();
             }
             else if (layout == PreferenceData.LAYOUT_LIST)
             {
+                Log.i(TAG, "Attempting to start App Layout Activity");
                 Intent intent = new Intent(this, AppListActivity.class);
                 startActivity(intent);
                 this.finish();
             }
+            else
+            {
+                Log.i(TAG, "Attempting to start App Grid Activity by default. Check default preferences");
+                Intent intent = new Intent(this, MainActivity.class);
+                startActivity(intent);
+                this.finish();
+            }
+
         }
         catch (Exception e)
         {
+            Log.e(TAG, "Error finding which activity to start.");
             ErrorMessageDialog.showDialog(this, e);
         }
 

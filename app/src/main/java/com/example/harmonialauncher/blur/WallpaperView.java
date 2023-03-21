@@ -33,23 +33,34 @@ public class WallpaperView extends androidx.appcompat.widget.AppCompatImageView 
     public WallpaperView(Context context) {
         super(context);
         prefs = PreferenceManager.getDefaultSharedPreferences(getContext());
-        greyscale = (Integer.parseInt(prefs.getString(getResources().getString(R.string.set_app_screen_style_key), STYLE_NORMAL + "")) == STYLE_GREYSCALE);
-        PreferenceManager.getDefaultSharedPreferences(context).registerOnSharedPreferenceChangeListener(this);
+        String preference = prefs.getString(getResources().getString(R.string.set_app_screen_style_key), STYLE_NORMAL + "");
+        if (preference.equalsIgnoreCase(""))
+            preference = PreferenceData.LAYOUT_GRID + "";
+        int prefInt  = Integer.parseInt(preference);
+        greyscale = (prefInt == STYLE_GREYSCALE);
+        prefs.registerOnSharedPreferenceChangeListener(this);
     }
 
     public WallpaperView(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
         prefs = PreferenceManager.getDefaultSharedPreferences(getContext());
-        greyscale = (Integer.parseInt(prefs.getString(getResources().getString(R.string.set_app_screen_style_key), STYLE_NORMAL + "")) == STYLE_GREYSCALE);
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        String preference = prefs.getString(getResources().getString(R.string.set_app_screen_style_key), STYLE_NORMAL + "");
+        if (preference.equalsIgnoreCase(""))
+            preference = PreferenceData.LAYOUT_GRID + "";
+        int prefInt  = Integer.parseInt(preference);
+        greyscale = (prefInt == STYLE_GREYSCALE);
         prefs.registerOnSharedPreferenceChangeListener(this);
     }
 
     public WallpaperView(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         prefs = PreferenceManager.getDefaultSharedPreferences(getContext());
-        greyscale = (Integer.parseInt(prefs.getString(getResources().getString(R.string.set_app_screen_style_key), STYLE_NORMAL + "")) == STYLE_GREYSCALE);
-        PreferenceManager.getDefaultSharedPreferences(context).registerOnSharedPreferenceChangeListener(this);
+        String preference = prefs.getString(getResources().getString(R.string.set_app_screen_style_key), STYLE_NORMAL + "");
+        if (preference.equalsIgnoreCase(""))
+            preference = PreferenceData.LAYOUT_GRID + "";
+        int prefInt  = Integer.parseInt(preference);
+        greyscale = (prefInt == STYLE_GREYSCALE);
+        prefs.registerOnSharedPreferenceChangeListener(this);
     }
 
     @Override

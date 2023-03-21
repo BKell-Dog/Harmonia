@@ -1,4 +1,4 @@
-package com.example.harmonialauncher.Helpers;
+package com.example.harmonialauncher.gesture;
 
 import android.annotation.SuppressLint;
 import android.content.Context;

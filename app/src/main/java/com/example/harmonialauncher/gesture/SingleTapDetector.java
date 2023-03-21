@@ -1,8 +1,7 @@
-package com.example.harmonialauncher.Helpers;
+package com.example.harmonialauncher.gesture;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewConfiguration;

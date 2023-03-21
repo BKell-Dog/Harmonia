@@ -3,7 +3,7 @@ package com.example.harmonialauncher.Utils;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 
-import com.example.harmonialauncher.Interfaces.Gesturable;
+import com.example.harmonialauncher.gesture.Gesturable;
 
 import java.util.ArrayList;
 

@@ -1,4 +1,4 @@
-package com.example.harmonialauncher.Views;
+package com.example.harmonialauncher.gesture;
 
 import android.annotation.TargetApi;
 import android.content.Context;
@@ -9,14 +9,11 @@ import android.view.MotionEvent;
 
 import androidx.constraintlayout.widget.ConstraintLayout;
 
-import com.example.harmonialauncher.Helpers.FlingDetector;
-import com.example.harmonialauncher.Interfaces.PageHolder;
-
 public class FlingCatcher extends ConstraintLayout {
     private static final String TAG = FlingCatcher.class.getSimpleName();
     private Context context;
     private FlingDetector fd;
-    private PageHolder callback;
+    private FlingListener callback;
     private float firstX = -1, firstY = -1;
 
     public FlingCatcher(Context context) {
@@ -29,7 +26,6 @@ public class FlingCatcher extends ConstraintLayout {
         super(context, attrs);
         this.context = context;
         fd = new FlingDetector(context);
-        Log.d(TAG, "FlingCatcher: " + context);
     }
 
     public FlingCatcher(Context context, AttributeSet attrs, int defStyleAttr) {
@@ -52,16 +48,14 @@ public class FlingCatcher extends ConstraintLayout {
             if (callback != null) {
                 if (fd.getMode() == FlingDetector.VERTICAL) {
                     if (firstY > event.getY())
-                        callback.incrementPage(); //Upward fling, return to HomeScreen
+                        callback.flingUp(); //Upward fling, return to HomeScreen
                     else
-                        callback.decrementPage(); //Downward fling, go to DrawerScreen
-                }
-                else if (fd.getMode() == FlingDetector.HORIZONTAL)
-                {
+                        callback.flingDown(); //Downward fling, go to DrawerScreen
+                } else if (fd.getMode() == FlingDetector.HORIZONTAL) {
                     if (firstX < event.getX())
-                        callback.decrementPage();
+                        callback.flingRight();
                     else
-                        callback.incrementPage();
+                        callback.flingLeft();
                 }
             } else
                 Log.e(TAG, "Callback Runnable was not instantiated.");
@@ -75,15 +69,17 @@ public class FlingCatcher extends ConstraintLayout {
         return super.dispatchTouchEvent(event);
     }
 
-    public void setCallback(PageHolder ma) {
+    public void setCallback(FlingListener ma) {
         callback = ma;
     }
 
-    public void setMode(int mode)
-    {fd.setMode(mode);}
+    public void setMode(int mode) {
+        fd.setMode(mode);
+    }
 
-    public int getMode()
-    {return fd.getMode();}
+    public int getMode() {
+        return fd.getMode();
+    }
 
     private void reset() {
         firstX = -1f;

@@ -342,6 +342,7 @@ public class Util {
         return locked;
     }
 
+
     public static void exitHarmonia(Context context) {
         openApp(context, EXIT_PACKAGE_NAME);
     }

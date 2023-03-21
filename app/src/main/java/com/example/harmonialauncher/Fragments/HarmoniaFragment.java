@@ -4,7 +4,7 @@ import android.view.MotionEvent;
 
 import androidx.fragment.app.Fragment;
 
-import com.example.harmonialauncher.Interfaces.Gesturable;
+import com.example.harmonialauncher.gesture.Gesturable;
 import com.example.harmonialauncher.lock.Lockable;
 
 public abstract class HarmoniaFragment extends Fragment implements Lockable, Gesturable {

@@ -3,7 +3,6 @@ package com.example.harmonialauncher.Fragments;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,14 +12,14 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.viewpager2.widget.ViewPager2;
 
 import com.example.harmonialauncher.appgrid.DrawerPageAdapter;
-import com.example.harmonialauncher.Helpers.FlingDetector;
-import com.example.harmonialauncher.Interfaces.PageHolder;
+import com.example.harmonialauncher.gesture.FlingDetector;
+import com.example.harmonialauncher.gesture.FlingListener;
 import com.example.harmonialauncher.R;
 import com.example.harmonialauncher.appgrid.AppGridViewModel;
 import com.example.harmonialauncher.ViewModels.DrawerViewModel;
-import com.example.harmonialauncher.Views.FlingCatcher;
+import com.example.harmonialauncher.gesture.FlingCatcher;
 
-public class DrawerFragment extends HarmoniaFragment implements PageHolder {
+public class DrawerFragment extends HarmoniaFragment implements FlingListener {
 
     private static final String TAG = DrawerFragment.class.getSimpleName();
     public ViewPager2 vp = null;
@@ -64,17 +63,6 @@ public class DrawerFragment extends HarmoniaFragment implements PageHolder {
         return v;
     }
 
-    public void incrementPage() {
-        Log.d(TAG, "incrementPage: FLING DETECTED");
-        vm.setCurrentPage(vm.getCurrentPage() + 1);
-        update();
-    }
-
-    public void decrementPage() {
-        Log.d(TAG, "decrementPage: FLING DETECTED");
-        vm.setCurrentPage(vm.getCurrentPage() - 1);
-        update();
-    }
 
     public void update()
     {
@@ -87,5 +75,23 @@ public class DrawerFragment extends HarmoniaFragment implements PageHolder {
             return "";
         StringBuilder s = new StringBuilder("Drawer Fragment. Children: " + vm.getNumOfPages());
         return s.toString();
+    }
+
+    @Override
+    public void flingUp() {}
+
+    @Override
+    public void flingDown() {}
+
+    @Override
+    public void flingRight() {
+        vm.setCurrentPage(vm.getCurrentPage() - 1);
+        update();
+    }
+
+    @Override
+    public void flingLeft() {
+        vm.setCurrentPage(vm.getCurrentPage() + 1);
+        update();
     }
 }
