@@ -20,22 +20,20 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.view.WindowInsets;
-import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.RadioButton;
+import android.widget.PopupMenu;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.core.content.res.ResourcesCompat;
 import androidx.core.view.WindowCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.preference.PreferenceManager;
 
 import com.example.harmonialauncher.Activities.HarmoniaActivity;
-import com.example.harmonialauncher.Activities.MainActivity;
+import com.example.harmonialauncher.appgrid.AppGridActivity;
 import com.example.harmonialauncher.gesture.FlingDetector;
 import com.example.harmonialauncher.gesture.FlingListener;
 import com.example.harmonialauncher.gesture.SingleTapDetector;
@@ -51,10 +49,13 @@ import com.example.harmonialauncher.preferences.PreferenceData;
 
 import java.util.ArrayList;
 
-public class AppListActivity extends HarmoniaActivity implements FlingListener, LockStatusChangeListener.LockStatusListener, SharedPreferences.OnSharedPreferenceChangeListener {
+public class AppListActivity extends HarmoniaActivity implements FlingListener,
+                                                                LockStatusChangeListener.LockStatusListener,
+                                                                SharedPreferences.OnSharedPreferenceChangeListener,
+                                                                PopupMenu.OnMenuItemClickListener {
     private static final String TAG = AppListActivity.class.getSimpleName();
 
-    private Context CONTEXT;
+    private AppListActivity CONTEXT;
     private WallpaperView wallpaper;
     private AppListViewModel vm;
     private SingleTapDetector std;
@@ -126,8 +127,17 @@ public class AppListActivity extends HarmoniaActivity implements FlingListener, 
                 0, 0, 0, 1.0f, 0};
         d.setColorFilter(new ColorMatrixColorFilter(new ColorMatrix(NEGATIVE)));
 
-        // We set the image view to open a menu dialog if touched.
-        registerForContextMenu(filterButton);
+        // Set button to open a context menu when long tapped.
+        filterButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                PopupMenu popup = new PopupMenu(CONTEXT, filterButton);
+                MenuInflater inflater = popup.getMenuInflater();
+                inflater.inflate(R.menu.filter_menu, popup.getMenu());
+                popup.setOnMenuItemClickListener(CONTEXT);
+                popup.show();
+            }
+        });
     }
 
     private void inflateListItems(LinearLayout ll) {
@@ -188,7 +198,7 @@ public class AppListActivity extends HarmoniaActivity implements FlingListener, 
             Log.e(TAG, "onSharedPreferenceChanged: " + key);
             int layout = Integer.parseInt(sharedPreferences.getString(key, PreferenceData.LAYOUT_GRID + ""));
             if (layout == PreferenceData.LAYOUT_GRID) {
-                Intent intent = new Intent(this, MainActivity.class);
+                Intent intent = new Intent(this, AppGridActivity.class);
                 startActivity(intent);
                 this.finish();
             }
@@ -196,14 +206,7 @@ public class AppListActivity extends HarmoniaActivity implements FlingListener, 
     }
 
     @Override
-    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
-        super.onCreateContextMenu(menu, v, menuInfo);
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.filter_menu, menu);
-    }
-
-    @Override
-    public boolean onContextItemSelected(MenuItem item) {
+    public boolean onMenuItemClick(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.option2: // Sort list A - Z
                 vm.sortList(AppListViewModel.SORT_AZ);
@@ -222,7 +225,7 @@ public class AppListActivity extends HarmoniaActivity implements FlingListener, 
                 Toast.makeText(this, "SORT Old-New", Toast.LENGTH_SHORT).show();
                 return true;
             default:
-                return super.onContextItemSelected(item);
+                return false;
         }
     }
 
@@ -234,6 +237,7 @@ public class AppListActivity extends HarmoniaActivity implements FlingListener, 
 
     @Override
     public void flingUp() {
+        // Hide filter button above screen.
         ObjectAnimator animation = ObjectAnimator.ofFloat(filterButton, "translationY", -300f);
         animation.setDuration(100);
         animation.start();
@@ -241,6 +245,7 @@ public class AppListActivity extends HarmoniaActivity implements FlingListener, 
 
     @Override
     public void flingDown() {
+        // If scroll view has been pulled to the top, then show filter button.
         if (scrollY < 2) {
             ObjectAnimator animation = ObjectAnimator.ofFloat(filterButton, "translationY", 100f);
             animation.setDuration(150);
@@ -249,16 +254,8 @@ public class AppListActivity extends HarmoniaActivity implements FlingListener, 
     }
 
     @Override
-    public void flingRight() {
-        // Close filter menu if open
-        ObjectAnimator animation = ObjectAnimator.ofFloat(fc, "translationX", 0f);
-        animation.setDuration(200);
-        animation.start();
-    }
+    public void flingRight() {}
 
     @Override
-    public void flingLeft() {
-        // Open filter menu
-
-    }
+    public void flingLeft() {}
 }

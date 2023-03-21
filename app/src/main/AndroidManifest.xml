@@ -27,7 +27,7 @@
         </activity>
 
         <activity
-            android:name=".Activities.MainActivity"
+            android:name=".appgrid.AppGridActivity"
             android:excludeFromRecents="true"
             android:launchMode="singleTask"
             android:screenOrientation="nosensor"

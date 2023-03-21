@@ -1,10 +1,9 @@
-package com.example.harmonialauncher.Activities;
+package com.example.harmonialauncher.appgrid;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.view.WindowInsets;
 
@@ -18,10 +17,10 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.preference.PreferenceManager;
 import androidx.viewpager2.widget.ViewPager2;
 
+import com.example.harmonialauncher.Activities.HarmoniaActivity;
 import com.example.harmonialauncher.Adapters.PageAdapter;
 import com.example.harmonialauncher.gesture.FlingListener;
 import com.example.harmonialauncher.preferences.PreferenceData;
-import com.example.harmonialauncher.appgrid.HomeScreenFragment;
 import com.example.harmonialauncher.applist.AppListActivity;
 import com.example.harmonialauncher.blur.WallpaperView;
 import com.example.harmonialauncher.Fragments.DrawerFragment;
@@ -37,8 +36,8 @@ This class will manage the fragment viewer which switches between the HomeScreen
 It will switch from home to settings once the Harmonia settings button is pressed, and switch from settings to
 home once the back button is pressed in the settings menu.
  */
-public class MainActivity extends HarmoniaActivity implements FlingListener, SharedPreferences.OnSharedPreferenceChangeListener {
-    private static final String TAG = MainActivity.class.getSimpleName();
+public class AppGridActivity extends HarmoniaActivity implements FlingListener, SharedPreferences.OnSharedPreferenceChangeListener {
+    private static final String TAG = AppGridActivity.class.getSimpleName();
     private MainActivityViewModel vm;
     public ViewPager2 vp;
     private FlingCatcher fc;

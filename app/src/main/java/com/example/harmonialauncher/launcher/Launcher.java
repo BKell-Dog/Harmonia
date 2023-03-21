@@ -1,17 +1,14 @@
 package com.example.harmonialauncher.launcher;
 
-import android.app.Dialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.Window;
-import android.widget.TextView;
 
 import androidx.preference.PreferenceManager;
 
 import com.example.harmonialauncher.Activities.HarmoniaActivity;
-import com.example.harmonialauncher.Activities.MainActivity;
+import com.example.harmonialauncher.appgrid.AppGridActivity;
 import com.example.harmonialauncher.R;
 import com.example.harmonialauncher.applist.AppListActivity;
 import com.example.harmonialauncher.error.ErrorMessageDialog;
@@ -34,7 +31,7 @@ public class Launcher extends HarmoniaActivity {
             if (layout == PreferenceData.LAYOUT_GRID)
             {
                 Log.i(TAG, "Attempting to start App Grid Activity");
-                Intent intent = new Intent(this, MainActivity.class);
+                Intent intent = new Intent(this, AppGridActivity.class);
                 startActivity(intent);
                 this.finish();
             }
@@ -48,7 +45,7 @@ public class Launcher extends HarmoniaActivity {
             else
             {
                 Log.i(TAG, "Attempting to start App Grid Activity by default. Check default preferences");
-                Intent intent = new Intent(this, MainActivity.class);
+                Intent intent = new Intent(this, AppGridActivity.class);
                 startActivity(intent);
                 this.finish();
             }
