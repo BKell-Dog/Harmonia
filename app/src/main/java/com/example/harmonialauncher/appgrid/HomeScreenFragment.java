@@ -14,6 +14,7 @@ import com.example.harmonialauncher.database.AppEntity;
 import com.example.harmonialauncher.lock.LockStatusChangeListener;
 import com.example.harmonialauncher.R;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /*
@@ -27,7 +28,7 @@ public class HomeScreenFragment extends AppGridFragment implements LockStatusCha
     private AppGridViewModel vm;
 
     public HomeScreenFragment() {
-        super(AppGridViewModel.TYPE_HOME, 0);
+        super(new ArrayList<>());
     }
 
     @Override

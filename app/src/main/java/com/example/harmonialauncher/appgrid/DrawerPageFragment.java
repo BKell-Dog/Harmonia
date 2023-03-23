@@ -28,8 +28,8 @@ public class DrawerPageFragment extends AppGridFragment implements LockStatusCha
     private AppGridViewModel vm;
     private int pageNum;
 
-    public DrawerPageFragment(int pageNum) {
-        super(AppGridViewModel.TYPE_DRAWER, R.layout.app_grid_page);
+    public DrawerPageFragment(int pageNum, ArrayList<AppObject> appList) {
+        super(appList);
         this.pageNum = pageNum;
         Log.d(TAG, "DrawerPageFragment: ");
     }

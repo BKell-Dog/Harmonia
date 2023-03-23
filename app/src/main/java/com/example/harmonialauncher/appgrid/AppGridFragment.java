@@ -37,16 +37,13 @@ public class AppGridFragment extends HarmoniaFragment implements LockStatusChang
     protected AppGridView gv;
     protected AppGridAdapter adapter;
     public static final int NUM_COLS = 4;
-    private int pageNum;
-    private String type;
     //Gesture Detection
     protected GestureDetectorCompat gd;
     protected ArrayList<AppObject> appList = new ArrayList<>();
 
-    public AppGridFragment(String type, int pageNum) {
+    public AppGridFragment(ArrayList<AppObject> apps) {
         super(R.id.app_page_grid);
-        this.type = type;
-        this.pageNum = pageNum;
+        appList = apps;
     }
 
     @Override

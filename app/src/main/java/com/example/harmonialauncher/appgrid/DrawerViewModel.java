@@ -1,6 +1,7 @@
 package com.example.harmonialauncher.appgrid;
 
 import android.app.Application;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
@@ -13,19 +14,13 @@ import com.example.harmonialauncher.database.AppRepository;
 
 import java.util.List;
 
-public class DrawerViewModel extends AndroidViewModel {
+public class DrawerViewModel extends AppGridViewModel {
     private static final String TAG = DrawerViewModel.class.getSimpleName();
-    private AppRepository repository;
-    protected LiveData<List<AppEntity>> appEntityList;
     private int currentPage = -1;
-    private final int numOfPages;
 
-    public DrawerViewModel(@NonNull Application application, int numOfPages)
+    public DrawerViewModel(@NonNull Application application)
     {
         super(application);
-        this.numOfPages = numOfPages;
-        repository = new AppRepository(application);
-        appEntityList = repository.getAllApps();
     }
 
     public int getCurrentPage() {
@@ -33,11 +28,14 @@ public class DrawerViewModel extends AndroidViewModel {
     }
 
     public void setCurrentPage(int currentPage) {
-        this.currentPage = (currentPage >= 0 && currentPage < numOfPages) ? currentPage : this.currentPage;
+        this.currentPage = (currentPage >= 0 && currentPage < getNumOfPages()) ? currentPage : this.currentPage;
+        Log.d(TAG, "setCurrentPage: Num of Pages " + getNumOfPages());
     }
 
     public int getNumOfPages()
-    {return numOfPages;}
+    {
+        return (int) Math.ceil(((double)drawerScreenApps.size()) / ((double)NUMOFAPPSONPAGE));
+    }
 
     public static class DrawerViewModelFactory implements ViewModelProvider.Factory
     {
@@ -53,7 +51,7 @@ public class DrawerViewModel extends AndroidViewModel {
         @Override
         public <T extends ViewModel> T create(@NonNull Class<T> modelClass)
         {
-            return (T) new DrawerViewModel(application, numOfPages);
+            return (T) new DrawerViewModel(application);
         }
     }
 }

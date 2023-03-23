@@ -23,6 +23,7 @@ import com.example.harmonialauncher.gesture.FlingListener;
 import com.example.harmonialauncher.R;
 import com.example.harmonialauncher.gesture.FlingCatcher;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class DrawerFragment extends HarmoniaFragment implements FlingListener {
@@ -30,9 +31,11 @@ public class DrawerFragment extends HarmoniaFragment implements FlingListener {
     private static final String TAG = DrawerFragment.class.getSimpleName();
     private Context CONTEXT;
     private FragmentActivity activity;
-    public ViewPager2 vp = null;
+    private ViewPager2 vp = null;
+    private DrawerPageAdapter adapter;
     private DrawerViewModel vm;
     private FlingCatcher fc;
+    private ArrayList<AppObject> appList = new ArrayList<>();
 
     public DrawerFragment() {
         super(R.layout.horiz_app_pager);
@@ -43,22 +46,7 @@ public class DrawerFragment extends HarmoniaFragment implements FlingListener {
         CONTEXT = context;
         activity = this.getActivity();
 
-        AppGridViewModel agvm = new ViewModelProvider(requireActivity()).get(AppGridViewModel.class);
-        int numOfPages = 0;
-        if (agvm.getDrawerScreenApps() != null)
-            numOfPages = agvm.getDrawerScreenApps().size() / AppGridViewModel.NUMOFAPPSONPAGE;
-
-        vm = new ViewModelProvider(requireActivity(), new DrawerViewModel.DrawerViewModelFactory(activity.getApplication(), numOfPages)).get(DrawerViewModel.class);
-
-        Log.d(TAG, "onAttach: " + numOfPages);
-        agvm.getAppList().observe(getActivity(), new Observer<List<AppEntity>>() {
-            @Override
-            public void onChanged(List<AppEntity> appEntities) {
-                int numOfPages = appEntities.size() / AppGridViewModel.NUMOFAPPSONPAGE;
-                vm = new ViewModelProvider(requireActivity(), new DrawerViewModel.DrawerViewModelFactory(activity.getApplication(), numOfPages)).get(DrawerViewModel.class);
-                vp.setAdapter(new DrawerPageAdapter(activity));
-            }
-        });
+        vm = new ViewModelProvider(requireActivity()).get(DrawerViewModel.class);
     }
 
     public void onCreate(Bundle savedInstanceState) {
@@ -67,6 +55,20 @@ public class DrawerFragment extends HarmoniaFragment implements FlingListener {
 
     @SuppressLint("ClickableViewAccessibility")
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        vm.getAppList().observe(getViewLifecycleOwner(), new Observer<List<AppEntity>>() {
+            @Override
+            public void onChanged(List<AppEntity> appEntities) {
+                appList = AppObject.Factory.toAppObjects(CONTEXT, appEntities);
+                adapter = new DrawerPageAdapter(activity, appList);
+                vp.setAdapter(adapter);
+            }
+        });
+
+        if (vm.getAppList().getValue() != null)
+            appList = AppObject.Factory.toAppObjects(CONTEXT, vm.getAppList().getValue());
+
+        adapter = new DrawerPageAdapter(this.getActivity(), appList);
+
         View v = inflater.inflate(R.layout.horiz_app_pager, container, false);
         if (v == null || getActivity() == null)
             return null;
@@ -74,11 +76,10 @@ public class DrawerFragment extends HarmoniaFragment implements FlingListener {
         fc = v.findViewById(R.id.fling_detector);
         fc.setCallback(this);
         fc.setMode(FlingDetector.HORIZONTAL);
-        fc.setBackgroundColor(Color.RED);
 
         //Initialize view pager to scroll horizontally
         vp = v.findViewById(R.id.drawer_view_pager);
-        vp.setAdapter(new DrawerPageAdapter(this.getActivity()));
+        vp.setAdapter(adapter);
         vp.setUserInputEnabled(false);
         vp.setOrientation(ViewPager2.ORIENTATION_HORIZONTAL);
         vp.canScrollHorizontally(1);
@@ -93,6 +94,7 @@ public class DrawerFragment extends HarmoniaFragment implements FlingListener {
     public void update()
     {
         vp.setCurrentItem(vm.getCurrentPage());
+        Log.d(TAG, "update: SET CURRENT ITEM " + vm.getCurrentPage());
         vp.invalidate();
     }
 
@@ -114,6 +116,7 @@ public class DrawerFragment extends HarmoniaFragment implements FlingListener {
     public void flingRight() {
         vm.setCurrentPage(vm.getCurrentPage() - 1);
         update();
+        Log.d(TAG, "flingRight: ");
     }
 
     @Override

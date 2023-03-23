@@ -121,7 +121,6 @@ public class AppGridActivity extends HarmoniaActivity implements FlingListener, 
     public void flingUp() {
         if (vp.getCurrentItem() == 0) {
             vm.setCurrentPage(1);
-            Log.d(TAG, "flingUp: ");
             wallpaper.setBlurRadius(blurRadius);
             wallpaper.setDimmed(true);
             update();
