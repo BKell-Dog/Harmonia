@@ -16,7 +16,7 @@ public class DrawerPageAdapter extends PageAdapter {
     private ArrayList<AppObject> appList;
 
     public DrawerPageAdapter(@NonNull FragmentActivity fragmentActivity, @NonNull ArrayList<AppObject> appList) {
-        super(fragmentActivity, (appList.size() / AppGridViewModel.NUMOFAPPSONPAGE));
+        super(fragmentActivity, (int) Math.ceil(((double)appList.size()) / ((double)AppGridViewModel.NUMOFAPPSONPAGE)));
         this.appList = appList;
     }
 
@@ -25,8 +25,14 @@ public class DrawerPageAdapter extends PageAdapter {
     public Fragment createFragment(int position) {
         if (position < 0 && position > pageCount)
             position = 0;
-        ArrayList<AppObject> list = new ArrayList<>(appList.subList(position * AppGridViewModel.NUMOFAPPSONPAGE, (position + 1) * AppGridViewModel.NUMOFAPPSONPAGE));
-        Log.d(TAG, "createFragment: " + position + " ---" + list);
-        return new AppGridFragment(list);
+
+        int start = position * AppGridViewModel.NUMOFAPPSONPAGE,
+                end = (position + 1) * AppGridViewModel.NUMOFAPPSONPAGE;
+
+        ArrayList<AppObject> appSubList = new ArrayList<>();
+        for (int i = start; i < appList.size() && i < end; i++)
+            appSubList.add(appList.get(i));
+
+        return new AppGridFragment(appSubList);
     }
 }

@@ -30,11 +30,13 @@ import android.widget.Toast;
 import androidx.core.splashscreen.SplashScreen;
 import androidx.core.view.WindowCompat;
 import androidx.core.view.WindowInsetsCompat;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.preference.PreferenceManager;
 
 import com.example.harmonialauncher.Activities.HarmoniaActivity;
 import com.example.harmonialauncher.appgrid.AppGridActivity;
+import com.example.harmonialauncher.database.AppEntity;
 import com.example.harmonialauncher.gesture.FlingDetector;
 import com.example.harmonialauncher.gesture.FlingListener;
 import com.example.harmonialauncher.gesture.SingleTapDetector;
@@ -49,20 +51,23 @@ import com.example.harmonialauncher.lock.LockStatusChangeListener;
 import com.example.harmonialauncher.preferences.PreferenceData;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class AppListActivity extends HarmoniaActivity
-                            implements FlingListener,
-                            LockStatusChangeListener.LockStatusListener,
-                            SharedPreferences.OnSharedPreferenceChangeListener,
-                            PopupMenu.OnMenuItemClickListener {
+        implements FlingListener,
+        LockStatusChangeListener.LockStatusListener,
+        SharedPreferences.OnSharedPreferenceChangeListener,
+        PopupMenu.OnMenuItemClickListener {
     private static final String TAG = AppListActivity.class.getSimpleName();
 
     private AppListActivity CONTEXT;
     private WallpaperView wallpaper;
     private AppListViewModel vm;
+    private ArrayList<AppObject> appList = new ArrayList<>();
     private SingleTapDetector std;
     private FlingCatcher fc;
     private ImageView filterButton;
+    LinearLayout ll;
     private int scrollY = 0;
 
     @SuppressLint({"SetTextI18n", "ClickableViewAccessibility"})
@@ -80,8 +85,15 @@ public class AppListActivity extends HarmoniaActivity
         CONTEXT = this;
         std = new SingleTapDetector(this);
         vm = new ViewModelProvider(this).get(AppListViewModel.class);
-        if (vm == null)
-            Log.e(TAG, "onCreate: VIEW MODEL IS NULL");
+        vm.getAppList().observe(this, new Observer<List<AppEntity>>() {
+            @Override
+            public void onChanged(List<AppEntity> appEntities) {
+                appList.clear();
+                for (AppEntity a : appEntities)
+                    appList.add(AppObject.Factory.toAppObject(CONTEXT, a));
+                inflateListItems(ll);
+            }
+        });
 
         //Set window to show behind status bar (on top) and navigation bar (on bottom w/ three buttons)
         WindowCompat.setDecorFitsSystemWindows(getWindow(), false);
@@ -105,7 +117,7 @@ public class AppListActivity extends HarmoniaActivity
         fc.setCallback(this);
         fc.setMode(FlingDetector.VERTICAL);
 
-        LinearLayout ll = (LinearLayout) findViewById(R.id.app_list_linear_layout);
+        ll = (LinearLayout) findViewById(R.id.app_list_linear_layout);
         ll.requestDisallowInterceptTouchEvent(true);
 
         ScrollView scroll = (ScrollView) findViewById(R.id.app_list_scroll_view);
@@ -147,54 +159,59 @@ public class AppListActivity extends HarmoniaActivity
     }
 
     private void inflateListItems(LinearLayout ll) {
+        if (ll == null)
+            return;
+
         // Clear linear layout
         ll.removeAllViews();
 
         // Inflate list items
-        ArrayList<AppObject> apps = vm.getAppList();
-        for (AppObject app : apps) {
-            LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            View listItem = inflater.inflate(R.layout.app_list_item, null, false);
-            TextView text = (TextView) listItem.findViewById(R.id.app_list_text_view);
-            TextView timeLeft = (TextView) listItem.findViewById(R.id.time_left_timer);
-            boolean addToView = true;
+        if (vm.getAppList().getValue() != null) {
+            ArrayList<AppObject> apps = AppObject.Factory.toAppObjects(this, vm.getAppList().getValue());
+            for (AppObject app : apps) {
+                LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                View listItem = inflater.inflate(R.layout.app_list_item, null, false);
+                TextView text = (TextView) listItem.findViewById(R.id.app_list_text_view);
+                TextView timeLeft = (TextView) listItem.findViewById(R.id.time_left_timer);
+                boolean addToView = true;
 
-            //If app name is too long, shorten it and add on an ellipse.
-            String name = app.getName();
-            if (name.length() > 20)
-                name = name.substring(0, 20).trim() + "...";
+                //If app name is too long, shorten it and add on an ellipse.
+                String name = app.getName();
+                if (name.length() > 20)
+                    name = name.substring(0, 20).trim() + "...";
 
-            if (text != null)
-                text.setText(name);
-            else
-                addToView = false;
+                if (text != null)
+                    text.setText(name);
+                else
+                    addToView = false;
 
-            if (timeLeft != null && LockManager.isLocked(app.getPackageName())) {
-                TimeHelper remaining = LockManager.getTimeRemaining(app.getPackageName());
-                timeLeft.setText(remaining.getTimeFormatted(TimeHelper.HHMM));
-            } else if (timeLeft == null) {
-                addToView = false;
-                Log.e(TAG, "onCreate: TextView time_left_timer is null!");
-            } else
-                timeLeft.setText("");
+                if (timeLeft != null && LockManager.isLocked(app.getPackageName())) {
+                    TimeHelper remaining = LockManager.getTimeRemaining(app.getPackageName());
+                    timeLeft.setText(remaining.getTimeFormatted(TimeHelper.HHMM));
+                } else if (timeLeft == null) {
+                    addToView = false;
+                    Log.e(TAG, "onCreate: TextView time_left_timer is null!");
+                } else
+                    timeLeft.setText("");
 
-            listItem.setOnTouchListener(new View.OnTouchListener() {
-                @SuppressLint("ClickableViewAccessibility")
-                @Override
-                public boolean onTouch(View view, MotionEvent motionEvent) {
-                    if (std.onTouch(null, motionEvent)) {
-                        String appName = ((TextView) ((ViewGroup) view).getChildAt(0)).getText().toString();
-                        AppObject app = Util.findAppByName(appName, CONTEXT);
-                        String appPackageName = app.getPackageName();
+                listItem.setOnTouchListener(new View.OnTouchListener() {
+                    @SuppressLint("ClickableViewAccessibility")
+                    @Override
+                    public boolean onTouch(View view, MotionEvent motionEvent) {
+                        if (std.onTouch(null, motionEvent)) {
+                            String appName = ((TextView) ((ViewGroup) view).getChildAt(0)).getText().toString();
+                            AppObject app = Util.findAppByName(appName, CONTEXT);
+                            String appPackageName = app.getPackageName();
 
-                        Util.openApp(CONTEXT, appPackageName);
+                            Util.openApp(CONTEXT, appPackageName);
+                        }
+                        return true;
                     }
-                    return true;
-                }
-            });
+                });
 
-            if (addToView)
-                ll.addView(listItem);
+                if (addToView)
+                    ll.addView(listItem);
+            }
         }
     }
 

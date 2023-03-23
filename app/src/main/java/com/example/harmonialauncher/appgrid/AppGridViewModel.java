@@ -1,13 +1,10 @@
 package com.example.harmonialauncher.appgrid;
 
 import android.app.Application;
-import android.content.Context;
-import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
-import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Observer;
 
 import com.example.harmonialauncher.database.AppEntity;
@@ -20,7 +17,6 @@ import java.util.List;
 
 public class AppGridViewModel extends AndroidViewModel {
     private static final String TAG = AppGridViewModel.class.getSimpleName();
-    protected final Application application;
     private AppRepository repository;
     protected ArrayList<AppObject> homeScreenApps = new ArrayList<>(), drawerScreenApps = new ArrayList<>();
     protected LiveData<List<AppEntity>> appEntityList;
@@ -31,7 +27,6 @@ public class AppGridViewModel extends AndroidViewModel {
 
     public AppGridViewModel(@NonNull Application application) {
         super(application);
-        this.application = application;
 
         repository = new AppRepository(application);
         appEntityList = repository.getAllApps();
@@ -52,9 +47,9 @@ public class AppGridViewModel extends AndroidViewModel {
     }
 
     private void insertAppValues(AppRepository repo) {
-        ArrayList<AppObject> apps = Util.loadAllApps(application);
+        ArrayList<AppObject> apps = Util.loadAllApps(getApplication());
         for (AppObject app : apps) {
-            AppEntity entity = AppEntity.Factory.toAppEntity(application, app);
+            AppEntity entity = AppEntity.Factory.toAppEntity(getApplication(), app);
             repo.upsert(entity);
         }
         appEntityList = repository.getAllApps();

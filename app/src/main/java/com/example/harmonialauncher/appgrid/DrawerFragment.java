@@ -94,7 +94,6 @@ public class DrawerFragment extends HarmoniaFragment implements FlingListener {
     public void update()
     {
         vp.setCurrentItem(vm.getCurrentPage());
-        Log.d(TAG, "update: SET CURRENT ITEM " + vm.getCurrentPage());
         vp.invalidate();
     }
 

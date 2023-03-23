@@ -29,7 +29,6 @@ public class DrawerViewModel extends AppGridViewModel {
 
     public void setCurrentPage(int currentPage) {
         this.currentPage = (currentPage >= 0 && currentPage < getNumOfPages()) ? currentPage : this.currentPage;
-        Log.d(TAG, "setCurrentPage: Num of Pages " + getNumOfPages());
     }
 
     public int getNumOfPages()
