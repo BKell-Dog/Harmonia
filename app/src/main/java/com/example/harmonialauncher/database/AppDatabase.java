@@ -1,4 +1,4 @@
-package com.example.harmonialauncher.Database;
+package com.example.harmonialauncher.database;
 
 import android.content.Context;
 
@@ -9,7 +9,7 @@ import androidx.room.RoomDatabase;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-@Database(entities = {AppEntity.class}, version = 1, exportSchema = false)
+@Database(entities = {AppEntity.class}, version = 1, exportSchema = true)
 public abstract class AppDatabase extends RoomDatabase {
 
     public abstract AppDao appDao();
@@ -25,6 +25,7 @@ public abstract class AppDatabase extends RoomDatabase {
                 if (INSTANCE == null) {
                     INSTANCE = Room.databaseBuilder(context.getApplicationContext(),
                                     AppDatabase.class, "app_database")
+                            //.fallbackToDestructiveMigration() //Uncomment this line to handle migrations. It will destroy database and rebuild it from scratch.
                             .build();
                 }
             }

@@ -8,10 +8,15 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.example.harmonialauncher.database.AppEntity;
 import com.example.harmonialauncher.lock.LockStatusChangeListener;
 import com.example.harmonialauncher.R;
+
+import java.util.ArrayList;
+import java.util.List;
 
 // Purpose of this class: retrieve app data for all installed apps, and display app name as well as
 // app icon (type Drawable) on the screen in a grid. Grid will not exceed 4 columns and 5 rows, and
@@ -26,29 +31,54 @@ public class DrawerPageFragment extends AppGridFragment implements LockStatusCha
     public DrawerPageFragment(int pageNum) {
         super(AppGridViewModel.TYPE_DRAWER, R.layout.app_grid_page);
         this.pageNum = pageNum;
+        Log.d(TAG, "DrawerPageFragment: ");
     }
 
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
+        Log.d(TAG, "onAttach: ");
         vm = new ViewModelProvider(requireActivity()).get(AppGridViewModel.class);
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Log.d(TAG, "onCreate: ");
 
-        adapter = new AppGridAdapter(CONTEXT, R.layout.app, vm.getAppList(AppGridViewModel.TYPE_DRAWER, pageNum));
+        vm.getAppList().observe(this, new Observer<List<AppEntity>>() {
+            @Override
+            public void onChanged(List<AppEntity> appEntities) {
+                appList = vm.getDrawerScreenApps(pageNum);
+                Log.d(TAG, "onChanged: DRAWER CHANGED");
+
+                adapter = new AppGridAdapter(CONTEXT, R.id.app_page_grid, appList);
+                gv.setAdapter(adapter);
+            }
+        });
+
+        Log.d(TAG, "onCreate: DRAWER SET 1");
+        appList = vm.getDrawerScreenApps(pageNum);
+        adapter = new AppGridAdapter(CONTEXT, R.id.app_page_grid, appList);
+        gv.setAdapter(adapter);
     }
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        return super.onCreateView(inflater, container, savedInstanceState);
-    }
-
-    public void onResume()
-    {
-        super.onResume();
-        Log.d(TAG, "onResume: " + pageNum + "---" + vm.getAppList(AppGridViewModel.TYPE_DRAWER, pageNum));
+        View v = super.onCreateView(inflater, container, savedInstanceState);
+        vm.getAppList().observe(getViewLifecycleOwner(), new Observer<List<AppEntity>>() {
+            @Override
+            public void onChanged(List<AppEntity> appEntities) {
+                Log.d(TAG, "onChanged: DRAWER OBSERVED 2");
+                appList = vm.getDrawerScreenApps(pageNum);
+                adapter = new AppGridAdapter(CONTEXT, R.layout.app, appList);
+                gv.setAdapter(adapter);
+            }
+        });
+        Log.d(TAG, "onCreateView: DRAWER SET 2");
+        appList = vm.getDrawerScreenApps(pageNum);
+        adapter = new AppGridAdapter(CONTEXT, R.layout.app, appList);
+        gv.setAdapter(adapter);
+        return v;
     }
 
     @NonNull

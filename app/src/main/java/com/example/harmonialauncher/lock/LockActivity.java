@@ -72,7 +72,7 @@ public class LockActivity extends HarmoniaActivity {
 
         //Populate LinearLayout with items
         LinearLayout ll = findViewById(R.id.lock_activity_linearlayout);
-        ArrayList<AppObject> apps = Util.loadAllApps(this);
+        ArrayList<AppObject> apps = Util.loadAllApps(this); // TODO: get rid of this call to Util by creating a lock activity view model.
         for (AppObject a : apps) {
             View v = createListItem(a);
             ll.addView(v);

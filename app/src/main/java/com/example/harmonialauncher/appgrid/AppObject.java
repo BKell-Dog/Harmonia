@@ -1,40 +1,42 @@
 package com.example.harmonialauncher.appgrid;
 
+import android.content.Context;
 import android.graphics.drawable.Drawable;
 
 import androidx.annotation.NonNull;
 
+import com.example.harmonialauncher.database.AppEntity;
+import com.example.harmonialauncher.Utils.Util;
 import com.example.harmonialauncher.lock.Lockable;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class AppObject implements Lockable {
     private String name, packageName;
     private Drawable image = null;
-    private Boolean isAppInDrawer;
     private int imageId;
     private boolean locked = false;
 
-    public AppObject(String packageName, String name, int imageId, Boolean isAppInDrawer) {
+    public AppObject(String packageName, String name, int imageId) {
         this.name = name;
         this.packageName = packageName;
         this.imageId = imageId;
-        this.isAppInDrawer = isAppInDrawer;
     }
 
-    public AppObject(String packageName, String name, int imageId, Drawable image, Boolean isAppInDrawer) {
+    public AppObject(String packageName, String name, int imageId, Drawable image) {
         this.name = name;
         this.packageName = packageName;
         this.image = image;
         this.imageId = imageId;
-        this.isAppInDrawer = isAppInDrawer;
     }
 
     //This constructor is primarily used for info on other downloaded apps, and should not be used
     //whenever possible.
-    public AppObject(String packageName, String name, Drawable image, Boolean isAppInDrawer) {
+    public AppObject(String packageName, String name, Drawable image) {
         this.name = name;
         this.packageName = packageName;
         this.image = image;
-        this.isAppInDrawer = isAppInDrawer;
     }
 
     public String getPackageName() {
@@ -69,14 +71,6 @@ public class AppObject implements Lockable {
         imageId = ID;
     }
 
-    public Boolean getIsAppInDrawer() {
-        return isAppInDrawer;
-    }
-
-    public void setIsAppInDrawer(Boolean isAppInDrawer) {
-        this.isAppInDrawer = isAppInDrawer;
-    }
-
     @NonNull
     public String toString() {
         String s = "";
@@ -98,5 +92,26 @@ public class AppObject implements Lockable {
     @Override
     public boolean isLocked() {
         return locked;
+    }
+
+    public static class Factory {
+        public static ArrayList<AppObject> toAppObjects(@NonNull Context context, @NonNull List<AppEntity> entities) {
+            ArrayList<AppObject> apps = new ArrayList<>();
+            for (AppEntity entity : entities)
+                apps.add(toAppObject(context, entity));
+            return apps;
+        }
+
+        public static AppObject toAppObject(@NonNull Context context, @NonNull AppEntity entity)
+        {
+            AppObject app = new AppObject(entity.packageName, entity.appName, entity.imageId);
+            try {
+                app.setImage(Util.getDrawableByResource(context, entity.imageId));
+            } catch (Exception e)
+            {
+                app.setImage(null);
+            }
+            return app;
+        }
     }
 }

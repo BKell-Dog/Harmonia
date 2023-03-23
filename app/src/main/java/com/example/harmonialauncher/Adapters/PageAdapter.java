@@ -10,7 +10,6 @@ import java.util.ArrayList;
 public abstract class PageAdapter extends FragmentStateAdapter {
     private static final String TAG = PageAdapter.class.getSimpleName();
 
-    protected ArrayList<String> nameIndex = new ArrayList<String>();
     protected int pageCount;
 
     public PageAdapter(@NonNull FragmentActivity fragmentActivity, int pageCount) {

@@ -13,8 +13,10 @@ import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.core.view.GestureDetectorCompat;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.example.harmonialauncher.database.AppEntity;
 import com.example.harmonialauncher.appgrid.Views.AppGridView;
 import com.example.harmonialauncher.Fragments.HarmoniaFragment;
 import com.example.harmonialauncher.Utils.HarmoniaGestureDetector;
@@ -22,6 +24,9 @@ import com.example.harmonialauncher.lock.LockStatusChangeListener;
 import com.example.harmonialauncher.R;
 import com.example.harmonialauncher.Utils.Util;
 import com.example.harmonialauncher.lock.LockManager;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class AppGridFragment extends HarmoniaFragment implements LockStatusChangeListener.LockStatusListener {
 
@@ -36,6 +41,7 @@ public class AppGridFragment extends HarmoniaFragment implements LockStatusChang
     private String type;
     //Gesture Detection
     protected GestureDetectorCompat gd;
+    protected ArrayList<AppObject> appList = new ArrayList<>();
 
     public AppGridFragment(String type, int pageNum) {
         super(R.id.app_page_grid);
@@ -56,7 +62,7 @@ public class AppGridFragment extends HarmoniaFragment implements LockStatusChang
 
         //All subclasses should override this method if only to initialize their adapter in their own way.
 
-        gd = new GestureDetectorCompat(this.getActivity(), new HarmoniaGestureDetector());
+        gd = new GestureDetectorCompat(getActivity(), new HarmoniaGestureDetector());
         HarmoniaGestureDetector.add(this);
         LockStatusChangeListener.add(this);
     }
@@ -64,17 +70,15 @@ public class AppGridFragment extends HarmoniaFragment implements LockStatusChang
     @SuppressLint("ClickableViewAccessibility")
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        // Inflate layout for this fragment
         View v = inflater.inflate(R.layout.app_grid_page, container, false);
 
         if (adapter == null)
-            adapter = new AppGridAdapter(CONTEXT, R.id.app_page_grid, vm.getAppList(type, pageNum));
+            adapter = new AppGridAdapter(CONTEXT, R.id.app_page_grid, appList);
 
-        //Populate Grid Layout in home_screen.xml with instances of app.xml
-        //Get grid view
+        // Populate Grid Layout in home_screen.xml with instances of app.xml
         gv = v.findViewById(R.id.app_page_grid);
         gv.setAdapter(adapter);
-        gv.setNumColumns(vm.NUM_COLS);
+        gv.setNumColumns(AppGridViewModel.NUM_COLS);
         gv.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
 
         return v;

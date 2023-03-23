@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.WindowInsets;
 
@@ -23,7 +24,6 @@ import com.example.harmonialauncher.gesture.FlingListener;
 import com.example.harmonialauncher.preferences.PreferenceData;
 import com.example.harmonialauncher.applist.AppListActivity;
 import com.example.harmonialauncher.blur.WallpaperView;
-import com.example.harmonialauncher.Fragments.DrawerFragment;
 import com.example.harmonialauncher.gesture.FlingDetector;
 import com.example.harmonialauncher.Helpers.WallpaperManager;
 import com.example.harmonialauncher.R;
@@ -121,6 +121,7 @@ public class AppGridActivity extends HarmoniaActivity implements FlingListener, 
     public void flingUp() {
         if (vp.getCurrentItem() == 0) {
             vm.setCurrentPage(1);
+            Log.d(TAG, "flingUp: ");
             wallpaper.setBlurRadius(blurRadius);
             wallpaper.setDimmed(true);
             update();

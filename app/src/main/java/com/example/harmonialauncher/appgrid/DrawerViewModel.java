@@ -1,14 +1,22 @@
-package com.example.harmonialauncher.ViewModels;
+package com.example.harmonialauncher.appgrid;
 
 import android.app.Application;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
+import androidx.lifecycle.LiveData;
 import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.example.harmonialauncher.database.AppEntity;
+import com.example.harmonialauncher.database.AppRepository;
+
+import java.util.List;
+
 public class DrawerViewModel extends AndroidViewModel {
     private static final String TAG = DrawerViewModel.class.getSimpleName();
+    private AppRepository repository;
+    protected LiveData<List<AppEntity>> appEntityList;
     private int currentPage = -1;
     private final int numOfPages;
 
@@ -16,6 +24,8 @@ public class DrawerViewModel extends AndroidViewModel {
     {
         super(application);
         this.numOfPages = numOfPages;
+        repository = new AppRepository(application);
+        appEntityList = repository.getAllApps();
     }
 
     public int getCurrentPage() {

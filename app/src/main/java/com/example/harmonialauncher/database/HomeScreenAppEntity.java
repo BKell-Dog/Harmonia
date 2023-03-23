@@ -1,4 +1,4 @@
-package com.example.harmonialauncher.Database;
+package com.example.harmonialauncher.database;
 
 import androidx.annotation.NonNull;
 import androidx.room.ColumnInfo;

@@ -2,95 +2,101 @@ package com.example.harmonialauncher.appgrid;
 
 import android.app.Application;
 import android.content.Context;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.Observer;
 
-import com.example.harmonialauncher.Database.AppEntity;
-import com.example.harmonialauncher.Database.AppRepository;
+import com.example.harmonialauncher.database.AppEntity;
+import com.example.harmonialauncher.database.AppRepository;
 import com.example.harmonialauncher.lock.LockManager;
 import com.example.harmonialauncher.Utils.Util;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class AppGridViewModel extends AndroidViewModel {
     private static final String TAG = AppGridViewModel.class.getSimpleName();
     protected final Application application;
     private AppRepository repository;
-    protected ArrayList<AppObject> homeScreenApps, drawerScreenApps;
-    protected ArrayList<AppObject> appList = new ArrayList<>();
-    protected ArrayList<AppEntity> appEntityList = new ArrayList<>();
-    protected boolean firstBoot = true, onScreen = false;
-    public final int NUMOFAPPSONPAGE = 20, NUM_COLS = 4;
+    protected ArrayList<AppObject> homeScreenApps = new ArrayList<>(), drawerScreenApps = new ArrayList<>();
+    protected LiveData<List<AppEntity>> appEntityList;
+    protected boolean onScreen = false;
+    public static final int NUMOFAPPSONPAGE = 20, NUM_COLS = 4;
     public final static String TYPE_HOME = "HOME",
-                                TYPE_DRAWER = "DRAWER";
+            TYPE_DRAWER = "DRAWER";
 
     public AppGridViewModel(@NonNull Application application) {
         super(application);
         this.application = application;
 
-        homeScreenApps = Util.loadFirstFifteenApps(application);
-        drawerScreenApps = Util.loadAllApps(application);
+        repository = new AppRepository(application);
+        appEntityList = repository.getAllApps();
+        if (appEntityList.getValue() == null)
+            insertAppValues(repository);
 
-        //repository = new AppRepository(application); //TODO: Uncomment these lines when work on the repository and database continue
-        //appEntityList = repository.getAllApps().getValue();
-        //appList = AppObjectFactory.toAppObjects(application, appEntityList);
-    }
-
-    public ArrayList<AppObject> getAppList(String type, int pageNum) {
-        if (type.equalsIgnoreCase(TYPE_HOME))
-        {
-            return homeScreenApps;
-        }
-        else if (type.equalsIgnoreCase(TYPE_DRAWER))
-        {
-            ArrayList<AppObject> drawerApps = new ArrayList<>();
-            for (int i = pageNum * NUMOFAPPSONPAGE; i < drawerScreenApps.size() && i < (pageNum + 1) * NUMOFAPPSONPAGE; i++)
-            {
-                drawerApps.add(drawerScreenApps.get(i));
+        appEntityList.observeForever(new Observer<List<AppEntity>>() {
+            @Override
+            public void onChanged(List<AppEntity> appEntities) {
+                homeScreenApps.clear();
+                drawerScreenApps.clear();
+                for (int i = 0; i < NUMOFAPPSONPAGE; i++)
+                    homeScreenApps.add(AppObject.Factory.toAppObject(application, appEntities.get(i)));
+                for (AppEntity a : appEntities)
+                    drawerScreenApps.add(AppObject.Factory.toAppObject(application, a));
             }
-            return drawerApps;
+        });
+    }
+
+    private void insertAppValues(AppRepository repo) {
+        ArrayList<AppObject> apps = Util.loadAllApps(application);
+        for (AppObject app : apps) {
+            AppEntity entity = AppEntity.Factory.toAppEntity(application, app);
+            repo.upsert(entity);
         }
-        else
-            return drawerScreenApps;
+        appEntityList = repository.getAllApps();
     }
 
-    public ArrayList<AppObject> getAppList()
-    {return getAppList("", 0);}
+    public LiveData<List<AppEntity>> getAppList() {
+        return appEntityList;
+    }
 
-    public int getNumOfPages()
+    public ArrayList<AppObject> getHomeScreenApps()
+    {return homeScreenApps;}
+
+    public ArrayList<AppObject> getDrawerScreenApps()
+    {return drawerScreenApps;}
+
+    public ArrayList<AppObject> getDrawerScreenApps(int pageNum)
     {
-        return (int) Math.ceil((double) drawerScreenApps.size() / (double) NUMOFAPPSONPAGE);
+        return new ArrayList<>(drawerScreenApps.subList(NUMOFAPPSONPAGE * pageNum, NUMOFAPPSONPAGE * (pageNum + 1)));
     }
 
-    public boolean isFirstBoot() {
-        return firstBoot;
+
+    public boolean isLocked(AppObject app) {
+        return LockManager.isLocked(app.getPackageName());
     }
 
-    public boolean isLocked(AppObject app)
-    {return LockManager.isLocked(app.getPackageName());}
-
-    public boolean isOnScreen()
-    {return onScreen;}
-    public void setFirstBoot(boolean firstBoot) {
-        this.firstBoot = firstBoot;
+    public boolean isOnScreen() {
+        return onScreen;
     }
 
-    public void setOnScreen(boolean onScreen)
-    {this.onScreen = onScreen;}
+    public void setOnScreen(boolean onScreen) {
+        this.onScreen = onScreen;
+    }
 
     //TODO: rework this entire method
-    public void swap(String type, int pageNum, int a, int b)
-    {
+    public void swap(String type, int pageNum, int a, int b) {
         if (type.equalsIgnoreCase(TYPE_HOME)) {
             if (a >= 0 && a < homeScreenApps.size() && b >= 0 && b < homeScreenApps.size()) {
                 AppObject app = homeScreenApps.get(a);
                 homeScreenApps.set(a, homeScreenApps.get(b));
                 homeScreenApps.set(b, app);
             }
-        }
-        else if (type.equalsIgnoreCase(TYPE_DRAWER))
-        {
+        } else if (type.equalsIgnoreCase(TYPE_DRAWER)) {
             /*int index1 = (pageNum * NUMOFAPPSONPAGE) + a,
                     index2 = (pageNum * NUMOFAPPSONPAGE) + b;
             if (a >= 0 && a < drawerScreenApps.size() && b >= 0 && b < drawerScreenApps.size()) {
@@ -98,22 +104,6 @@ public class AppGridViewModel extends AndroidViewModel {
                 drawerScreenApps.set(a, drawerScreenApps.get((pageNum * NUMOFAPPSONPAGE) + b));
                 homeScreenApps.set(b, app);
             }*/
-        }
-    }
-
-    public static class AppObjectFactory {
-        public static ArrayList<AppObject> toAppObjects(Context context, ArrayList<AppEntity> entities) {
-            ArrayList<AppObject> apps = new ArrayList<>();
-            for (AppEntity entity : entities)
-                apps.add(toAppObject(context, entity));
-            return apps;
-        }
-
-        public static AppObject toAppObject(Context context, AppEntity entity)
-        {
-            AppObject app = new AppObject(entity.packageName, entity.appName, entity.imageId, false);
-            app.setImage(Util.getDrawableByResource(context, entity.imageId));
-            return app;
         }
     }
 }

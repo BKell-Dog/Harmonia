@@ -9,6 +9,7 @@ import android.annotation.SuppressLint;
 import android.content.ClipData;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.graphics.Point;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
@@ -63,6 +64,7 @@ public class AppGridAdapter extends ArrayAdapter<AppObject> implements AppHolder
 
         PreferenceManager.getDefaultSharedPreferences(context).registerOnSharedPreferenceChangeListener(this);
         initializePreferences();
+        setElementDimens();
     }
 
     public void add(AppObject app) {
@@ -89,8 +91,11 @@ public class AppGridAdapter extends ArrayAdapter<AppObject> implements AppHolder
         return apps;
     }
 
-    public int getItemCount() {
-        return apps.size();
+    public int getCount() {
+        if (apps != null)
+            return apps.size();
+        else
+            return 0;
     }
 
     public Point getElementDimens() {
@@ -106,6 +111,9 @@ public class AppGridAdapter extends ArrayAdapter<AppObject> implements AppHolder
     @NonNull
     @Override
     public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
+        if (gridHeight == 0 || gridWidth == 0)
+            setDimensions(parent.getWidth(), parent.getHeight());
+
         View gridItemView = convertView;
         if (gridItemView == null) {
             // Layout Inflater inflates each item to be displayed in GridView.
@@ -119,10 +127,20 @@ public class AppGridAdapter extends ArrayAdapter<AppObject> implements AppHolder
         appView.setText(app.getName());
         Drawable image = app.getImage();
         if (image == null) {
-            if (Build.VERSION.SDK_INT > 21)
-                image = CONTEXT.getResources().getDrawable(app.getImageId(), null);
-            else
-                image = CONTEXT.getResources().getDrawable(app.getImageId());
+            if (app.getImageId() == 0)
+            {
+                try {
+                    image = CONTEXT.getPackageManager().getApplicationIcon(app.getPackageName());
+                } catch (PackageManager.NameNotFoundException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+            else {
+                if (Build.VERSION.SDK_INT > 21)
+                    image = ResourcesCompat.getDrawable(CONTEXT.getResources(), app.getImageId(), null);
+                else
+                    image = ResourcesCompat.getDrawable(CONTEXT.getResources(), R.drawable.error_icon, null);
+            }
         }
 
         //Resize icon to fit within the GridView area
@@ -159,11 +177,16 @@ public class AppGridAdapter extends ArrayAdapter<AppObject> implements AppHolder
             public boolean onTouch(View view, MotionEvent event) {
                 if (std.onTouch(null, event)) {
                     //Isolate app package name
-                    String appPackageName = Util.findAppByName(appView.getText(), CONTEXT).getPackageName();
+                    AppObject app = Util.findAppByName(appView.getText(), CONTEXT);
+                    if (app != null) {
+                        String appPackageName = app.getPackageName();
 
-                    //Start app
-                    Util.openApp(CONTEXT, appPackageName);
-                    return true;
+                        //Start app
+                        Util.openApp(CONTEXT, appPackageName);
+                        return true;
+                    }
+                    else
+                        Log.e(TAG, "onTouch: App Is NULL");
                 }
                 return false;
             }

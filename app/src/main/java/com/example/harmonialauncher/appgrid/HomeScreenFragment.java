@@ -7,10 +7,14 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.example.harmonialauncher.database.AppEntity;
 import com.example.harmonialauncher.lock.LockStatusChangeListener;
 import com.example.harmonialauncher.R;
+
+import java.util.List;
 
 /*
 This class will manage the GridView which displays the apps, its construction and popualtion, and will
@@ -35,12 +39,21 @@ public class HomeScreenFragment extends AppGridFragment implements LockStatusCha
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        adapter = new AppGridAdapter(CONTEXT, R.layout.app, vm.getAppList(AppGridViewModel.TYPE_HOME, 0));
+        appList = vm.getHomeScreenApps();
+        adapter = new AppGridAdapter(CONTEXT, R.layout.app, appList);
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        return super.onCreateView(inflater, container, savedInstanceState);
+        View v = super.onCreateView(inflater, container, savedInstanceState);
+        vm.getAppList().observe(getViewLifecycleOwner(), new Observer<List<AppEntity>>() {
+            @Override
+            public void onChanged(List<AppEntity> appEntities) {
+                appList = vm.getHomeScreenApps();
+                adapter = new AppGridAdapter(CONTEXT, R.layout.app, appList);
+                gv.setAdapter(adapter);
+            }
+        });
+        return v;
     }
 }

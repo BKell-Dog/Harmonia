@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.content.res.Resources;
 import android.graphics.ColorMatrix;
 import android.graphics.ColorMatrixColorFilter;
 import android.graphics.Point;
@@ -97,13 +98,14 @@ public class Util {
             String packageName = packages.get(installedApps.indexOf(app)).packageName;
             String label = (String) pm.getApplicationLabel(app);
             Drawable icon = pm.getApplicationIcon(app);
-            apps.add(new AppObject(packageName, label, icon, false));
+            apps.add(new AppObject(packageName, label, icon));
         }
 
         //Remove all apps that are not launchable
         ArrayList<AppObject> removeApps = new ArrayList<AppObject>();
         for (AppObject app : apps)
-            if (pm.getLaunchIntentForPackage(app.getPackageName()) == null)
+            if (pm.getLaunchIntentForPackage(app.getPackageName()) == null
+                || app.getPackageName() == null || app.getImageId() == 0)
                 removeApps.add(app);
         apps.removeAll(removeApps);
 
@@ -134,15 +136,15 @@ public class Util {
         ArrayList<AppObject> hApps = new ArrayList<AppObject>();
 
         //Lock Activity
-        hApps.add(new AppObject(LOCK_PACKAGE_NAME, LOCK_APP_NAME, R.drawable.lock_icon, ResourcesCompat.getDrawable(c.getResources(), R.drawable.lock_icon, null), false));
+        hApps.add(new AppObject(LOCK_PACKAGE_NAME, LOCK_APP_NAME, R.drawable.lock_icon, ResourcesCompat.getDrawable(c.getResources(), R.drawable.lock_icon, null)));
 
         //App icon which opens the settings page for changing default launcher
-        hApps.add(new AppObject(LAUNCHER_SETTINGS_PACKAGE_NAME, LAUNCHER_SETTINGS_APP_NAME, R.drawable.launcher_icon, ResourcesCompat.getDrawable(c.getResources(), R.drawable.launcher_icon, null), false));
+        hApps.add(new AppObject(LAUNCHER_SETTINGS_PACKAGE_NAME, LAUNCHER_SETTINGS_APP_NAME, R.drawable.launcher_icon, ResourcesCompat.getDrawable(c.getResources(), R.drawable.launcher_icon, null)));
 
         //Exit Intent, for Testing on Real Phones
-        hApps.add(new AppObject(EXIT_PACKAGE_NAME, EXIT_APP_NAME, R.drawable.exit_icon, ResourcesCompat.getDrawable(c.getResources(), R.drawable.exit_icon, null), false));
+        hApps.add(new AppObject(EXIT_PACKAGE_NAME, EXIT_APP_NAME, R.drawable.exit_icon, ResourcesCompat.getDrawable(c.getResources(), R.drawable.exit_icon, null)));
 
-        hApps.add(new AppObject(SETTINGS_PACKAGE_NAME, SETTINGS_APP_NAME, R.drawable.settings_icon, ResourcesCompat.getDrawable(c.getResources(), R.drawable.settings_icon, null), false));
+        hApps.add(new AppObject(SETTINGS_PACKAGE_NAME, SETTINGS_APP_NAME, R.drawable.settings_icon, ResourcesCompat.getDrawable(c.getResources(), R.drawable.settings_icon, null)));
 
         return hApps;
     }
@@ -328,7 +330,16 @@ public class Util {
 
     public static Drawable getDrawableByResource(Context context, int resourceId)
     {
-        return ResourcesCompat.getDrawable(context.getResources(), resourceId, null);
+        Drawable d = null;
+        try {
+            d = ResourcesCompat.getDrawable(context.getResources(), resourceId, null);
+        } catch (Resources.NotFoundException e)
+        {
+            //e.printStackTrace();
+            Log.e(TAG, "getDrawableByResource: Invalid ID " + resourceId);
+            d = null;
+        }
+        return d;
     }
 
     public static ArrayList<AppObject> getLockedApps(Context c) {
