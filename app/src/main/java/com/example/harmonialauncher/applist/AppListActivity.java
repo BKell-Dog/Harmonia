@@ -200,7 +200,7 @@ public class AppListActivity extends HarmoniaActivity
                     public boolean onTouch(View view, MotionEvent motionEvent) {
                         if (std.onTouch(null, motionEvent)) {
                             String appName = ((TextView) ((ViewGroup) view).getChildAt(0)).getText().toString();
-                            AppObject app = Util.findAppByName(appName, CONTEXT);
+                            AppObject app = Util.findAppByName(apps, appName);
                             String appPackageName = app.getPackageName();
 
                             Util.openApp(CONTEXT, appPackageName);

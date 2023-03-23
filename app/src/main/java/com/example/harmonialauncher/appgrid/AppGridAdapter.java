@@ -177,7 +177,7 @@ public class AppGridAdapter extends ArrayAdapter<AppObject> implements AppHolder
             public boolean onTouch(View view, MotionEvent event) {
                 if (std.onTouch(null, event)) {
                     //Isolate app package name
-                    AppObject app = Util.findAppByName(appView.getText(), CONTEXT);
+                    AppObject app = Util.findAppByName(apps, appView.getText());
                     if (app != null) {
                         String appPackageName = app.getPackageName();
 

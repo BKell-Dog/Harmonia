@@ -234,8 +234,8 @@ public class Util {
         return findAppByPackageName(packageName, a);
     }
 
-    public static AppObject findAppByName(String name, Context c) {
-        for (AppObject a : apps)
+    public static AppObject findAppByName(List<AppObject> appList, String name) {
+        for (AppObject a : appList)
             if (a.getName().equalsIgnoreCase(name))
                 return a;
         return null;
