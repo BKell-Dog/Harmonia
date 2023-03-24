@@ -60,7 +60,7 @@ public class DrawerFragment extends HarmoniaFragment implements FlingListener {
             public void onChanged(List<AppEntity> appEntities) {
                 appList = AppObject.Factory.toAppObjects(CONTEXT, appEntities);
                 adapter = new DrawerPageAdapter(activity, appList);
-                vp.setAdapter(adapter);
+                vp.post(() -> vp.setAdapter(adapter));
             }
         });
 

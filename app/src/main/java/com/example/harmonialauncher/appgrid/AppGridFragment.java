@@ -1,7 +1,13 @@
 package com.example.harmonialauncher.appgrid;
 
+import static com.example.harmonialauncher.preferences.PreferenceData.LOCK_MODE_GREYSCALE;
+import static com.example.harmonialauncher.preferences.PreferenceData.LOCK_MODE_INVISIBLE;
+import static com.example.harmonialauncher.preferences.PreferenceData.STYLE_GREYSCALE;
+import static com.example.harmonialauncher.preferences.PreferenceData.STYLE_NORMAL;
+
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.Point;
 import android.graphics.Rect;
 import android.os.Bundle;
@@ -15,6 +21,7 @@ import androidx.annotation.NonNull;
 import androidx.core.view.GestureDetectorCompat;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.preference.PreferenceManager;
 
 import com.example.harmonialauncher.database.AppEntity;
 import com.example.harmonialauncher.appgrid.Views.AppGridView;
@@ -24,11 +31,13 @@ import com.example.harmonialauncher.lock.LockStatusChangeListener;
 import com.example.harmonialauncher.R;
 import com.example.harmonialauncher.Utils.Util;
 import com.example.harmonialauncher.lock.LockManager;
+import com.example.harmonialauncher.preferences.PreferenceData;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class AppGridFragment extends HarmoniaFragment implements LockStatusChangeListener.LockStatusListener {
+public class AppGridFragment extends HarmoniaFragment implements LockStatusChangeListener.LockStatusListener,
+        SharedPreferences.OnSharedPreferenceChangeListener {
 
     private static final String TAG = AppGridFragment.class.getSimpleName();
     protected Context CONTEXT;
@@ -62,6 +71,7 @@ public class AppGridFragment extends HarmoniaFragment implements LockStatusChang
         gd = new GestureDetectorCompat(getActivity(), new HarmoniaGestureDetector());
         HarmoniaGestureDetector.add(this);
         LockStatusChangeListener.add(this);
+        PreferenceManager.getDefaultSharedPreferences(CONTEXT).registerOnSharedPreferenceChangeListener(this);
     }
 
     @SuppressLint("ClickableViewAccessibility")
@@ -112,6 +122,32 @@ public class AppGridFragment extends HarmoniaFragment implements LockStatusChang
     @Override
     public void onStatusChanged() {
         if (adapter != null)
-            gv.setAdapter(adapter);//.copy());
+            gv.setAdapter(adapter);
+    }
+
+    @Override
+    public void onSharedPreferenceChanged(SharedPreferences prefs, String key) {
+        if (key.equalsIgnoreCase(CONTEXT.getResources().getString(R.string.set_locked_app_style_key))) {
+            int style = Integer.parseInt(prefs.getString(getString(R.string.set_app_screen_style_key), STYLE_NORMAL + ""));
+            if (style == STYLE_NORMAL)
+                adapter.setLockMode(Integer.parseInt(prefs.getString(key, LOCK_MODE_GREYSCALE + "")));
+            else if (style == STYLE_GREYSCALE) {
+                prefs.edit().putInt(key, LOCK_MODE_INVISIBLE).commit(); // Do not change to .apply()
+                adapter.setLockMode(Integer.parseInt(prefs.getString(key, LOCK_MODE_INVISIBLE + "")));
+            }
+
+            gv.setAdapter(adapter);
+        }
+        else if (key.equalsIgnoreCase(CONTEXT.getResources().getString(R.string.set_app_screen_style_key)))
+        {
+            int style = Integer.parseInt(prefs.getString(key, STYLE_NORMAL + ""));
+            adapter.setStyle(style);
+            gv.setAdapter(adapter);
+
+            //When the total app theme is greyscale, we must not allow locked apps to be drawn in greyscale.
+            //Therefore, we set lock mode to INVISIBLE in preferences.
+            if (style == STYLE_GREYSCALE)
+                prefs.edit().putInt(getString(R.string.set_locked_app_style_key), LOCK_MODE_INVISIBLE).apply();
+        }
     }
 }

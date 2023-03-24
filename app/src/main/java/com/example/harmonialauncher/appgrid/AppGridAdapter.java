@@ -10,6 +10,7 @@ import android.content.ClipData;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.graphics.Point;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
@@ -36,7 +37,7 @@ import com.example.harmonialauncher.lock.LockManager;
 import java.util.ArrayList;
 import java.util.Collections;
 
-public class AppGridAdapter extends ArrayAdapter<AppObject> implements AppHolder, SharedPreferences.OnSharedPreferenceChangeListener {
+public class AppGridAdapter extends ArrayAdapter<AppObject> implements AppHolder {
 
     private final static String TAG = AppGridAdapter.class.getSimpleName();
     private int lockMode = LOCK_MODE_GREYSCALE; //Change this variable to change disappearance mode
@@ -62,7 +63,6 @@ public class AppGridAdapter extends ArrayAdapter<AppObject> implements AppHolder
 
         std = new SingleTapDetector(context);
 
-        PreferenceManager.getDefaultSharedPreferences(context).registerOnSharedPreferenceChangeListener(this);
         initializePreferences();
         setElementDimens();
     }
@@ -107,6 +107,9 @@ public class AppGridAdapter extends ArrayAdapter<AppObject> implements AppHolder
         return lockMode;
     }
 
+    public int getStyle()
+    {return style;}
+
     @SuppressLint("ClickableViewAccessibility")
     @NonNull
     @Override
@@ -136,8 +139,9 @@ public class AppGridAdapter extends ArrayAdapter<AppObject> implements AppHolder
                 }
             }
             else {
-                if (Build.VERSION.SDK_INT > 21)
+                if (Build.VERSION.SDK_INT > 21) {
                     image = ResourcesCompat.getDrawable(CONTEXT.getResources(), app.getImageId(), null);
+                }
                 else
                     image = ResourcesCompat.getDrawable(CONTEXT.getResources(), R.drawable.error_icon, null);
             }
@@ -159,6 +163,8 @@ public class AppGridAdapter extends ArrayAdapter<AppObject> implements AppHolder
                     appView.setVisibility(View.INVISIBLE);
                 else if (lockMode == LOCK_MODE_GREYSCALE)
                     appView.setImageDrawable(Util.convertToGreyscale(image));
+                else
+                    appView.setImageDrawable(Util.convertToGreyscale(image));
             }
         }
         else if (style == STYLE_GREYSCALE)
@@ -166,7 +172,7 @@ public class AppGridAdapter extends ArrayAdapter<AppObject> implements AppHolder
             lockMode = LOCK_MODE_INVISIBLE;
             appView.setImageDrawable(Util.convertToGreyscale(image));
 
-            //Make app invisible or greyscale if it is meant to be locked
+            //Make app invisible if it is meant to be locked, not greyscale (since we are already in greyscale)
             if (position == dragInvisibleIndex || app.isLocked() || LockManager.isLocked(app.getPackageName())) {
                 appView.setImageDrawable(ResourcesCompat.getDrawable(getContext().getResources(), R.drawable.lock_icon, null));
             }
@@ -241,6 +247,11 @@ public class AppGridAdapter extends ArrayAdapter<AppObject> implements AppHolder
             Log.d(TAG, "Mode out of bounds!");
     }
 
+    public void setStyle(int newStyle)
+    {
+        this.style = newStyle;
+    }
+
     public void swap(int a, int b) {
         if (a >= 0 && b >= 0 && a < apps.size() && b < apps.size()) {
             Collections.swap(apps, a, b);
@@ -256,23 +267,8 @@ public class AppGridAdapter extends ArrayAdapter<AppObject> implements AppHolder
     public void initializePreferences()
     {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(CONTEXT);
-        onSharedPreferenceChanged(prefs, CONTEXT.getResources().getString(R.string.set_app_screen_style_key));
-        onSharedPreferenceChanged(prefs, CONTEXT.getResources().getString(R.string.set_locked_app_style_key));
-    }
-
-    @Override
-    public void onSharedPreferenceChanged(SharedPreferences prefs, String key) {
-        if (key.equalsIgnoreCase(CONTEXT.getResources().getString(R.string.set_app_screen_style_key))) {
-            style = Integer.parseInt(prefs.getString(key, STYLE_NORMAL + ""));
-
-            //When the total app theme is greyscale, we must not allow locked apps to be drawn in greyscale.
-            //Therefore, we set lock mode to INVISIBLE in preferences.
-            //if (style == STYLE_GREYSCALE)
-            //    prefs.edit().putString(CONTEXT.getResources().getString(R.string.set_locked_app_style_key), LOCK_MODE_INVISIBLE + "").apply();
-        }
-
-        if (key.equalsIgnoreCase(CONTEXT.getResources().getString(R.string.set_locked_app_style_key)))
-            lockMode = Integer.parseInt(prefs.getString(key, LOCK_MODE_GREYSCALE + ""));
+        //onSharedPreferenceChanged(prefs, CONTEXT.getResources().getString(R.string.set_app_screen_style_key));
+        //onSharedPreferenceChanged(prefs, CONTEXT.getResources().getString(R.string.set_locked_app_style_key));
     }
 
     @NonNull

@@ -6,12 +6,10 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewConfiguration;
 
-public class SingleTapDetector implements View.OnTouchListener {
+public class SingleTapDetector extends GestureDetector {
     private static final String TAG = SingleTapDetector.class.getSimpleName();
-    private static final float CUSTOM_SLOP_MULTIPLIER = 2.2f;
-    private static final int SEC_IN_MILLIS = 1000;
-    private float mInitX, mInitY, mFinalX, mFinalY;
-    private float mSingleTapTimeout, mInitTime, mFinalTime;
+
+    private float mSingleTapTimeout;
     private double mCustomTouchSlop;
 
     public SingleTapDetector(Context context) {

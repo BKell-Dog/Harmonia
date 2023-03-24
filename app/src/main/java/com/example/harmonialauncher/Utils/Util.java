@@ -330,6 +330,9 @@ public class Util {
 
     public static Drawable getDrawableByResource(Context context, int resourceId)
     {
+        if (resourceId == 0)
+            return null;
+
         Drawable d = null;
         try {
             d = ResourcesCompat.getDrawable(context.getResources(), resourceId, null);

@@ -2,6 +2,7 @@ package com.example.harmonialauncher.lock;
 
 import android.app.Dialog;
 import android.content.Context;
+import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
@@ -90,8 +91,7 @@ public class LockActivity extends HarmoniaActivity {
         populateLinearLayout(ll);
     }
 
-    private void populateLinearLayout(LinearLayout ll)
-    {
+    private void populateLinearLayout(LinearLayout ll) {
         if (ll == null)
             return;
 
@@ -117,15 +117,17 @@ public class LockActivity extends HarmoniaActivity {
         else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
             try {
                 icon.setImageDrawable(ResourcesCompat.getDrawable(getResources(), a.getImageId(), null));
-            } catch (Exception e)
-            {
-                icon.setImageDrawable(ResourcesCompat.getDrawable(getResources(), R.drawable.error_icon, null));
+            } catch (Exception e) {
+                try {
+                    icon.setImageDrawable(CONTEXT.getPackageManager().getApplicationIcon(a.getPackageName()));
+                } catch (PackageManager.NameNotFoundException ex) {
+                    icon.setImageDrawable(ResourcesCompat.getDrawable(getResources(), R.drawable.error_icon, null));
+                }
             }
         else
             try {
                 icon.setImageDrawable(ResourcesCompat.getDrawable(getResources(), a.getImageId(), null));
-            } catch (Exception e)
-            {
+            } catch (Exception e) {
                 icon.setImageDrawable(ResourcesCompat.getDrawable(getResources(), R.drawable.error_icon, null));
             }
         icon.setLayoutParams(new RelativeLayout.LayoutParams(Util.getRealScreenSize(this).x / 4, Util.getRealScreenSize(this).x / 4));
@@ -191,7 +193,6 @@ public class LockActivity extends HarmoniaActivity {
                         TimeHelper time = new TimeHelper(hour, minute, TimeHelper.INPUT_RELATIVE);
                         LockManager.lock(app.getPackageName(), time);
                         LockManager.lock(app, time);
-                        LockStatusChangeListener.onStatusChanged();
 
                         timer.setText(time.getTimeFormatted(TimeHelper.HHMM));
                         Log.d(TAG, "LOCKED APP: " + app + " for time: " + time.getTimeRemaining());

@@ -9,13 +9,10 @@ import android.view.ViewConfiguration;
 
 import androidx.annotation.Nullable;
 
-public class FlingDetector implements View.OnTouchListener {
+public class FlingDetector extends GestureDetector {
     private static final String TAG = FlingDetector.class.getSimpleName();
-    private static final float CUSTOM_SLOP_MULTIPLIER = 2.2f;
-    private static final int SEC_IN_MILLIS = 1000;
     public static final int HORIZONTAL = 0, VERTICAL = 1;
 
-    private VelocityTracker mVelocityTracker;
     private float mMinimumFlingVelocity;
     private float mMaximumFlingVelocity;
     private float mDownX, mDownY;
@@ -87,12 +84,4 @@ public class FlingDetector implements View.OnTouchListener {
 
     public int getMode()
     {return mode;}
-
-    private void cleanUp() {
-        if (mVelocityTracker == null) {
-            return;
-        }
-        mVelocityTracker.recycle();
-        mVelocityTracker = null;
-    }
 }

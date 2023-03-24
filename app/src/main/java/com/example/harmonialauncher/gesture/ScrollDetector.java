@@ -14,11 +14,8 @@ import android.view.ViewConfiguration;
  * Swipe: no on-screen target, moves beyond slop, slow or fast motion, controlled
  * Scroll: no on-screen target, moves beyond slop, slow motion, controlled
  */
-public class ScrollDetector implements View.OnTouchListener {
+public class ScrollDetector extends GestureDetector {
     private static final String TAG = ScrollDetector.class.getSimpleName();
-    private static final float CUSTOM_SLOP_MULTIPLIER = 2.2f;
-    private static final int SEC_IN_MILLIS = 1000;
-    private float mInitX, mInitY;
     private final float mSingleTapTimeout;
     private float mInitTime;
     private final double mCustomTouchSlop;

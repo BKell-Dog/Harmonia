@@ -16,6 +16,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.Nullable;
+import androidx.core.content.res.ResourcesCompat;
 import androidx.preference.PreferenceManager;
 
 import com.example.harmonialauncher.appgrid.AppObject;
@@ -58,8 +59,6 @@ public class AppView extends LinearLayout {  //in future: extends CellElement or
 
     public void onDraw(Canvas canvas)
     {
-        updateImageStyle();
-
         super.onDraw(canvas);
     }
 
@@ -134,16 +133,6 @@ public class AppView extends LinearLayout {  //in future: extends CellElement or
         return this;
     }
 
-    public void updateImageStyle()
-    {
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getContext());
-        int style = Integer.parseInt(prefs.getString(getResources().getString(R.string.set_app_screen_style_key), PreferenceData.STYLE_NORMAL + ""));
-        if (style == PreferenceData.STYLE_NORMAL)
-            setImageDrawable(Util.convertToColor(getImageDrawable()));
-        else
-            setImageDrawable(Util.convertToGreyscale(getImageDrawable()));
-    }
-
 
     public static class AppViewFactory {
         @SuppressLint("UseCompatLoadingForDrawables")
@@ -151,7 +140,15 @@ public class AppView extends LinearLayout {  //in future: extends CellElement or
             AppView appView = new AppView(context);
             appView.setText(a.getName());
             if (a.getImage() == null)
-                appView.setImageDrawable(context.getResources().getDrawable(a.getImageId()));
+                if (a.getImageId() == 0)
+                    try {
+                        appView.setImageDrawable(context.getPackageManager().getApplicationIcon(a.getPackageName()));
+                    } catch (Exception ex) {
+                        ex.printStackTrace();
+                        appView.setImageDrawable(Util.getDrawableByResource(context, R.drawable.error_icon));
+                    }
+                else
+                    appView.setImageDrawable(ResourcesCompat.getDrawable(context.getResources(), a.getImageId(), null));
             else
                 appView.setImageDrawable(a.getImage());
             return appView;
@@ -162,7 +159,15 @@ public class AppView extends LinearLayout {  //in future: extends CellElement or
             AppView appView = new AppView(context, attrs);
             appView.setText(a.getName());
             if (a.getImage() == null)
-                appView.setImageDrawable(context.getResources().getDrawable(a.getImageId()));
+                if (a.getImageId() == 0)
+                    try {
+                        appView.setImageDrawable(context.getPackageManager().getApplicationIcon(a.getPackageName()));
+                    } catch (Exception ex) {
+                        ex.printStackTrace();
+                        appView.setImageDrawable(Util.getDrawableByResource(context, R.drawable.error_icon));
+                    }
+                else
+                    appView.setImageDrawable(ResourcesCompat.getDrawable(context.getResources(), a.getImageId(), null));
             else
                 appView.setImageDrawable(a.getImage());
             return appView;
@@ -173,7 +178,15 @@ public class AppView extends LinearLayout {  //in future: extends CellElement or
             AppView appView = new AppView(context, attrs, defStyleAttr);
             appView.setText(a.getName());
             if (a.getImage() == null)
-                appView.setImageDrawable(context.getResources().getDrawable(a.getImageId()));
+                if (a.getImageId() == 0)
+                    try {
+                        appView.setImageDrawable(context.getPackageManager().getApplicationIcon(a.getPackageName()));
+                    } catch (Exception ex) {
+                        ex.printStackTrace();
+                        appView.setImageDrawable(Util.getDrawableByResource(context, R.drawable.error_icon));
+                    }
+                else
+                    appView.setImageDrawable(ResourcesCompat.getDrawable(context.getResources(), a.getImageId(), null));
             else
                 appView.setImageDrawable(a.getImage());
             return appView;
@@ -184,7 +197,15 @@ public class AppView extends LinearLayout {  //in future: extends CellElement or
             AppView appView = new AppView(context, attrs, defStyleAttr, defStyleRes);
             appView.setText(a.getName());
             if (a.getImage() == null)
-                appView.setImageDrawable(context.getResources().getDrawable(a.getImageId()));
+                if (a.getImageId() == 0)
+                    try {
+                        appView.setImageDrawable(context.getPackageManager().getApplicationIcon(a.getPackageName()));
+                    } catch (Exception ex) {
+                        ex.printStackTrace();
+                        appView.setImageDrawable(Util.getDrawableByResource(context, R.drawable.error_icon));
+                    }
+                else
+                    appView.setImageDrawable(ResourcesCompat.getDrawable(context.getResources(), a.getImageId(), null));
             else
                 appView.setImageDrawable(a.getImage());
             return appView;
