@@ -25,10 +25,6 @@ public class AppListViewModel extends AndroidViewModel {
 
     private AppRepository repository;
     protected LiveData<List<AppEntity>> appEntityList;
-    public final static int SORT_AZ = 0,
-                                SORT_ZA = 1,
-                                SORT_OLDNEW = 2,
-                                SORT_NEWOLD = 3;
 
     public AppListViewModel(@NonNull Application application) {
         super(application);
@@ -50,19 +46,5 @@ public class AppListViewModel extends AndroidViewModel {
     public LiveData<List<AppEntity>> getAppList()
     {
         return appEntityList;
-    }
-
-    public void sortList(int sortType)
-    {
-        switch(sortType)
-        {
-            case SORT_AZ:
-                Collections.sort(apps, (a, b) -> a.getName().compareToIgnoreCase(b.getName()));
-                break;
-            case SORT_ZA:
-                Collections.sort(apps, (a, b) -> - a.getName().compareToIgnoreCase(b.getName()));
-                break;
-            //TODO: Create sorting method for Old-New and New-Old
-        }
     }
 }

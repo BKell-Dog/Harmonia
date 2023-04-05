@@ -32,6 +32,9 @@
     <string name="submit_time">OK</string>
     <string name="cancel">Cancel</string>
     <string name="edit_button">Set Time</string>
+    <string name="select_media">Select Media to Lock</string>
+    <string name="lock_app_picker_title">Select an App to Lock</string>
+    <string name="sample_text">Sample Text</string>
 
     <!-- App Icon -->
     <string name="app_icon_image">App Icon Image</string>

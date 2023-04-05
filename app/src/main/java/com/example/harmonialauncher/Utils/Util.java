@@ -105,7 +105,7 @@ public class Util {
         ArrayList<AppObject> removeApps = new ArrayList<AppObject>();
         for (AppObject app : apps)
             if (pm.getLaunchIntentForPackage(app.getPackageName()) == null
-                || app.getPackageName() == null || app.getImageId() == 0)
+                || app.getPackageName() == null || app.getImageId() == null)
                 removeApps.add(app);
         apps.removeAll(removeApps);
 
@@ -219,8 +219,8 @@ public class Util {
         return getAppPackages(f.getActivity());
     }
 
-    public static AppObject findAppByPackageName(String packageName, Context c) {
-        for (AppObject a : apps)
+    public static AppObject findAppByPackageName(ArrayList<AppObject> appList, String packageName) {
+        for (AppObject a : appList)
             if (a.getPackageName().equalsIgnoreCase(packageName))
                 return a;
         return null;
@@ -341,6 +341,37 @@ public class Util {
             //e.printStackTrace();
             Log.e(TAG, "getDrawableByResource: Invalid ID " + resourceId);
             d = null;
+        }
+        return d;
+    }
+
+    public static Drawable getAppDrawable(AppObject app, Context c) {
+        Drawable d = null;
+        if (app.getImage() != null)
+            d = app.getImage();
+        else if (app.getImageId() != null)
+        {
+            try {
+                d = ResourcesCompat.getDrawable(c.getResources(), app.getImageId(), null);
+            } catch (Resources.NotFoundException ex)
+            {
+                Log.e(TAG, "ERROR: Bad Resource");
+                try {
+                    d = c.getPackageManager().getApplicationIcon(app.getPackageName());
+                } catch (PackageManager.NameNotFoundException e)
+                {
+                    Log.e(TAG, "ERROR: Invalid package name");
+                }
+            }
+        }
+        else
+        {
+            try {
+                d = c.getPackageManager().getApplicationIcon(app.getPackageName());
+            } catch (PackageManager.NameNotFoundException ex)
+            {
+                Log.e(TAG, "getAppDrawable: ERROR: Invalid package name");
+            }
         }
         return d;
     }

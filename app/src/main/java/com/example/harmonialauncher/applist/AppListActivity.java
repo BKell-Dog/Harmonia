@@ -51,6 +51,7 @@ import com.example.harmonialauncher.lock.LockStatusChangeListener;
 import com.example.harmonialauncher.preferences.PreferenceData;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class AppListActivity extends HarmoniaActivity
@@ -69,6 +70,12 @@ public class AppListActivity extends HarmoniaActivity
     private ImageView filterButton;
     LinearLayout ll;
     private int scrollY = 0;
+
+    private int sortMode = -1;
+    public final static int SORT_AZ = 0,
+            SORT_ZA = 1,
+            SORT_OLDNEW = 2,
+            SORT_NEWOLD = 3;
 
     @SuppressLint({"SetTextI18n", "ClickableViewAccessibility"})
     protected void onCreate(Bundle savedInstanceState) {
@@ -89,8 +96,8 @@ public class AppListActivity extends HarmoniaActivity
             @Override
             public void onChanged(List<AppEntity> appEntities) {
                 appList.clear();
-                for (AppEntity a : appEntities)
-                    appList.add(AppObject.Factory.toAppObject(CONTEXT, a));
+                appList = AppObject.Factory.toAppObjects(CONTEXT, appEntities);
+                sortList(sortMode);
                 inflateListItems(ll);
             }
         });
@@ -167,8 +174,7 @@ public class AppListActivity extends HarmoniaActivity
 
         // Inflate list items
         if (vm.getAppList().getValue() != null) {
-            ArrayList<AppObject> apps = AppObject.Factory.toAppObjects(this, vm.getAppList().getValue());
-            for (AppObject app : apps) {
+            for (AppObject app : appList) {
                 LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
                 View listItem = inflater.inflate(R.layout.app_list_item, null, false);
                 TextView text = (TextView) listItem.findViewById(R.id.app_list_text_view);
@@ -200,7 +206,7 @@ public class AppListActivity extends HarmoniaActivity
                     public boolean onTouch(View view, MotionEvent motionEvent) {
                         if (std.onTouch(null, motionEvent)) {
                             String appName = ((TextView) ((ViewGroup) view).getChildAt(0)).getText().toString();
-                            AppObject app = Util.findAppByName(apps, appName);
+                            AppObject app = Util.findAppByName(appList, appName);
                             String appPackageName = app.getPackageName();
 
                             Util.openApp(CONTEXT, appPackageName);
@@ -232,11 +238,13 @@ public class AppListActivity extends HarmoniaActivity
     public boolean onMenuItemClick(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.option2: // Sort list A - Z
-                vm.sortList(AppListViewModel.SORT_AZ);
+                sortMode = SORT_AZ;
+                sortList(sortMode);
                 inflateListItems(findViewById(R.id.app_list_linear_layout));
                 return true;
             case R.id.option3: // Sort list Z - A
-                vm.sortList(AppListViewModel.SORT_ZA);
+                sortMode = SORT_ZA;
+                sortList(sortMode);
                 inflateListItems(findViewById(R.id.app_list_linear_layout));
                 return true;
             case R.id.option4:
@@ -249,6 +257,20 @@ public class AppListActivity extends HarmoniaActivity
                 return true;
             default:
                 return false;
+        }
+    }
+
+    public void sortList(int sortType)
+    {
+        switch(sortType)
+        {
+            case SORT_AZ:
+                Collections.sort(appList, (a, b) -> a.getName().compareToIgnoreCase(b.getName()));
+                break;
+            case SORT_ZA:
+                Collections.sort(appList, (a, b) -> - a.getName().compareToIgnoreCase(b.getName()));
+                break;
+            //TODO: Create sorting method for Old-New and New-Old
         }
     }
 

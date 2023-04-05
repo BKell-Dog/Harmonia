@@ -19,22 +19,18 @@ import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.core.view.GestureDetectorCompat;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.preference.PreferenceManager;
 
-import com.example.harmonialauncher.database.AppEntity;
-import com.example.harmonialauncher.appgrid.Views.AppGridView;
+import com.example.harmonialauncher.appgrid.views.AppGridView;
 import com.example.harmonialauncher.Fragments.HarmoniaFragment;
 import com.example.harmonialauncher.Utils.HarmoniaGestureDetector;
 import com.example.harmonialauncher.lock.LockStatusChangeListener;
 import com.example.harmonialauncher.R;
 import com.example.harmonialauncher.Utils.Util;
 import com.example.harmonialauncher.lock.LockManager;
-import com.example.harmonialauncher.preferences.PreferenceData;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class AppGridFragment extends HarmoniaFragment implements LockStatusChangeListener.LockStatusListener,
         SharedPreferences.OnSharedPreferenceChangeListener {

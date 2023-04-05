@@ -1,9 +1,8 @@
-package com.example.harmonialauncher.appgrid.Views;
+package com.example.harmonialauncher.appgrid.views;
 
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.graphics.Canvas;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
@@ -17,10 +16,8 @@ import android.widget.TextView;
 
 import androidx.annotation.Nullable;
 import androidx.core.content.res.ResourcesCompat;
-import androidx.preference.PreferenceManager;
 
 import com.example.harmonialauncher.appgrid.AppObject;
-import com.example.harmonialauncher.preferences.PreferenceData;
 import com.example.harmonialauncher.R;
 import com.example.harmonialauncher.Utils.Util;
 
@@ -211,6 +208,4 @@ public class AppView extends LinearLayout {  //in future: extends CellElement or
             return appView;
         }
     }
-
-
 }

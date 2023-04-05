@@ -172,7 +172,7 @@ public class ConfigManager {
             if (pack.equalsIgnoreCase(EMPTY))
                 appList.add(null);
             else
-                appList.add(Util.findAppByPackageName(pack, context));
+                appList.add(Util.findAppByPackageName(appList, pack));
         }
         return appList;
     }

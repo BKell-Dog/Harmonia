@@ -5,7 +5,9 @@ import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.graphics.drawable.Drawable;
+import android.util.Log;
 
+import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
 
 import com.example.harmonialauncher.appgrid.AppObject;
@@ -29,13 +31,14 @@ public class AppRepository {
         mAllApps = mAppDao.getAppList();
 
         // Insert values if needed
-        AppDatabase.databaseWriteExecutor.execute(() -> { // Take this activity off the UI thread
+        AppDatabase.databaseWriteExecutor.execute(() -> { // Take this method off the UI thread
 
             if (mAllApps == null || mAllApps.getValue() == null || mAllApps.getValue().size() == 0) {
+                Log.d(TAG, "AppRepository: INSERTING VALUES INTO DB");
                 ArrayList<AppObject> apps = new ArrayList<>();
 
                 PackageManager pm = application.getPackageManager();
-                List<PackageInfo> packages = pm.getInstalledPackages(0); //TODO: Update this package fetching method
+                List<PackageInfo> packages = pm.getInstalledPackages(0); //TODO: Update this package fetching method according to warning
                 List<ApplicationInfo> applications = new ArrayList<ApplicationInfo>();
 
                 for (PackageInfo p : packages)
@@ -71,7 +74,7 @@ public class AppRepository {
                 ArrayList<AppObject> removeApps = new ArrayList<AppObject>();
                 for (AppObject app : apps)
                     if (pm.getLaunchIntentForPackage(app.getPackageName()) == null
-                            || app.getPackageName() == null || app.getImageId() == 0)
+                            || app.getPackageName() == null)
                         removeApps.add(app);
                 apps.removeAll(removeApps);
 
@@ -98,12 +101,25 @@ public class AppRepository {
         });
     }
 
+    public void upsert(List<AppEntity> apps)
+    {
+        for (AppEntity a : apps)
+            upsert(a);
+    }
+
     public void update(AppEntity appEntity) {
         AppDatabase.databaseWriteExecutor.execute(() -> {
             mAppDao.update(appEntity);
         });
     }
 
+    public void remove(AppEntity appEntity) {
+        AppDatabase.databaseWriteExecutor.execute(() -> {
+            mAppDao.delete(appEntity);
+        });
+    }
+
+    @NonNull
     public String toString() {
         return "App Repository";
     }

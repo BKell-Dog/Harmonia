@@ -38,7 +38,7 @@ public class AppGridViewModel extends AndroidViewModel {
             public void onChanged(List<AppEntity> appEntities) {
                 homeScreenApps.clear();
                 drawerScreenApps.clear();
-                for (int i = 0; i < NUMOFAPPSONPAGE; i++)
+                for (int i = 0; i < NUMOFAPPSONPAGE && i < appEntities.size(); i++)
                     homeScreenApps.add(AppObject.Factory.toAppObject(application, appEntities.get(i)));
                 for (AppEntity a : appEntities)
                     drawerScreenApps.add(AppObject.Factory.toAppObject(application, a));

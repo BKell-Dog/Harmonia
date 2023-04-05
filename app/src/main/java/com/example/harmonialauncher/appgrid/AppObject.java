@@ -15,7 +15,7 @@ import java.util.List;
 public class AppObject implements Lockable {
     private String name, packageName;
     private Drawable image = null;
-    private int imageId;
+    private Integer imageId = null;
     private boolean locked = false;
 
     public AppObject(String packageName, String name, int imageId) {
@@ -63,7 +63,7 @@ public class AppObject implements Lockable {
         this.image = image;
     }
 
-    public int getImageId() {
+    public Integer getImageId() {
         return imageId;
     }
 

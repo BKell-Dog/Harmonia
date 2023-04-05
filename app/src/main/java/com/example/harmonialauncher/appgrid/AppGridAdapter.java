@@ -10,7 +10,6 @@ import android.content.ClipData;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.graphics.Color;
 import android.graphics.Point;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
@@ -27,7 +26,7 @@ import androidx.annotation.Nullable;
 import androidx.core.content.res.ResourcesCompat;
 import androidx.preference.PreferenceManager;
 
-import com.example.harmonialauncher.appgrid.Views.AppView;
+import com.example.harmonialauncher.appgrid.views.AppView;
 import com.example.harmonialauncher.preferences.PreferenceData;
 import com.example.harmonialauncher.gesture.SingleTapDetector;
 import com.example.harmonialauncher.R;

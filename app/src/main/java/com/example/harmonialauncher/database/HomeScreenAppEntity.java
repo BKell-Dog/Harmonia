@@ -16,19 +16,16 @@ public class HomeScreenAppEntity {
 
     @PrimaryKey
     @NonNull
+    @ColumnInfo(name="package_name")
+    public String packageName;
+
+    @NonNull
     @ColumnInfo(name="page_index")
     public Integer pageIndex;
 
-    public HomeScreenAppEntity(Integer pageIndex)
+    public HomeScreenAppEntity(@NonNull String packageName, @NonNull Integer pageIndex)
     {
+        this.packageName = packageName;
         this.pageIndex = pageIndex;
-    }
-
-    public Integer getPageIndex()
-    {return pageIndex;}
-
-    public void setPageIndex(int newIndex)
-    {
-        pageIndex = newIndex;
     }
 }
