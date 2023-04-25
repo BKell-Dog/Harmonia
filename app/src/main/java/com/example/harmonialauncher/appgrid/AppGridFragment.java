@@ -11,7 +11,6 @@ import android.content.SharedPreferences;
 import android.graphics.Point;
 import android.graphics.Rect;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -19,32 +18,41 @@ import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.core.view.GestureDetectorCompat;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.preference.PreferenceManager;
 
+import com.example.harmonialauncher.appgrid.viewmodels.AppGridViewModel;
 import com.example.harmonialauncher.appgrid.views.AppGridView;
 import com.example.harmonialauncher.Fragments.HarmoniaFragment;
 import com.example.harmonialauncher.Utils.HarmoniaGestureDetector;
+import com.example.harmonialauncher.database.LockEntity;
 import com.example.harmonialauncher.lock.LockStatusChangeListener;
 import com.example.harmonialauncher.R;
 import com.example.harmonialauncher.Utils.Util;
-import com.example.harmonialauncher.lock.LockManager;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class AppGridFragment extends HarmoniaFragment implements LockStatusChangeListener.LockStatusListener,
         SharedPreferences.OnSharedPreferenceChangeListener {
 
     private static final String TAG = AppGridFragment.class.getSimpleName();
     protected Context CONTEXT;
+
+    // View Models and Database
     protected AppGridViewModel vm;
+
     //Drawing Grid
     protected AppGridView gv;
     protected AppGridAdapter adapter;
     public static final int NUM_COLS = 4;
+
     //Gesture Detection
     protected GestureDetectorCompat gd;
-    protected ArrayList<AppObject> appList = new ArrayList<>();
+    protected ArrayList<AppObject> appList;
+    protected ArrayList<LockEntity> lockedList = new ArrayList<>();
+    protected ArrayList<String> lockedPacks = new ArrayList<>();
 
     public AppGridFragment(ArrayList<AppObject> apps) {
         super(R.id.app_page_grid);
@@ -55,14 +63,30 @@ public class AppGridFragment extends HarmoniaFragment implements LockStatusChang
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
         vm = new ViewModelProvider(requireActivity()).get(AppGridViewModel.class);
+
+        vm.getLockedList().observe(this, new Observer<List<LockEntity>>() {
+            @Override
+            public void onChanged(List<LockEntity> lockEntities) {
+                lockedList = new ArrayList<>(lockEntities);
+
+                lockedPacks.clear();
+                for (LockEntity l : lockedList)
+                    lockedPacks.add(l.appPackageName);
+
+                if (gv != null) {
+                    gv.getAdapter().setLockedPackages(lockedPacks);
+                    gv.setAdapter(adapter);
+                    gv.invalidate();
+                }
+            }
+        });
     }
 
+    //All subclasses should override this method if only to initialize their adapter in their own way.
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        CONTEXT = getActivity();
-
-        //All subclasses should override this method if only to initialize their adapter in their own way.
+        CONTEXT = requireContext();
 
         gd = new GestureDetectorCompat(getActivity(), new HarmoniaGestureDetector());
         HarmoniaGestureDetector.add(this);
@@ -77,6 +101,7 @@ public class AppGridFragment extends HarmoniaFragment implements LockStatusChang
 
         if (adapter == null)
             adapter = new AppGridAdapter(CONTEXT, R.id.app_page_grid, appList);
+        adapter.setLockedPackages(lockedPacks);
 
         // Populate Grid Layout in home_screen.xml with instances of app.xml
         gv = v.findViewById(R.id.app_page_grid);
@@ -101,11 +126,7 @@ public class AppGridFragment extends HarmoniaFragment implements LockStatusChang
                 if (bounds.contains((int) e.getX(), (int) e.getY())) {
                     AppGridAdapter a = gv.getAdapter();
                     AppObject app = a.getItem(i);
-                    Log.d(TAG, "Child at: " + i);
-                    Log.d(TAG, "View Rect: " + bounds);
-                    Log.d(TAG, "Tap Coords: (" + e.getX() + ", " + e.getY() + ")");
-                    Log.d(TAG, "TAP INTERSECTS " + app);
-                    if (app != null && !LockManager.isLocked(app.getPackageName())) {         //Check that app is not locked
+                    if (app != null && !lockedPacks.contains(app.getPackageName())) {         //Check that app is not locked
                         Util.openApp(this.CONTEXT, app.getPackageName());
                         return true;
                     }

@@ -11,6 +11,7 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.example.harmonialauncher.appgrid.viewmodels.AppGridViewModel;
 import com.example.harmonialauncher.database.AppEntity;
 import com.example.harmonialauncher.lock.LockStatusChangeListener;
 import com.example.harmonialauncher.R;
@@ -31,20 +32,17 @@ public class DrawerPageFragment extends AppGridFragment implements LockStatusCha
     public DrawerPageFragment(int pageNum, ArrayList<AppObject> appList) {
         super(appList);
         this.pageNum = pageNum;
-        Log.d(TAG, "DrawerPageFragment: ");
     }
 
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
-        Log.d(TAG, "onAttach: ");
         vm = new ViewModelProvider(requireActivity()).get(AppGridViewModel.class);
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Log.d(TAG, "onCreate: ");
 
         vm.getAppList().observe(this, new Observer<List<AppEntity>>() {
             @Override

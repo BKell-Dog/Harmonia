@@ -1,9 +1,7 @@
 package com.example.harmonialauncher.appgrid;
 
 import android.annotation.SuppressLint;
-import android.app.Application;
 import android.content.Context;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -17,6 +15,7 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.viewpager2.widget.ViewPager2;
 
 import com.example.harmonialauncher.Fragments.HarmoniaFragment;
+import com.example.harmonialauncher.appgrid.viewmodels.DrawerViewModel;
 import com.example.harmonialauncher.database.AppEntity;
 import com.example.harmonialauncher.gesture.FlingDetector;
 import com.example.harmonialauncher.gesture.FlingListener;

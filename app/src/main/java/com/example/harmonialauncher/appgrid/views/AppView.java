@@ -7,7 +7,9 @@ import android.graphics.Canvas;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -20,8 +22,14 @@ import androidx.core.content.res.ResourcesCompat;
 import com.example.harmonialauncher.appgrid.AppObject;
 import com.example.harmonialauncher.R;
 import com.example.harmonialauncher.Utils.Util;
+import com.example.harmonialauncher.lock.Lockable;
 
-public class AppView extends LinearLayout {  //in future: extends CellElement or CellView
+public class AppView extends LinearLayout implements Lockable {  //in future: extends CellElement or CellView
+    private static final String TAG = AppView.class.getSimpleName();
+
+    private boolean locked = false;
+    protected String packageName = null;
+
     public AppView(Context context) {
         super(context);
         setupAttributes();
@@ -57,6 +65,21 @@ public class AppView extends LinearLayout {  //in future: extends CellElement or
     public void onDraw(Canvas canvas)
     {
         super.onDraw(canvas);
+    }
+
+    public boolean onInterceptTouchEvent(MotionEvent event)
+    {
+        super.onInterceptTouchEvent(event);
+        return true;
+    }
+
+    @SuppressLint("ClickableViewAccessibility")
+    @Override
+    public boolean onTouchEvent(MotionEvent event)
+    {
+        if (!locked && packageName != null && event.getActionMasked() == MotionEvent.ACTION_UP && getContext() != null)
+            Util.openApp(getContext(), packageName);
+        return super.onTouchEvent(event);
     }
 
     public String getAppName()
@@ -128,6 +151,39 @@ public class AppView extends LinearLayout {  //in future: extends CellElement or
             }
         }
         return this;
+    }
+
+    public void update()
+    {
+        setImageDrawable(getImageDrawable());
+        setText(getText());
+    }
+
+    @Override
+    public void lock() {
+        locked = true;
+        update();
+    }
+
+    @Override
+    public void unlock() {
+        locked = false;
+        update();
+    }
+
+    @Override
+    public boolean isLocked() {
+        return locked;
+    }
+
+    public void setPackageName(String packageName)
+    {
+        this.packageName = packageName;
+    }
+
+    public String getPackageName()
+    {
+        return packageName;
     }
 
 

@@ -35,6 +35,8 @@
     <string name="select_media">Select Media to Lock</string>
     <string name="lock_app_picker_title">Select an App to Lock</string>
     <string name="sample_text">Sample Text</string>
+    <string name="set_lock_time">Set Lock Period</string>
+    <string name="ok">OK</string>
 
     <!-- App Icon -->
     <string name="app_icon_image">App Icon Image</string>

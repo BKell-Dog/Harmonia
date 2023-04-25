@@ -84,7 +84,6 @@ public class AppGridView extends GridView implements AppHolder, SharedPreference
                                 int originalIndex = getChildIndexByView(originalView);
                                 swap(originalIndex, i);
                                 nextSwap = TimeHelper.now() + SWAP_TIMEOUT;
-                                Log.d(TAG, "onDragEvent: " + originalView.getText());
                                 child.setVisibility(View.INVISIBLE);
                                 originalView.setVisibility(View.VISIBLE);
                                 Log.d(TAG, "onDragEvent: SWAP LEFT " + originalIndex + " -- " + i);

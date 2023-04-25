@@ -36,12 +36,15 @@ import com.example.harmonialauncher.lock.LockManager;
 import java.util.ArrayList;
 import java.util.Collections;
 
+import javax.security.auth.login.LoginException;
+
 public class AppGridAdapter extends ArrayAdapter<AppObject> implements AppHolder {
 
     private final static String TAG = AppGridAdapter.class.getSimpleName();
     private int lockMode = LOCK_MODE_GREYSCALE; //Change this variable to change disappearance mode
     public static final int COLS = 4, ROWS = 5;
     protected ArrayList<AppObject> apps;
+    protected ArrayList<String> lockedPacks = new ArrayList<>();
     protected Context CONTEXT;
     protected int layout_id;
 
@@ -116,15 +119,16 @@ public class AppGridAdapter extends ArrayAdapter<AppObject> implements AppHolder
         if (gridHeight == 0 || gridWidth == 0)
             setDimensions(parent.getWidth(), parent.getHeight());
 
-        View gridItemView = convertView;
-        if (gridItemView == null) {
+        LayoutInflater inflater = (LayoutInflater) CONTEXT.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        if (convertView == null) {
             // Layout Inflater inflates each item to be displayed in GridView.
-            LayoutInflater inflater = (LayoutInflater) CONTEXT.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            gridItemView = inflater.inflate(R.layout.app, null);
+            convertView = inflater.inflate(R.layout.app, null);
         }
 
         AppObject app = apps.get(position);
-        AppView appView = gridItemView.findViewById(R.id.app_layout);
+        if (app == null)
+            return inflater.inflate(R.layout.app, null);
+        AppView appView = convertView.findViewById(R.id.app_layout);
 
         appView.setText(app.getName());
         Drawable image = app.getImage();
@@ -134,7 +138,8 @@ public class AppGridAdapter extends ArrayAdapter<AppObject> implements AppHolder
                 try {
                     image = CONTEXT.getPackageManager().getApplicationIcon(app.getPackageName());
                 } catch (PackageManager.NameNotFoundException e) {
-                    throw new RuntimeException(e);
+                    Log.e(TAG, "Invalid Package Name");
+                    e.printStackTrace();
                 }
             }
             else {
@@ -145,6 +150,9 @@ public class AppGridAdapter extends ArrayAdapter<AppObject> implements AppHolder
                     image = ResourcesCompat.getDrawable(CONTEXT.getResources(), R.drawable.error_icon, null);
             }
         }
+        appView.setPackageName(app.getPackageName());
+        if (app.isLocked())
+            appView.lock();
 
         //Resize icon to fit within the GridView area
         appView.setIconLayoutParams(new LinearLayout.LayoutParams(elementWidth - horizontalBuffer, elementHeight - verticalBuffer));
@@ -157,7 +165,8 @@ public class AppGridAdapter extends ArrayAdapter<AppObject> implements AppHolder
             appView.setImageDrawable(image);
 
             //Make app invisible or greyscale if it is meant to be locked
-            if (position == dragInvisibleIndex || app.isLocked() || LockManager.isLocked(app.getPackageName())) {
+            if (position == dragInvisibleIndex || app.isLocked() || lockedPacks.contains(app.getPackageName())) {
+                Log.d(TAG, "getView: APP IS LOCKED: " + app.getPackageName());
                 if (lockMode == LOCK_MODE_INVISIBLE || dragInvisibleIndex != -1)
                     appView.setVisibility(View.INVISIBLE);
                 else if (lockMode == LOCK_MODE_GREYSCALE)
@@ -172,30 +181,10 @@ public class AppGridAdapter extends ArrayAdapter<AppObject> implements AppHolder
             appView.setImageDrawable(Util.convertToGreyscale(image));
 
             //Make app invisible if it is meant to be locked, not greyscale (since we are already in greyscale)
-            if (position == dragInvisibleIndex || app.isLocked() || LockManager.isLocked(app.getPackageName())) {
+            if (position == dragInvisibleIndex || app.isLocked() || lockedPacks.contains(app.getPackageName())) {
                 appView.setImageDrawable(ResourcesCompat.getDrawable(getContext().getResources(), R.drawable.lock_icon, null));
             }
         }
-
-        appView.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View view, MotionEvent event) {
-                if (std.onTouch(null, event)) {
-                    //Isolate app package name
-                    AppObject app = Util.findAppByName(apps, appView.getText());
-                    if (app != null) {
-                        String appPackageName = app.getPackageName();
-
-                        //Start app
-                        Util.openApp(CONTEXT, appPackageName);
-                        return true;
-                    }
-                    else
-                        Log.e(TAG, "onTouch: App Is NULL");
-                }
-                return false;
-            }
-        });
 
         appView.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
@@ -240,10 +229,15 @@ public class AppGridAdapter extends ArrayAdapter<AppObject> implements AppHolder
     }
 
     public void setLockMode(int lockMode) {
-        if (lockMode == PreferenceData.LOCK_MODE_INVISIBLE || lockMode == PreferenceData.LOCK_MODE_INVISIBLE)
+        if (lockMode == PreferenceData.LOCK_MODE_INVISIBLE || lockMode == LOCK_MODE_GREYSCALE)
             this.lockMode = lockMode;
         else
-            Log.d(TAG, "Mode out of bounds!");
+            Log.e(TAG, "Mode out of bounds!");
+    }
+
+    public void setLockedPackages(ArrayList<String> lockedPackages)
+    {
+        this.lockedPacks = lockedPackages;
     }
 
     public void setStyle(int newStyle)

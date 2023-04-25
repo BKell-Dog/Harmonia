@@ -105,7 +105,7 @@ public class Util {
         ArrayList<AppObject> removeApps = new ArrayList<AppObject>();
         for (AppObject app : apps)
             if (pm.getLaunchIntentForPackage(app.getPackageName()) == null
-                || app.getPackageName() == null || app.getImageId() == null)
+                || app.getPackageName() == null)
                 removeApps.add(app);
         apps.removeAll(removeApps);
 
@@ -224,14 +224,6 @@ public class Util {
             if (a.getPackageName().equalsIgnoreCase(packageName))
                 return a;
         return null;
-    }
-
-    public static AppObject findAppByPackageName(String packageName, Fragment f) {
-        return findAppByPackageName(packageName, f.getActivity());
-    }
-
-    public static AppObject findAppByPackageName(String packageName, Activity a) {
-        return findAppByPackageName(packageName, a);
     }
 
     public static AppObject findAppByName(List<AppObject> appList, String name) {

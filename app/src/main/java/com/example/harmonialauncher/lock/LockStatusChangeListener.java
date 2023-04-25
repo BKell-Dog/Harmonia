@@ -14,7 +14,7 @@ public class LockStatusChangeListener {
         listeners.remove(l);
     }
 
-    public static void onStatusChanged() {
+    public static void onLockStatusChanged() {
         for (LockStatusListener l : listeners)
             l.onStatusChanged();
     }

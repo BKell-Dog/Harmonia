@@ -1,5 +1,6 @@
 package com.example.harmonialauncher.Fragments;
 
+import android.content.Context;
 import android.view.MotionEvent;
 
 import androidx.fragment.app.Fragment;
@@ -9,11 +10,23 @@ import com.example.harmonialauncher.lock.Lockable;
 
 public abstract class HarmoniaFragment extends Fragment implements Lockable, Gesturable {
 
+    protected boolean attached = false;
     protected boolean locked = false;
     protected boolean onScreen = false;
 
     public HarmoniaFragment(int resource) {
         super(resource);
+    }
+
+
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        attached = true;
+    }
+
+    public void onDetach() {
+        super.onDetach();
+        attached = false;
     }
 
     public void lock() {

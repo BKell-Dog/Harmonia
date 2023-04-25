@@ -1,13 +1,11 @@
 package com.example.harmonialauncher.appgrid;
 
-import android.util.Log;
-
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 
 import com.example.harmonialauncher.Adapters.PageAdapter;
-import com.example.harmonialauncher.Utils.Util;
+import com.example.harmonialauncher.appgrid.viewmodels.AppGridViewModel;
 
 import java.util.ArrayList;
 
@@ -16,7 +14,7 @@ public class DrawerPageAdapter extends PageAdapter {
     private ArrayList<AppObject> appList;
 
     public DrawerPageAdapter(@NonNull FragmentActivity fragmentActivity, @NonNull ArrayList<AppObject> appList) {
-        super(fragmentActivity, (int) Math.ceil(((double)appList.size()) / ((double)AppGridViewModel.NUMOFAPPSONPAGE)));
+        super(fragmentActivity, (int) Math.ceil(((double)appList.size()) / ((double) AppGridViewModel.NUMOFAPPSONPAGE)));
         this.appList = appList;
     }
 

@@ -46,12 +46,6 @@ public class AppGridActivity extends HarmoniaActivity implements FlingListener, 
     private WallpaperView wallpaper;
     private float blurRadius = 70;
 
-    /*@ReportsCrashes(formKey = "", // will not be used
-            mailTo = "bkelldog59@gmail.com",
-            mode = ReportingInteractionMode.SILENT,
-            resToastText = R.string.crash_toast_text)
-*/
-
     @SuppressLint({"MissingInflatedId"})
     protected void onCreate(Bundle savedInstanceState) {
         //Initialize splash screen to show before activity begins calculations, and to disappear once

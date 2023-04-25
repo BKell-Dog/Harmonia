@@ -72,7 +72,7 @@ public class LockManager {
         else
             if (inMap(obj))
                 locked.put(obj.getClass(), time.getAbsoluteTime());
-        LockStatusChangeListener.onStatusChanged();
+        LockStatusChangeListener.onLockStatusChanged();
     }
     public static void lock(String packageName, TimeHelper time)
     {
@@ -83,7 +83,7 @@ public class LockManager {
             if (nearestTime > time.getAbsoluteTime())
                 nearestTime = time.getAbsoluteTime();
 
-            LockStatusChangeListener.onStatusChanged();
+            LockStatusChangeListener.onLockStatusChanged();
         }
     }
     //TODO: locked packages are not synced with corresponding Lockable App Objects. Must fix.
@@ -99,14 +99,14 @@ public class LockManager {
         obj.unlock();
         locked.remove(obj.getClass());
 
-        LockStatusChangeListener.onStatusChanged();
+        LockStatusChangeListener.onLockStatusChanged();
     }
 
     public static void unlock(String packageName) {
         if (inMap(packageName))
             lockedPacks.remove(packageName);
 
-        LockStatusChangeListener.onStatusChanged();
+        LockStatusChangeListener.onLockStatusChanged();
     }
 
     public static void unlock(Intent i) {

@@ -1,18 +1,10 @@
-package com.example.harmonialauncher.appgrid;
+package com.example.harmonialauncher.appgrid.viewmodels;
 
 import android.app.Application;
-import android.util.Log;
 
 import androidx.annotation.NonNull;
-import androidx.lifecycle.AndroidViewModel;
-import androidx.lifecycle.LiveData;
 import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
-
-import com.example.harmonialauncher.database.AppEntity;
-import com.example.harmonialauncher.database.AppRepository;
-
-import java.util.List;
 
 public class DrawerViewModel extends AppGridViewModel {
     private static final String TAG = DrawerViewModel.class.getSimpleName();

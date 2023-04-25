@@ -5,10 +5,12 @@ import android.content.Context;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowInsets;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -29,6 +31,7 @@ import com.example.harmonialauncher.Helpers.TimeHelper;
 import com.example.harmonialauncher.R;
 import com.example.harmonialauncher.Utils.Util;
 import com.example.harmonialauncher.database.AppEntity;
+import com.example.harmonialauncher.database.LockEntity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -42,7 +45,9 @@ public class LockActivity extends HarmoniaActivity {
     private static final String TAG = LockActivity.class.getSimpleName();
     private Context CONTEXT;
     private LockActivityViewModel vm;
-    private ArrayList<AppObject> appList = new ArrayList<>();
+    private Handler handler;
+    private Runnable run;
+    private final ArrayList<AppObject> appList = new ArrayList<>();
     private final String[] fragmentTags = new String[] {"Lock Media Picker", "Lock App Picker", "Lock Website Picker"};
 
     @Override
@@ -50,6 +55,22 @@ public class LockActivity extends HarmoniaActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.lock_activity);
         CONTEXT = this;
+
+        //Set window to show behind status bar (on top) and navigation bar (on bottom w/ three buttons)
+        WindowCompat.setDecorFitsSystemWindows(getWindow(), false);
+        WindowInsets insets = null;
+        int navigationBarHeight = 0, statusBarHeight = 0;
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.R) {
+            insets = getWindowManager().getCurrentWindowMetrics().getWindowInsets();
+            statusBarHeight = insets.getInsets(WindowInsetsCompat.Type.statusBars()).top; //in pixels
+            navigationBarHeight = insets.getInsets(WindowInsetsCompat.Type.navigationBars()).bottom; //in pixels
+        } else {
+            navigationBarHeight = 150;
+            statusBarHeight = 120;
+        }
+
+        FrameLayout frame = findViewById(R.id.lock_activity_frame_layout);
+        frame.setPadding(0, statusBarHeight, 0, navigationBarHeight);
 
         getSupportFragmentManager().beginTransaction()
                 .add(R.id.lock_activity_frame_layout, LockMediaPicker.class, null, fragmentTags[0])
@@ -69,6 +90,18 @@ public class LockActivity extends HarmoniaActivity {
                     lap.setAppList(appList);
             }
         });
+
+        // Set a recurring task to update the locked_table database.
+        handler = new Handler();
+        run = new Runnable() {
+            @Override
+            public void run() {
+                if (vm.update())
+                    LockStatusChangeListener.onLockStatusChanged();
+                handler.postDelayed(this, 20000); // Repeat every 30 seconds (30,000 ms).
+            }
+        };
+        handler.post(run);
     }
 
     public void moveToAppPicker()
@@ -86,6 +119,6 @@ public class LockActivity extends HarmoniaActivity {
 
     public void onDestroy() {
         super.onDestroy();
-        LockStatusChangeListener.onStatusChanged();
+        handler.removeCallbacks(run);
     }
 }

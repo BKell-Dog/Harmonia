@@ -2,15 +2,22 @@ package com.example.harmonialauncher.appgrid;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
+import androidx.lifecycle.LiveData;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.example.harmonialauncher.Utils.Util;
+import com.example.harmonialauncher.appgrid.viewmodels.AppGridViewModel;
+import com.example.harmonialauncher.appgrid.viewmodels.HomeScreenViewModel;
 import com.example.harmonialauncher.database.AppEntity;
+import com.example.harmonialauncher.database.HomeScreenAppEntity;
 import com.example.harmonialauncher.lock.LockStatusChangeListener;
 import com.example.harmonialauncher.R;
 
@@ -25,7 +32,8 @@ pressing of buttons and opening of apps. This screen is the home screen and laun
 
 public class HomeScreenFragment extends AppGridFragment implements LockStatusChangeListener.LockStatusListener {
     private final static String TAG = HomeScreenFragment.class.getSimpleName();
-    private AppGridViewModel vm;
+    private HomeScreenViewModel vm;
+    private LiveData<List<HomeScreenAppEntity>> mHSApps;
 
     public HomeScreenFragment() {
         super(new ArrayList<>());
@@ -34,27 +42,51 @@ public class HomeScreenFragment extends AppGridFragment implements LockStatusCha
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
-        vm = new ViewModelProvider(requireActivity()).get(AppGridViewModel.class);
+        vm = new ViewModelProvider(requireActivity()).get(HomeScreenViewModel.class);
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        appList = vm.getHomeScreenApps();
-        adapter = new AppGridAdapter(CONTEXT, R.layout.app, appList);
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View v = super.onCreateView(inflater, container, savedInstanceState);
-        vm.getAppList().observe(getViewLifecycleOwner(), new Observer<List<AppEntity>>() {
+
+        if (savedInstanceState == null) {
+            ArrayList<AppObject> hsApps = Util.loadFirstFifteenApps(requireContext());
+            ArrayList<HomeScreenAppEntity> hsEntities = new ArrayList<>();
+            for (int i = 0; i < hsApps.size() && i < 15; i++)
+                hsEntities.add(new HomeScreenAppEntity(hsApps.get(i).getPackageName(), i));
+            vm.overwriteValues(hsEntities);
+        }
+
+        final Fragment frag = this;
+        mHSApps = vm.getHomeScreenApps();
+        mHSApps.observe(getViewLifecycleOwner(), new Observer<List<HomeScreenAppEntity>>() {
             @Override
-            public void onChanged(List<AppEntity> appEntities) {
-                appList = vm.getHomeScreenApps();
-                adapter = new AppGridAdapter(CONTEXT, R.layout.app, appList);
+            public void onChanged(List<HomeScreenAppEntity> homeScreenAppEntities) {
+                appList.clear();
+                for (HomeScreenAppEntity hsae : homeScreenAppEntities) {
+                    appList.add(Util.findAppByPackageName(Util.loadAllApps(frag), hsae.packageName));
+                }
+                adapter = new AppGridAdapter(frag.requireContext(), R.layout.app, appList);
+                adapter.setLockedPackages(lockedPacks);
                 gv.setAdapter(adapter);
+                gv.invalidate();
             }
         });
+
         return v;
+    }
+
+    public void onDestroy()
+    {
+        super.onDestroy();
+        appList = adapter.getAppList();
+        if (appList.size() > AppGridViewModel.NUMOFAPPSONPAGE)
+            appList = new ArrayList<>(appList.subList(0, AppGridViewModel.NUMOFAPPSONPAGE));
+        vm.overwriteValues(HomeScreenAppEntity.toHSAE(appList));
     }
 }

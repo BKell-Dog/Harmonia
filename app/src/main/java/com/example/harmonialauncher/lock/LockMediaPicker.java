@@ -14,12 +14,9 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.cardview.widget.CardView;
 
 import com.example.harmonialauncher.Fragments.HarmoniaFragment;
 import com.example.harmonialauncher.R;
-import com.example.harmonialauncher.appgrid.AppGridAdapter;
-import com.example.harmonialauncher.appgrid.AppGridViewModel;
 
 import java.util.List;
 

@@ -30,6 +30,7 @@ import com.example.harmonialauncher.R;
 import com.example.harmonialauncher.Utils.Util;
 import com.example.harmonialauncher.appgrid.AppObject;
 import com.example.harmonialauncher.database.AppEntity;
+import com.example.harmonialauncher.database.LockEntity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -48,6 +49,7 @@ public class LockAppPicker extends HarmoniaFragment implements LockStatusChangeL
 
     private LockActivityViewModel vm;
     private ArrayList<AppObject> appList = new ArrayList<>();
+    private ArrayList<LockEntity> lockedList = new ArrayList<>();
     private LinearLayout ll;
 
     public LockAppPicker(int resource, ArrayList<AppObject> apps) {
@@ -69,6 +71,17 @@ public class LockAppPicker extends HarmoniaFragment implements LockStatusChangeL
                 appList.clear();
                 for (AppEntity a : appEntities)
                     appList.add(AppObject.Factory.toAppObject(requireContext(), a));
+            }
+        });
+
+        vm.getLockedList().observe(this, new Observer<List<LockEntity>>() {
+            @Override
+            public void onChanged(List<LockEntity> lockEntities) {
+                lockedList.clear();
+                for (LockEntity l : lockEntities)
+                    if (!l.appPackageName.equalsIgnoreCase(""))
+                        lockedList.add(l);
+                populateLinearLayout(ll);
             }
         });
 
@@ -110,6 +123,7 @@ public class LockAppPicker extends HarmoniaFragment implements LockStatusChangeL
         ll.addView(title);
 
         //Populate LinearLayout with items
+        vm.update();
         for (AppObject a : appList) {
             View v = createListItem(a);
             ll.addView(v);
@@ -151,12 +165,13 @@ public class LockAppPicker extends HarmoniaFragment implements LockStatusChangeL
         icon.setImageDrawable(image);
         icon.setLayoutParams(new RelativeLayout.LayoutParams(Util.getRealScreenSize(requireContext()).x / 4, Util.getRealScreenSize(requireContext()).x / 4));
 
-        if (LockManager.isLocked(a)) {
-            timer.setText(LockManager.getTimeRemaining(a.getPackageName()).getTimeFormatted(TimeHelper.HHMM));
-            icon.setImageDrawable(Util.convertToGreyscale(image));
-        }
-        else
-            timer.setText("00:00");
+        timer.setText("");//"00:00");
+        for (LockEntity l : lockedList)
+            if (l.appPackageName.equalsIgnoreCase(a.getPackageName())) {
+                TimeHelper time = new TimeHelper(l.lockedUntil, TimeHelper.INPUT_ABSOLUTE);
+                timer.setText(time.getTimeFormatted(TimeHelper.HHMM));
+                icon.setImageDrawable(Util.convertToGreyscale(image));
+            }
 
         v.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -165,23 +180,23 @@ public class LockAppPicker extends HarmoniaFragment implements LockStatusChangeL
 
                 // Create NumberPicker popup
                 if (app != null) {
-                    Dialog d = new LockTimeDialog(requireContext(), new LockMedia(app, requireContext()));
-                    d.show();
+                    LockTimeDialog d = new LockTimeDialog(R.layout.time_picker, new LockMedia(app, requireContext()));
+                    d.show(getChildFragmentManager(), TAG);
                 }
             }
         });
         return v;
     }
 
-    public void setAppList(ArrayList<AppObject> apps)
-    {
+    public void setAppList(ArrayList<AppObject> apps) {
         appList = apps;
         populateLinearLayout(ll);
     }
 
     @Override
     public void onStatusChanged() {
-        populateLinearLayout(ll);
+        if (attached && getActivity() != null) // When this fragment is attached to a context, it runs populateLinearLayout. This causes an error because it requires an ACTIVITY, not merely a context.
+            populateLinearLayout(ll);
     }
 }
 
