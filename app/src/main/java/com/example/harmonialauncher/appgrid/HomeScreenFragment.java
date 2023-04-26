@@ -35,10 +35,6 @@ public class HomeScreenFragment extends AppGridFragment implements LockStatusCha
     private HomeScreenViewModel vm;
     private LiveData<List<HomeScreenAppEntity>> mHSApps;
 
-    public HomeScreenFragment() {
-        super(new ArrayList<>());
-    }
-
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
@@ -55,10 +51,7 @@ public class HomeScreenFragment extends AppGridFragment implements LockStatusCha
         View v = super.onCreateView(inflater, container, savedInstanceState);
 
         if (savedInstanceState == null) {
-            ArrayList<AppObject> hsApps = Util.loadFirstFifteenApps(requireContext());
-            ArrayList<HomeScreenAppEntity> hsEntities = new ArrayList<>();
-            for (int i = 0; i < hsApps.size() && i < 15; i++)
-                hsEntities.add(new HomeScreenAppEntity(hsApps.get(i).getPackageName(), i));
+            ArrayList<HomeScreenAppEntity> hsEntities = HomeScreenAppEntity.toHSAE(Util.loadFirstFifteenApps(requireContext()));
             vm.overwriteValues(hsEntities);
         }
 
@@ -68,8 +61,9 @@ public class HomeScreenFragment extends AppGridFragment implements LockStatusCha
             @Override
             public void onChanged(List<HomeScreenAppEntity> homeScreenAppEntities) {
                 appList.clear();
+                ArrayList<AppObject> allApps = Util.loadAllApps(frag);
                 for (HomeScreenAppEntity hsae : homeScreenAppEntities) {
-                    appList.add(Util.findAppByPackageName(Util.loadAllApps(frag), hsae.packageName));
+                    appList.add(Util.findAppByPackageName(allApps, hsae.packageName));
                 }
                 adapter = new AppGridAdapter(frag.requireContext(), R.layout.app, appList);
                 adapter.setLockedPackages(lockedPacks);

@@ -13,9 +13,11 @@ import com.example.harmonialauncher.appgrid.viewmodels.AppGridViewModel;
 import java.util.ArrayList;
 import java.util.List;
 
-@Entity(tableName = "home_screen_apps", primaryKeys = {"package_name", "page_index"},
-        indices = {@Index(value = {"package_name", "page_index"}, unique = true)})
+@Entity(tableName = "home_screen_apps")
 public class HomeScreenAppEntity {
+
+    @PrimaryKey(autoGenerate = true)
+    public int id;
 
     @NonNull
     @ColumnInfo(name="package_name")

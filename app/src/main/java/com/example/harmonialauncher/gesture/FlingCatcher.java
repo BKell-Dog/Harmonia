@@ -1,5 +1,6 @@
 package com.example.harmonialauncher.gesture;
 
+import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.os.Build;
@@ -67,6 +68,12 @@ public class FlingCatcher extends ConstraintLayout {
             }
         }
         return super.dispatchTouchEvent(event);
+    }
+
+    @SuppressLint("ClickableViewAccessibility")
+    public boolean onTouchEvent(MotionEvent event)
+    {
+        return true;
     }
 
     public void setCallback(FlingListener ma) {

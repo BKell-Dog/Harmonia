@@ -1,6 +1,7 @@
 package com.example.harmonialauncher.appgrid;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -8,10 +9,12 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.example.harmonialauncher.appgrid.viewmodels.AppGridViewModel;
+import com.example.harmonialauncher.appgrid.viewmodels.DrawerViewModel;
 import com.example.harmonialauncher.database.AppEntity;
 import com.example.harmonialauncher.lock.LockStatusChangeListener;
 import com.example.harmonialauncher.R;
@@ -26,39 +29,23 @@ import java.util.List;
 // When an app element is held down, options appear and the app may move to where the finger decides.
 public class DrawerPageFragment extends AppGridFragment implements LockStatusChangeListener.LockStatusListener {
     private static final String TAG = DrawerPageFragment.class.getSimpleName();
-    private AppGridViewModel vm;
+    private DrawerViewModel vm;
     private int pageNum;
 
-    public DrawerPageFragment(int pageNum, ArrayList<AppObject> appList) {
-        super(appList);
+    public DrawerPageFragment(int pageNum) {
         this.pageNum = pageNum;
+        Log.d(TAG, "DrawerPageFragment: " + pageNum);
     }
 
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
-        vm = new ViewModelProvider(requireActivity()).get(AppGridViewModel.class);
+        vm = new ViewModelProvider(requireActivity()).get(DrawerViewModel.class);
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        vm.getAppList().observe(this, new Observer<List<AppEntity>>() {
-            @Override
-            public void onChanged(List<AppEntity> appEntities) {
-                appList = vm.getDrawerScreenApps(pageNum);
-                Log.d(TAG, "onChanged: DRAWER CHANGED");
-
-                adapter = new AppGridAdapter(CONTEXT, R.id.app_page_grid, appList);
-                gv.setAdapter(adapter);
-            }
-        });
-
-        Log.d(TAG, "onCreate: DRAWER SET 1");
-        appList = vm.getDrawerScreenApps(pageNum);
-        adapter = new AppGridAdapter(CONTEXT, R.id.app_page_grid, appList);
-        gv.setAdapter(adapter);
     }
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -66,14 +53,14 @@ public class DrawerPageFragment extends AppGridFragment implements LockStatusCha
         vm.getAppList().observe(getViewLifecycleOwner(), new Observer<List<AppEntity>>() {
             @Override
             public void onChanged(List<AppEntity> appEntities) {
-                Log.d(TAG, "onChanged: DRAWER OBSERVED 2");
-                appList = vm.getDrawerScreenApps(pageNum);
+                appList = AppObject.Factory.toAppObjects(CONTEXT, appEntities);
+                appList = DrawerViewModel.getDrawerScreenApps(appList, pageNum);
                 adapter = new AppGridAdapter(CONTEXT, R.layout.app, appList);
                 gv.setAdapter(adapter);
             }
         });
-        Log.d(TAG, "onCreateView: DRAWER SET 2");
-        appList = vm.getDrawerScreenApps(pageNum);
+
+        appList = DrawerViewModel.getDrawerScreenApps(appList, pageNum);
         adapter = new AppGridAdapter(CONTEXT, R.layout.app, appList);
         gv.setAdapter(adapter);
         return v;

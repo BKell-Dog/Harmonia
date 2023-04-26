@@ -26,6 +26,7 @@ import com.example.harmonialauncher.appgrid.viewmodels.AppGridViewModel;
 import com.example.harmonialauncher.appgrid.views.AppGridView;
 import com.example.harmonialauncher.Fragments.HarmoniaFragment;
 import com.example.harmonialauncher.Utils.HarmoniaGestureDetector;
+import com.example.harmonialauncher.database.AppEntity;
 import com.example.harmonialauncher.database.LockEntity;
 import com.example.harmonialauncher.lock.LockStatusChangeListener;
 import com.example.harmonialauncher.R;
@@ -49,20 +50,25 @@ public class AppGridFragment extends HarmoniaFragment implements LockStatusChang
     public static final int NUM_COLS = 4;
 
     //Gesture Detection
-    protected GestureDetectorCompat gd;
-    protected ArrayList<AppObject> appList;
+    protected ArrayList<AppObject> appList = new ArrayList<>();
     protected ArrayList<LockEntity> lockedList = new ArrayList<>();
     protected ArrayList<String> lockedPacks = new ArrayList<>();
 
-    public AppGridFragment(ArrayList<AppObject> apps) {
+    public AppGridFragment() {
         super(R.id.app_page_grid);
-        appList = apps;
     }
 
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
         vm = new ViewModelProvider(requireActivity()).get(AppGridViewModel.class);
+
+        vm.getAppList().observe(this, new Observer<List<AppEntity>>() {
+            @Override
+            public void onChanged(List<AppEntity> appEntities) {
+                appList = AppObject.Factory.toAppObjects(requireContext(), appEntities);
+            }
+        });
 
         vm.getLockedList().observe(this, new Observer<List<LockEntity>>() {
             @Override
@@ -86,9 +92,12 @@ public class AppGridFragment extends HarmoniaFragment implements LockStatusChang
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        if (savedInstanceState == null)
+            vm.initializeApps();
+
         CONTEXT = requireContext();
 
-        gd = new GestureDetectorCompat(getActivity(), new HarmoniaGestureDetector());
         HarmoniaGestureDetector.add(this);
         LockStatusChangeListener.add(this);
         PreferenceManager.getDefaultSharedPreferences(CONTEXT).registerOnSharedPreferenceChangeListener(this);
@@ -112,7 +121,7 @@ public class AppGridFragment extends HarmoniaFragment implements LockStatusChang
         return v;
     }
 
-    @Override
+    /*@Override
     public boolean onSingleTapConfirmed(MotionEvent e) {
         //Check if view is created
         if (gv == null || !onScreen)
@@ -134,7 +143,7 @@ public class AppGridFragment extends HarmoniaFragment implements LockStatusChang
             }
         }
         return false;
-    }
+    }*/
 
     @Override
     public void onStatusChanged() {

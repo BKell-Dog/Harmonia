@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.util.AttributeSet;
@@ -22,6 +23,7 @@ import androidx.core.content.res.ResourcesCompat;
 import com.example.harmonialauncher.appgrid.AppObject;
 import com.example.harmonialauncher.R;
 import com.example.harmonialauncher.Utils.Util;
+import com.example.harmonialauncher.gesture.SingleTapDetector;
 import com.example.harmonialauncher.lock.Lockable;
 
 public class AppView extends LinearLayout implements Lockable {  //in future: extends CellElement or CellView
@@ -30,9 +32,13 @@ public class AppView extends LinearLayout implements Lockable {  //in future: ex
     private boolean locked = false;
     protected String packageName = null;
 
+    private SingleTapDetector std;
+
     public AppView(Context context) {
         super(context);
         setupAttributes();
+
+        std = new SingleTapDetector(context);
     }
 
     public AppView(Context context, @Nullable AttributeSet attrs) {
@@ -51,8 +57,7 @@ public class AppView extends LinearLayout implements Lockable {  //in future: ex
         setupAttributes();
     }
 
-    private void setupAttributes()
-    {
+    private void setupAttributes() {
         setId(R.id.app_layout);
         setTag("app_layout");
         setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
@@ -62,99 +67,80 @@ public class AppView extends LinearLayout implements Lockable {  //in future: ex
         setWeightSum(100f);
     }
 
-    public void onDraw(Canvas canvas)
-    {
+    public void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-    }
-
-    public boolean onInterceptTouchEvent(MotionEvent event)
-    {
-        super.onInterceptTouchEvent(event);
-        return true;
     }
 
     @SuppressLint("ClickableViewAccessibility")
     @Override
-    public boolean onTouchEvent(MotionEvent event)
-    {
-        if (!locked && packageName != null && event.getActionMasked() == MotionEvent.ACTION_UP && getContext() != null)
+    public boolean onTouchEvent(MotionEvent event) {
+        //boolean singleTap = std.onTouch(null, event);
+        if (/*singleTap && */!locked && packageName != null && event.getActionMasked() == MotionEvent.ACTION_UP && getContext() != null)
             Util.openApp(getContext(), packageName);
-        return super.onTouchEvent(event);
+        return true;
     }
 
-    public String getAppName()
-    {
-        TextView text = (TextView) ( (LinearLayout)getChildAt(1) ).getChildAt(0);
+    public String getAppName() {
+        TextView text = (TextView) ((LinearLayout) getChildAt(1)).getChildAt(0);
         return text.getText().toString();
     }
 
-    public Drawable getImageDrawable()
-    {
+    public Drawable getImageDrawable() {
         return getImageView().getDrawable();
     }
 
-    public ImageView getImageView()
-    {
-        return (ImageView) ( (LinearLayout)getChildAt(0) ).getChildAt(0);
+    public ImageView getImageView() {
+        return (ImageView) ((LinearLayout) getChildAt(0)).getChildAt(0);
     }
 
-    public String getText()
-    {
+    public String getText() {
         return getTextView().getText().toString();
     }
 
-    public TextView getTextView()
-    {
-        return (TextView) ( (LinearLayout)getChildAt(1) ).getChildAt(0);
+    public TextView getTextView() {
+        return (TextView) ((LinearLayout) getChildAt(1)).getChildAt(0);
     }
 
-    public View getView()
-    {return this;}
+    public View getView() {
+        return this;
+    }
 
-    public void setIconLayoutParams(LinearLayout.LayoutParams params)
-    {
+    public void setIconLayoutParams(LinearLayout.LayoutParams params) {
         getImageView().setLayoutParams(params);
     }
 
-    public void setImageDrawable(Drawable d)
-    {
+    public void setImageDrawable(Drawable d) {
         ImageView image = getImageView();
         image.setImageDrawable(d);
     }
 
-    public void setImageViewDimens(int width, int height)
-    {
+    public void setImageViewDimens(int width, int height) {
         setIconLayoutParams(new LinearLayout.LayoutParams(width, height));
     }
 
-    public void setText(String t)
-    {
+    public void setText(String t) {
         TextView text = getTextView();
         text.setText(t);
     }
 
-    public void setTextLayoutParams(LinearLayout.LayoutParams params)
-    {
+    public void setTextLayoutParams(LinearLayout.LayoutParams params) {
         getTextView().setLayoutParams(params);
     }
 
-    public View remake()
-    {
+    public View remake() {
         removeAllViews();
         LayoutInflater inflater = LayoutInflater.from(getContext());
         View v = inflater.inflate(R.layout.app, (ViewGroup) getRootView());
         if (v instanceof ViewGroup) {
             ViewGroup view = (ViewGroup) v;
-            for (int i = 0; i < view.getChildCount(); i++)
-            {
+            for (int i = 0; i < view.getChildCount(); i++) {
                 addView(view.getChildAt(i));
             }
         }
         return this;
     }
 
-    public void update()
-    {
+    public void update() {
         setImageDrawable(getImageDrawable());
         setText(getText());
     }
@@ -176,13 +162,11 @@ public class AppView extends LinearLayout implements Lockable {  //in future: ex
         return locked;
     }
 
-    public void setPackageName(String packageName)
-    {
+    public void setPackageName(String packageName) {
         this.packageName = packageName;
     }
 
-    public String getPackageName()
-    {
+    public String getPackageName() {
         return packageName;
     }
 

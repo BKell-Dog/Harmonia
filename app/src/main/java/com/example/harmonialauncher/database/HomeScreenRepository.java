@@ -31,14 +31,15 @@ public class HomeScreenRepository {
         return mAppList;
     }
 
-    public void deleteAll()
-    {
+    public void deleteAll() {
+        Log.d(TAG, "Delete All from Home Screen DB");
         AppDatabase.databaseWriteExecutor.execute(() -> {
             mHSDao.deleteAll();
         });
     }
 
     public void upsert(HomeScreenAppEntity appEntity) {
+        Log.d(TAG, "Upsert Home Screen DB");
         AppDatabase.databaseWriteExecutor.execute(() -> {
             mHSDao.upsert(appEntity);
         });
@@ -51,19 +52,21 @@ public class HomeScreenRepository {
     }
 
     public void update(HomeScreenAppEntity appEntity) {
+        Log.d(TAG, "Update Home Screen DB");
         AppDatabase.databaseWriteExecutor.execute(() -> {
             mHSDao.update(appEntity);
         });
     }
 
     public void remove(HomeScreenAppEntity appEntity) {
+        Log.d(TAG, "Remove from Home Screen DB");
         AppDatabase.databaseWriteExecutor.execute(() -> {
             mHSDao.delete(appEntity);
         });
     }
 
-    public void overwrite(List<HomeScreenAppEntity> newEntities)
-    {
+    public void overwrite(List<HomeScreenAppEntity> newEntities) {
+        Log.d(TAG, "Overwrite Home Screen DB");
         AppDatabase.databaseWriteExecutor.execute(() -> {
             mHSDao.deleteAll();
             for (HomeScreenAppEntity hsae : newEntities)

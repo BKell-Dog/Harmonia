@@ -2,6 +2,7 @@ package com.example.harmonialauncher.appgrid;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -15,6 +16,7 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.viewpager2.widget.ViewPager2;
 
 import com.example.harmonialauncher.Fragments.HarmoniaFragment;
+import com.example.harmonialauncher.appgrid.viewmodels.AppGridViewModel;
 import com.example.harmonialauncher.appgrid.viewmodels.DrawerViewModel;
 import com.example.harmonialauncher.database.AppEntity;
 import com.example.harmonialauncher.gesture.FlingDetector;
@@ -34,7 +36,6 @@ public class DrawerFragment extends HarmoniaFragment implements FlingListener {
     private DrawerPageAdapter adapter;
     private DrawerViewModel vm;
     private FlingCatcher fc;
-    private ArrayList<AppObject> appList = new ArrayList<>();
 
     public DrawerFragment() {
         super(R.layout.horiz_app_pager);
@@ -48,27 +49,22 @@ public class DrawerFragment extends HarmoniaFragment implements FlingListener {
         vm = new ViewModelProvider(requireActivity()).get(DrawerViewModel.class);
     }
 
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-    }
 
     @SuppressLint("ClickableViewAccessibility")
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        super.onCreateView(inflater, container, savedInstanceState);
         vm.getAppList().observe(getViewLifecycleOwner(), new Observer<List<AppEntity>>() {
             @Override
             public void onChanged(List<AppEntity> appEntities) {
-                appList = AppObject.Factory.toAppObjects(CONTEXT, appEntities);
-                adapter = new DrawerPageAdapter(activity, appList);
-                vp.post(() -> vp.setAdapter(adapter));
+                adapter = new DrawerPageAdapter(requireActivity(), vm.getNumOfPages());
+                vp.setAdapter(adapter);
+                vm.setNumOfPages((int) Math.ceil(((double)appEntities.size()) / ((double)vm.NUMOFAPPSONPAGE)));
             }
         });
 
-        if (vm.getAppList().getValue() != null)
-            appList = AppObject.Factory.toAppObjects(CONTEXT, vm.getAppList().getValue());
+        adapter = new DrawerPageAdapter(requireActivity(), vm.getNumOfPages());
 
-        adapter = new DrawerPageAdapter(this.getActivity(), appList);
-
-        View v = inflater.inflate(R.layout.horiz_app_pager, container, false);
+        View v = inflater.inflate(R.layout.horiz_app_pager, null);
         if (v == null || getActivity() == null)
             return null;
 
@@ -88,7 +84,6 @@ public class DrawerFragment extends HarmoniaFragment implements FlingListener {
 
         return v;
     }
-
 
     public void update()
     {
@@ -114,7 +109,6 @@ public class DrawerFragment extends HarmoniaFragment implements FlingListener {
     public void flingRight() {
         vm.setCurrentPage(vm.getCurrentPage() - 1);
         update();
-        Log.d(TAG, "flingRight: ");
     }
 
     @Override

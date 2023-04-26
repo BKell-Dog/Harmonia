@@ -37,6 +37,7 @@ public class AppObject implements Lockable {
         this.name = name;
         this.packageName = packageName;
         this.image = image;
+        this.imageId = 0;
     }
 
     public String getPackageName() {

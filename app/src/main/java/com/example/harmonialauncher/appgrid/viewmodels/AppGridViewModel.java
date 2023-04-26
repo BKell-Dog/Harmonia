@@ -21,9 +21,8 @@ import java.util.List;
 
 public class AppGridViewModel extends AndroidViewModel {
     private static final String TAG = AppGridViewModel.class.getSimpleName();
-    private AppRepository appRepository;
-    private LockRepository lockRepository;
-    protected ArrayList<AppObject> drawerScreenApps = new ArrayList<>();
+    protected AppRepository appRepository;
+    protected LockRepository lockRepository;
     protected LiveData<List<AppEntity>> appEntityList;
     protected LiveData<List<LockEntity>> lockedList;
     protected boolean onScreen = false;
@@ -36,15 +35,6 @@ public class AppGridViewModel extends AndroidViewModel {
 
         appRepository = new AppRepository(application);
         appEntityList = appRepository.getAllApps();
-
-        appEntityList.observeForever(new Observer<List<AppEntity>>() {
-            @Override
-            public void onChanged(List<AppEntity> appEntities) {
-                drawerScreenApps.clear();
-                for (AppEntity a : appEntities)
-                    drawerScreenApps.add(AppObject.Factory.toAppObject(application, a));
-            }
-        });
 
         lockRepository = new LockRepository(application);
         lockedList = lockRepository.getLockedList();
@@ -59,20 +49,17 @@ public class AppGridViewModel extends AndroidViewModel {
         appEntityList = appRepository.getAllApps();
     }
 
+    public void initializeApps()
+    {
+        //writeAppValues(appRepository);
+    }
+
     public LiveData<List<AppEntity>> getAppList() {
         return appEntityList;
     }
 
     public LiveData<List<LockEntity>> getLockedList() {
         return lockedList;
-    }
-
-    public ArrayList<AppObject> getDrawerScreenApps() {
-        return drawerScreenApps;
-    }
-
-    public ArrayList<AppObject> getDrawerScreenApps(int pageNum) {
-        return new ArrayList<>(drawerScreenApps.subList(NUMOFAPPSONPAGE * pageNum, NUMOFAPPSONPAGE * (pageNum + 1)));
     }
 
     public boolean isOnScreen() {

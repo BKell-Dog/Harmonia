@@ -3,6 +3,7 @@ package com.example.harmonialauncher.appgrid;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -27,7 +28,7 @@ import com.example.harmonialauncher.blur.WallpaperView;
 import com.example.harmonialauncher.gesture.FlingDetector;
 import com.example.harmonialauncher.Helpers.WallpaperManager;
 import com.example.harmonialauncher.R;
-import com.example.harmonialauncher.ViewModels.MainActivityViewModel;
+import com.example.harmonialauncher.appgrid.viewmodels.MainActivityViewModel;
 import com.example.harmonialauncher.gesture.FlingCatcher;
 
 
@@ -101,6 +102,7 @@ public class AppGridActivity extends HarmoniaActivity implements FlingListener, 
     public void update() {
         vp.setCurrentItem(vm.getCurrentPage());
         vp.invalidate();
+        Log.d(TAG, "Current Page: " + vm.getCurrentPage());
     }
 
     @Override
@@ -117,6 +119,7 @@ public class AppGridActivity extends HarmoniaActivity implements FlingListener, 
             vm.setCurrentPage(1);
             wallpaper.setBlurRadius(blurRadius);
             wallpaper.setDimmed(true);
+            Log.d(TAG, "flingUp: To Drawer Page");
             update();
         }
     }
@@ -146,8 +149,10 @@ public class AppGridActivity extends HarmoniaActivity implements FlingListener, 
         public Fragment createFragment(int position) {
             if (position == 0)
                 return new HomeScreenFragment();
-            else if (position == 1)
+            else if (position == 1) {
+                Log.d(TAG, "createFragment: RETURN DRAWER FRAGMENT");
                 return new DrawerFragment();
+            }
             else
                 throw new IndexOutOfBoundsException();
         }

@@ -1,4 +1,4 @@
-package com.example.harmonialauncher.ViewModels;
+package com.example.harmonialauncher.appgrid.viewmodels;
 
 import androidx.lifecycle.ViewModel;
 
