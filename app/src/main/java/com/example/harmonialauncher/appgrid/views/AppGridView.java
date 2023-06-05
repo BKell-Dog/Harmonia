@@ -1,6 +1,8 @@
 package com.example.harmonialauncher.appgrid.views;
 
+import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
+import android.content.ClipData;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Point;
@@ -9,19 +11,30 @@ import android.os.Build;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.DragEvent;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.GridView;
 import android.widget.ListAdapter;
 
+import androidx.annotation.NonNull;
 import androidx.preference.PreferenceManager;
 
+import com.example.harmonialauncher.Utils.Util;
 import com.example.harmonialauncher.appgrid.AppGridAdapter;
 import com.example.harmonialauncher.appgrid.AppHolder;
 import com.example.harmonialauncher.Helpers.TimeHelper;
 import com.example.harmonialauncher.R;
+import com.example.harmonialauncher.gesture.LongPressDetector;
+import com.example.harmonialauncher.lock.LockStatusChangeListener;
 
-public class AppGridView extends GridView implements AppHolder, SharedPreferences.OnSharedPreferenceChangeListener {
+import java.util.ArrayList;
+
+public class AppGridView extends GridView implements AppHolder,
+        SharedPreferences.OnSharedPreferenceChangeListener,
+        LongPressDetector.LongPressCallback {
     public static final String TAG = AppGridView.class.getSimpleName();
+
+    private LongPressDetector lpd;
 
     /**
      * These variables designate the tolerances for the areas which the drag event must enter in
@@ -35,22 +48,31 @@ public class AppGridView extends GridView implements AppHolder, SharedPreference
     public AppGridView(Context context) {
         super(context);
         PreferenceManager.getDefaultSharedPreferences(context).registerOnSharedPreferenceChangeListener(this);
+        initialize();
     }
 
     public AppGridView(Context context, AttributeSet attrs) {
         super(context, attrs);
         PreferenceManager.getDefaultSharedPreferences(context).registerOnSharedPreferenceChangeListener(this);
+        initialize();
     }
 
     public AppGridView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         PreferenceManager.getDefaultSharedPreferences(context).registerOnSharedPreferenceChangeListener(this);
+        initialize();
     }
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     public AppGridView(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         super(context, attrs, defStyleAttr, defStyleRes);
         PreferenceManager.getDefaultSharedPreferences(context).registerOnSharedPreferenceChangeListener(this);
+        initialize();
+    }
+
+    private void initialize()
+    {
+        lpd = new LongPressDetector(getContext(), this);
     }
 
     @Override
@@ -58,11 +80,7 @@ public class AppGridView extends GridView implements AppHolder, SharedPreference
         int action = event.getAction();
         AppView originalView = (AppView) event.getLocalState();
         switch (action) {
-            case DragEvent.ACTION_DRAG_STARTED:
-                originalView.setVisibility(View.INVISIBLE);
-                return true;
             case DragEvent.ACTION_DRAG_LOCATION:
-                originalView.setVisibility(View.INVISIBLE);
                 Point loc = new Point((int) event.getX(), (int) event.getY());
                 if (TimeHelper.now() > nextSwap) {
                     //Iterate through all grid children
@@ -102,6 +120,12 @@ public class AppGridView extends GridView implements AppHolder, SharedPreference
                     }
                 }
                 return false;
+            case DragEvent.ACTION_DROP:
+                //Set the drag shadow to land at the drop point, not fly back to the initial point.
+                float x = event.getX(), y = event.getY();
+                originalView.setX(x - (originalView.getWidth() / 2f));
+                originalView.setY(y - (originalView.getHeight() / 2f));
+                break;
             case DragEvent.ACTION_DRAG_ENDED:
                 nextSwap = 0;
                 //Set original view to be visible
@@ -109,13 +133,42 @@ public class AppGridView extends GridView implements AppHolder, SharedPreference
                 AppGridAdapter adapter = getAdapter();
                 adapter.setDragInvisible(-1);
                 setAdapter(getAdapter());
-
-                //Set drag shadow animation
-
-                return true;
-            default:
-                return false;
+                break;
         }
+        return true;
+    }
+
+    public boolean onInterceptTouchEvent(MotionEvent event)
+    {
+        onTouchEvent(event);
+        return super.onInterceptTouchEvent(event);
+    }
+    
+    public boolean onLongPress(MotionEvent event)
+    {
+        Log.d(TAG, "BEGIN DRAG NOW");
+        int position = pointToPosition((int)event.getX(), (int)event.getY());
+        View view = getChildAt(position);
+        if (view != null) {
+            ClipData data = ClipData.newPlainText("", "");
+            View.DragShadowBuilder shadowBuilder = new View.DragShadowBuilder(view);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N)
+                view.startDragAndDrop(data, shadowBuilder, view, 0);
+            else
+                view.startDrag(data, shadowBuilder, view, 0);
+            view.setVisibility(View.INVISIBLE);
+        }
+        return true;
+    }
+
+    @SuppressLint("ClickableViewAccessibility")
+    @Override
+    public boolean onTouchEvent(MotionEvent event)
+    {
+        boolean longPress = lpd.onTouch(null, event);
+        if (longPress)
+            lpd.cleanUp();
+        return true;
     }
 
     public int getChildIndexByView(AppView view) {
@@ -125,6 +178,32 @@ public class AppGridView extends GridView implements AppHolder, SharedPreference
                 return i;
         }
         return -1;
+    }
+    
+    public View getChildByLocation(int x, int y)
+    {
+        for (int i = 0; i < getChildCount(); i++)
+        {
+            View child = getChildAt(i);
+            Rect bound = new Rect((int)child.getX(), (int)child.getY(), (int)child.getX() + child.getWidth(), (int)child.getY() + child.getHeight());
+            if (bound.contains(x, y))
+                return child;
+        }
+        return null;
+    }
+
+    public AppView getChildByName(@NonNull String name)
+    {
+        for (int i = 0; i < getChildCount(); i++) {
+            View child = getChildAt(i);
+            if (child instanceof AppView)
+            {
+                AppView av = (AppView) child;
+                if (av.getAppName().equalsIgnoreCase(name))
+                    return av;
+            }
+        }
+        return null;
     }
 
     public AppGridAdapter getAdapter() {
@@ -138,9 +217,16 @@ public class AppGridView extends GridView implements AppHolder, SharedPreference
         getAdapter().setDimensions(w, h);
     }
 
+    public void reload()
+    {
+        setAdapter(getAdapter());
+        invalidate();
+    }
+
     public void setAdapter(ListAdapter adapter) {
-        if (adapter instanceof AppGridAdapter)
+        if (adapter instanceof AppGridAdapter) {
             super.setAdapter(adapter);
+        }
     }
 
     @Override
@@ -161,7 +247,6 @@ public class AppGridView extends GridView implements AppHolder, SharedPreference
             }
         }
         setAdapter(adapter);
-        invalidateViews();
     }
 
     @Override

@@ -57,7 +57,7 @@ public class AppGridAdapter extends ArrayAdapter<AppObject> implements AppHolder
     private int style;
     private SingleTapDetector std;
 
-    public AppGridAdapter(@NonNull Context context, int resource, ArrayList<AppObject> appList) {
+    public AppGridAdapter(@NonNull Context context, int resource, @NonNull ArrayList<AppObject> appList) {
         super(context, resource, appList);
         CONTEXT = context;
         apps = appList;
@@ -166,7 +166,6 @@ public class AppGridAdapter extends ArrayAdapter<AppObject> implements AppHolder
 
             //Make app invisible or greyscale if it is meant to be locked
             if (position == dragInvisibleIndex || app.isLocked() || lockedPacks.contains(app.getPackageName())) {
-                Log.d(TAG, "getView: APP IS LOCKED: " + app.getPackageName());
                 if (lockMode == LOCK_MODE_INVISIBLE || dragInvisibleIndex != -1)
                     appView.setVisibility(View.INVISIBLE);
                 else if (lockMode == LOCK_MODE_GREYSCALE)
@@ -189,16 +188,8 @@ public class AppGridAdapter extends ArrayAdapter<AppObject> implements AppHolder
         appView.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View view) {
-                if (view != null) {
-                    ClipData data = ClipData.newPlainText("", "");
-                    Log.d(TAG, "onLongPress: START DRAG EVENT NOW NIUGGAH");
-                    View.DragShadowBuilder shadowBuilder = new View.DragShadowBuilder(view);
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N)
-                        view.startDragAndDrop(data, shadowBuilder, view, 0);
-                    else
-                        view.startDrag(data, shadowBuilder, view, 0);
-                    view.setVisibility(View.INVISIBLE);
-                }
+                Log.d(TAG, "onLongClick: ");
+
                 return true;
             }
         });
@@ -238,6 +229,15 @@ public class AppGridAdapter extends ArrayAdapter<AppObject> implements AppHolder
     public void setLockedPackages(ArrayList<String> lockedPackages)
     {
         this.lockedPacks = lockedPackages;
+        if (apps != null)
+            for (AppObject app : apps)
+                if (lockedPacks.contains(app.getPackageName()))
+                    app.lock();
+    }
+
+    public ArrayList<String> getLockedPacks()
+    {
+        return lockedPacks;
     }
 
     public void setStyle(int newStyle)

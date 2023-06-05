@@ -11,6 +11,8 @@ import android.content.SharedPreferences;
 import android.graphics.Point;
 import android.graphics.Rect;
 import android.os.Bundle;
+import android.os.Handler;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -22,6 +24,7 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.preference.PreferenceManager;
 
+import com.example.harmonialauncher.Helpers.TimeHelper;
 import com.example.harmonialauncher.appgrid.viewmodels.AppGridViewModel;
 import com.example.harmonialauncher.appgrid.views.AppGridView;
 import com.example.harmonialauncher.Fragments.HarmoniaFragment;
@@ -54,6 +57,11 @@ public class AppGridFragment extends HarmoniaFragment implements LockStatusChang
     protected ArrayList<LockEntity> lockedList = new ArrayList<>();
     protected ArrayList<String> lockedPacks = new ArrayList<>();
 
+    //Updating lock list
+    private Handler handler;
+    private Runnable run;
+    private long nextUpdateTime = Long.MAX_VALUE;
+
     public AppGridFragment() {
         super(R.id.app_page_grid);
     }
@@ -76,16 +84,38 @@ public class AppGridFragment extends HarmoniaFragment implements LockStatusChang
                 lockedList = new ArrayList<>(lockEntities);
 
                 lockedPacks.clear();
-                for (LockEntity l : lockedList)
+                for (LockEntity l : lockedList) {
                     lockedPacks.add(l.appPackageName);
+                    if (l.lockedUntil < nextUpdateTime)
+                        nextUpdateTime = l.lockedUntil;
+                }
 
                 if (gv != null) {
-                    gv.getAdapter().setLockedPackages(lockedPacks);
+                    if (adapter == null)
+                        adapter = new AppGridAdapter(CONTEXT, R.id.app_page_grid, appList);
+                    adapter.setLockedPackages(lockedPacks);
                     gv.setAdapter(adapter);
-                    gv.invalidate();
                 }
+
+                Log.d(TAG, "onChanged: " + lockedPacks);
             }
         });
+
+        // Set a recurring task to update the locked_table database.
+        handler = new Handler();
+        run = new Runnable() {
+            @Override
+            public void run() {
+                Log.d(TAG, "run: " + TimeHelper.now() + " --- " + nextUpdateTime);
+                if (nextUpdateTime < TimeHelper.now()) {
+                    Log.d(TAG, "run: LOCK LIST UPDATE");
+                    updateLockedList();
+                    LockStatusChangeListener.onLockStatusChanged();
+                }
+                handler.postDelayed(this, 20000); // Repeat every 30 seconds (30,000 ms).
+            }
+        };
+        handler.post(run);
     }
 
     //All subclasses should override this method if only to initialize their adapter in their own way.
@@ -121,34 +151,18 @@ public class AppGridFragment extends HarmoniaFragment implements LockStatusChang
         return v;
     }
 
-    /*@Override
-    public boolean onSingleTapConfirmed(MotionEvent e) {
-        //Check if view is created
-        if (gv == null || !onScreen)
-            return false;
-
-        for (int i = 0; i < gv.getAdapter().getCount(); i++) {
-            View v = gv.getChildAt(i);
-            if (v != null) {
-                Point coords = Util.getLocationOnScreen(v);
-                Rect bounds = new Rect(coords.x, coords.y, coords.x + v.getWidth(), coords.y + v.getHeight());
-                if (bounds.contains((int) e.getX(), (int) e.getY())) {
-                    AppGridAdapter a = gv.getAdapter();
-                    AppObject app = a.getItem(i);
-                    if (app != null && !lockedPacks.contains(app.getPackageName())) {         //Check that app is not locked
-                        Util.openApp(this.CONTEXT, app.getPackageName());
-                        return true;
-                    }
-                }
-            }
-        }
-        return false;
-    }*/
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        updateLockedList();
+    }
 
     @Override
     public void onStatusChanged() {
-        if (adapter != null)
+        if (adapter != null) {
+            adapter.setLockedPackages(lockedPacks);
             gv.setAdapter(adapter);
+        }
     }
 
     @Override
@@ -175,5 +189,15 @@ public class AppGridFragment extends HarmoniaFragment implements LockStatusChang
             if (style == STYLE_GREYSCALE)
                 prefs.edit().putInt(getString(R.string.set_locked_app_style_key), LOCK_MODE_INVISIBLE).apply();
         }
+    }
+
+    private void updateLockedList()
+    {
+        ArrayList<LockEntity> remove = new ArrayList<>();
+        for (LockEntity le : lockedList)
+            if (le.lockedUntil < TimeHelper.now())
+                remove.add(le);
+        lockedList.removeAll(remove);
+        vm.overwriteLockList(lockedList);
     }
 }

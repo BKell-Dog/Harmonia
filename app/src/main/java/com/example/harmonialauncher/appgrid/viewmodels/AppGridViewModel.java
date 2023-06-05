@@ -54,6 +54,11 @@ public class AppGridViewModel extends AndroidViewModel {
         //writeAppValues(appRepository);
     }
 
+    public void overwriteLockList(ArrayList<LockEntity> lockList)
+    {
+        lockRepository.overwrite(lockList);
+    }
+
     public LiveData<List<AppEntity>> getAppList() {
         return appEntityList;
     }

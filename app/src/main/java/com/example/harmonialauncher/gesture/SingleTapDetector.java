@@ -36,8 +36,10 @@ public class SingleTapDetector extends GestureDetector {
                         mFinalTime - mInitTime < mSingleTapTimeout) {
                     return true;
                 }
+                cleanUp();
                 break;
              case MotionEvent.ACTION_CANCEL:
+                 cleanUp();
         }
         return false;
     }

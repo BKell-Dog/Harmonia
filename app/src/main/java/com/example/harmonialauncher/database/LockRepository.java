@@ -30,6 +30,28 @@ public class LockRepository {
 
     // You must call this on a non-UI thread or your app will throw an exception. Room ensures
     // that you're not doing any long running operations on the main thread, blocking the UI.
+    public void deleteAll()
+    {
+        LockDatabase.databaseWriteExecutor.execute(() -> {
+            mLockDao.deleteAll();
+        });
+    }
+
+    public void overwrite(List<LockEntity> lockList)
+    {
+        LockDatabase.databaseWriteExecutor.execute(() -> {
+            mLockDao.deleteAll();
+            for (LockEntity le : lockList)
+                mLockDao.insert(le);
+        });
+    }
+
+    public void remove(LockEntity lockEntity) {
+        LockDatabase.databaseWriteExecutor.execute(() -> {
+            mLockDao.delete(lockEntity);
+        });
+    }
+
     public void upsert(LockEntity lockEntity) {
         LockDatabase.databaseWriteExecutor.execute(() -> {
             mLockDao.upsert(lockEntity);
@@ -47,11 +69,4 @@ public class LockRepository {
             mLockDao.update(lockEntity);
         });
     }
-
-    public void remove(LockEntity lockEntity) {
-        LockDatabase.databaseWriteExecutor.execute(() -> {
-            mLockDao.delete(lockEntity);
-        });
-    }
-
 }

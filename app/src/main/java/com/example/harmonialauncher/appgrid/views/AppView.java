@@ -37,8 +37,6 @@ public class AppView extends LinearLayout implements Lockable {  //in future: ex
     public AppView(Context context) {
         super(context);
         setupAttributes();
-
-        std = new SingleTapDetector(context);
     }
 
     public AppView(Context context, @Nullable AttributeSet attrs) {
@@ -65,6 +63,8 @@ public class AppView extends LinearLayout implements Lockable {  //in future: ex
         setOrientation(LinearLayout.VERTICAL);
         setPadding(10, 10, 10, 10);
         setWeightSum(100f);
+
+        std = new SingleTapDetector(getContext());
     }
 
     public void onDraw(Canvas canvas) {
@@ -74,6 +74,8 @@ public class AppView extends LinearLayout implements Lockable {  //in future: ex
     @SuppressLint("ClickableViewAccessibility")
     @Override
     public boolean onTouchEvent(MotionEvent event) {
+        if (event == null || std == null)
+            return true;
         //boolean singleTap = std.onTouch(null, event);
         if (/*singleTap && */!locked && packageName != null && event.getActionMasked() == MotionEvent.ACTION_UP && getContext() != null)
             Util.openApp(getContext(), packageName);

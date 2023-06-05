@@ -99,10 +99,21 @@ public class AppGridActivity extends HarmoniaActivity implements FlingListener, 
         update();
     }
 
+    public void onResume()
+    {
+        super.onResume();
+        endService();
+    }
+
+    public void onPause()
+    {
+        super.onPause();
+        showOverlay();
+    }
+
     public void update() {
         vp.setCurrentItem(vm.getCurrentPage());
         vp.invalidate();
-        Log.d(TAG, "Current Page: " + vm.getCurrentPage());
     }
 
     @Override
@@ -119,7 +130,6 @@ public class AppGridActivity extends HarmoniaActivity implements FlingListener, 
             vm.setCurrentPage(1);
             wallpaper.setBlurRadius(blurRadius);
             wallpaper.setDimmed(true);
-            Log.d(TAG, "flingUp: To Drawer Page");
             update();
         }
     }
@@ -149,10 +159,8 @@ public class AppGridActivity extends HarmoniaActivity implements FlingListener, 
         public Fragment createFragment(int position) {
             if (position == 0)
                 return new HomeScreenFragment();
-            else if (position == 1) {
-                Log.d(TAG, "createFragment: RETURN DRAWER FRAGMENT");
+            else if (position == 1)
                 return new DrawerFragment();
-            }
             else
                 throw new IndexOutOfBoundsException();
         }

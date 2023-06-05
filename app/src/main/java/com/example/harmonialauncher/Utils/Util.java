@@ -132,7 +132,7 @@ public class Util {
      *
      * @return ArrayList<AppObject>
      */
-    private static ArrayList<AppObject> loadHarmoniaApps(@NonNull Context c) {
+    public static ArrayList<AppObject> loadHarmoniaApps(@NonNull Context c) {
         ArrayList<AppObject> hApps = new ArrayList<AppObject>();
 
         //Lock Activity

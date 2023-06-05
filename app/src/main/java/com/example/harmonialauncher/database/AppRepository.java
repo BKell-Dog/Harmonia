@@ -10,6 +10,7 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
 
+import com.example.harmonialauncher.Utils.Util;
 import com.example.harmonialauncher.appgrid.AppObject;
 
 import java.util.ArrayList;
@@ -77,6 +78,9 @@ public class AppRepository {
                             || app.getPackageName() == null)
                         removeApps.add(app);
                 apps.removeAll(removeApps);
+
+                //Add Harmonia Apps
+                apps.addAll(Util.loadHarmoniaApps(application));
 
                 ArrayList<AppEntity> appEntities = AppEntity.Factory.toAppEntities(application, apps);
                 for (AppEntity e : appEntities)

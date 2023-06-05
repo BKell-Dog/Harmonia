@@ -34,7 +34,6 @@ public class DrawerPageFragment extends AppGridFragment implements LockStatusCha
 
     public DrawerPageFragment(int pageNum) {
         this.pageNum = pageNum;
-        Log.d(TAG, "DrawerPageFragment: " + pageNum);
     }
 
     @Override

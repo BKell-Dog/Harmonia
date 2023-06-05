@@ -51,6 +51,10 @@ dependencies {
     implementation "androidx.lifecycle:lifecycle-livedata:2.5.1"
     implementation "androidx.lifecycle:lifecycle-common-java8:2.5.1"
 
+    // Worker and WorkManager components
+    def work_version = "2.8.1"
+    implementation "androidx.work:work-runtime:$work_version"
+
     // UI
     implementation "androidx.constraintlayout:constraintlayout:$rootProject.constraintLayoutVersion"
     implementation "com.google.android.material:material:1.8.0"

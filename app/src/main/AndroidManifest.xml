@@ -5,9 +5,14 @@
     <permission
         android:name="android.permission.QUERY_ALL_PACKAGES"
         tools:ignore="ReservedSystemPermission"/>
-    <!-- <uses-permission android:name="android.permission.SET_WALLPAPER"/> -->
 
+    <!-- Permissions for drawing a full screen overlay -->
+    <uses-permission android:name="android.permission.ACTION_MANAGE_OVERLAY_PERMISSION"/>
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW"/>
+
+    <!-- <uses-permission android:name="android.permission.SET_WALLPAPER"/> -->
     <!-- <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" /> -->
+
     <application
         android:allowBackup="true"
         android:icon="@drawable/harmonia_icon"
@@ -39,6 +44,7 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
+
         <activity
             android:name=".lock.LockActivity"
             android:label="@string/lock_title"
@@ -58,7 +64,6 @@
 
 
     <queries>
-
         <intent>
             <action android:name="android.intent.action.MAIN" />
             <category android:name="android.intent.category.LAUNCHER" />

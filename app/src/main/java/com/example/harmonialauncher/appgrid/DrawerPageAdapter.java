@@ -21,7 +21,6 @@ public class DrawerPageAdapter extends PageAdapter {
     @NonNull
     @Override
     public Fragment createFragment(int position) {
-        Log.d(TAG, "Return new drawer page fragment: " + position);
         return new DrawerPageFragment(position);
     }
 }
