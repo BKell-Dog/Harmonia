@@ -43,7 +43,7 @@ public class AppGridViewModel extends AndroidViewModel {
     private void writeAppValues(AppRepository repo) {
         ArrayList<AppObject> apps = Util.loadAllApps(getApplication());
         for (AppObject app : apps) {
-            AppEntity entity = AppEntity.Factory.toAppEntity(getApplication(), app);
+            AppEntity entity = AppEntity.Factory.toAppEntity(app);
             repo.upsert(entity);
         }
         appEntityList = appRepository.getAllApps();

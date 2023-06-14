@@ -55,6 +55,12 @@
     <string name="option5">Old-New</string>
     <string name="filter_icon">Filter Icon</string>
 
+    <!-- Full Screen Overlay & Blur -->
+    <string name="channel_name">OverlayNotifChannel</string>
+    <string name="channel_description">OverlayNotifDescription</string>
+    <string name="notification_content_title">NotifContentTitle</string>
+    <string name="accessibility_service_label">App Blur Overlay</string>
+
     <!-- Splash Screen -->
     <string name="splash_icon_text">Splash Icon</string>
 

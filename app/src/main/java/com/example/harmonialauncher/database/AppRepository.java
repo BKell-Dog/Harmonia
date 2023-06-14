@@ -82,7 +82,7 @@ public class AppRepository {
                 //Add Harmonia Apps
                 apps.addAll(Util.loadHarmoniaApps(application));
 
-                ArrayList<AppEntity> appEntities = AppEntity.Factory.toAppEntities(application, apps);
+                ArrayList<AppEntity> appEntities = AppEntity.Factory.toAppEntities(apps);
                 for (AppEntity e : appEntities)
                     if (e.appName != null && e.packageName != null && e.imageId != null) {
                         mAppDao.upsert(e);

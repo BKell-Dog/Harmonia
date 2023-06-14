@@ -39,13 +39,12 @@ public class OverlayWindow {
             // Set the layout parameters of the window
             mParams = new WindowManager.LayoutParams(
                     // Set the window to fill the screen
-                    WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                    WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.MATCH_PARENT,
                     // Display it on top of other application windows
                     WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY,
-                    // Don't let it grab the input focus
+                    // Don't let it grab the input focus or any touch event, let touch events pass straight through
                     WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE |
-                    WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE |
-                    WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN,
+                    WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
                     // Make the underlying application window visible through any transparent parts
                     PixelFormat.TRANSLUCENT);
         }
@@ -63,6 +62,7 @@ public class OverlayWindow {
             // Check if the view is already inflated or present in the window
             if (mView.getWindowToken() == null) {
                 if (mView.getParent() == null) {
+                    Log.d(TAG, "OVERLAY START");
                     mWindowManager.addView(mView, mParams);
                 }
             }
@@ -94,7 +94,7 @@ public class OverlayWindow {
     public void setBlur(Float newBlurRadius)
     {
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.S) {
-            if (newBlurRadius == null) {
+            if (newBlurRadius == null || newBlurRadius == 0f) {
                 mView.setRenderEffect(null);
                 return;
             }

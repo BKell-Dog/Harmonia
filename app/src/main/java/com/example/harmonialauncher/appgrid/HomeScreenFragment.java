@@ -59,6 +59,7 @@ public class HomeScreenFragment extends AppGridFragment implements LockStatusCha
                 ArrayList<AppObject> allApps = Util.loadAllApps(frag);
                 for (HomeScreenAppEntity hsae : homeScreenAppEntities) {
                     appList.add(Util.findAppByPackageName(allApps, hsae.packageName));
+                    Log.d(TAG, "onChanged: " + hsae.packageName);
                 }
                 adapter = new AppGridAdapter(frag.requireContext(), R.layout.app, appList);
                 adapter.setLockedPackages(lockedPacks);

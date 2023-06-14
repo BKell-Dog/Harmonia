@@ -32,16 +32,15 @@ public class AppEntity {
     @ColumnInfo(name="image_id")
     public Integer imageId;
 
-    /*@ColumnInfo(name="home_page_index")
-    public Integer homeIndex;
-
+    /**
+     * Blur interval refers to the amount of time this app will be allowed to be on screen before
+     * becoming blurred through the full screen blur overlay feature. A null value represents that
+     * the app will never be blurred, while a non-null value means that after that interval the
+     * blurriness will increment, continuing until the app is unusable.
+     */
     @Nullable
-    @ColumnInfo(name="drawer_page_num") // Indicates which page the app is on
-    public Integer drawerPageNum;
-
-    @NonNull
-    @ColumnInfo(name="drawer_page_index") // Indicates where within the page the app lies
-    public Integer drawerPageIndex;*/
+    @ColumnInfo(name="blur_interval")
+    public Integer blurInterval = null;
 
     public AppEntity(@NonNull String appName, @NonNull String packageName, @Nullable String appNameShortened, @NonNull Integer imageId)
     {
@@ -57,16 +56,21 @@ public class AppEntity {
         this(appName, packageName, null, imageId);
     }
 
+    public void setBlurInterval(@Nullable Integer blurInterval)
+    {
+        this.blurInterval = blurInterval;
+    }
+
     public static class Factory
     {
-        public static ArrayList<AppEntity> toAppEntities(@NonNull Context context, @NonNull List<AppObject> objects) {
+        public static ArrayList<AppEntity> toAppEntities(@NonNull List<AppObject> objects) {
             ArrayList<AppEntity> apps = new ArrayList<>();
             for (AppObject obj : objects)
-                apps.add(toAppEntity(context, obj));
+                apps.add(toAppEntity(obj));
             return apps;
         }
 
-        public static AppEntity toAppEntity(@NonNull Context context, @NonNull AppObject obj)
+        public static AppEntity toAppEntity(@NonNull AppObject obj)
         {
             return new AppEntity(obj.getName(), obj.getPackageName(), obj.getImageId());
         }

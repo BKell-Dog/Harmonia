@@ -102,13 +102,13 @@ public class AppGridActivity extends HarmoniaActivity implements FlingListener, 
     public void onResume()
     {
         super.onResume();
-        endService();
     }
 
     public void onPause()
     {
         super.onPause();
-        showOverlay();
+        checkOverlayPermission();
+        checkAccessibilityServiecPermissions();
     }
 
     public void update() {
